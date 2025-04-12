@@ -1,0 +1,67 @@
+{
+    "name": "@xiaohaih/json-form-plus",
+    "type": "module",
+    "version": "0.0.0",
+    "description": "基于element-plus实现, 通过JSON配置表单组件(表单项间可相互依赖)",
+    "author": "xiaohai",
+    "license": "MIT",
+    "homepage": "https://xiaohaih.github.io/condition/index.html",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/xiaohaiH/condition/tree/master/package/element-plus"
+    },
+    "keywords": [
+        "vue3",
+        "element-plus",
+        "JSON Form"
+    ],
+    "exports": {
+        ".": {
+            "browser": "./src/index.ts",
+            "types": "./src/index.ts",
+            "import": "./src/index.ts",
+            "require": "./dist/index.cjs.js"
+        },
+        "./*": "./*"
+    },
+    "main": "dist/index.cjs.js",
+    "module": "src/index.ts",
+    "unpkg": "dist/index.umd.js",
+    "jsdelivr": "dist/index.umd.js",
+    "types": "src/index.ts",
+    "scripts": {
+        "build": "vite build",
+        "postinstall": "node -e \"try{require('./scripts/postinstall.cjs')}catch(e){}\"",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "dependencies": {
+        "@xiaohaih/json-form-core": "workspace:*"
+    },
+    "devDependencies": {
+        "@rollup/plugin-terser": "^0.4.4",
+        "@tsconfig/node22": "^22.0.0",
+        "@vitejs/plugin-vue": "^5.2.1",
+        "@vitejs/plugin-vue-jsx": "^4.1.1",
+        "element-plus": "^2.9.5",
+        "vite": "^6.1.0",
+        "vite-plugin-dts": "^4.5.3",
+        "vue-component-type-helpers": "^2.1.10"
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/",
+        "main": "dist/index.cjs.js",
+        "module": "src/index.ts",
+        "unpkg": "dist/index.umd.js",
+        "jsdelivr": "dist/index.umd.js",
+        "types": "src/index.ts",
+        "exports": {
+            ".": {
+                "browser": "./src/index.ts",
+                "types": "./src/index.ts",
+                "import": "./src/index.ts",
+                "require": "./dist/index.cjs.js"
+            },
+            "./*": "./*"
+        }
+    }
+}
