@@ -6,7 +6,7 @@ const dir = path.resolve(__dirname, '..');
 const { loadModule, reexport, writeContent } = require('./utils.cjs');
 
 const ElementPlus = loadModule('element-plus');
-if (ElementPlus) {
+if (ElementPlus && dir.includes('node_modules')) {
     const newContent = reexport(fs.readFileSync(path.join(dir, 'components', 'components-whole.ts'), 'utf-8'), ElementPlus);
     writeContent(path.join(dir, 'components', 'components.ts'), newContent);
 }
