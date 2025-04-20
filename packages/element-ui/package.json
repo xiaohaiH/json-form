@@ -1,0 +1,72 @@
+{
+    "name": "@xiaohaih/json-form-el",
+    "version": "0.0.0",
+    "description": "基于element-ui实现, 通过JSON配置表单组件(表单项间可相互依赖)",
+    "author": "xiaohai",
+    "license": "MIT",
+    "homepage": "https://xiaohaih.github.io/json-form/example-el-vue2/index.html",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/xiaohaiH/json-form/tree/master/packages/element-ui"
+    },
+    "keywords": [
+        "vue2",
+        "element-ui",
+        "JSON Form"
+    ],
+    "exports": {
+        ".": {
+            "browser": "./src/index.ts",
+            "types": "./src/index.ts",
+            "import": "./src/index.ts",
+            "require": "./dist/index.cjs.js"
+        },
+        "./*": "./*"
+    },
+    "main": "dist/index.cjs.js",
+    "module": "src/index.ts",
+    "unpkg": "dist/index.umd.js",
+    "jsdelivr": "dist/index.umd.js",
+    "types": "src/index.ts",
+    "scripts": {
+        "build": "vite build",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "peerDependencies": {
+        "@vue/composition-api": "^1.0.0-rc.1",
+        "element-ui": "^1.0.0",
+        "vue": "^2.0.0"
+    },
+    "peerDependenciesMeta": {
+        "@vue/composition-api": {
+            "optional": true
+        }
+    },
+    "dependencies": {
+        "@xiaohaih/json-form-core": "workspace:*",
+        "vue-demi": "0.14.5"
+    },
+    "devDependencies": {
+        "@rollup/plugin-terser": "^0.4.4",
+        "element-ui": "^2.15.14",
+        "vite-plugin-dts": "^4.5.3",
+        "vue": "^2.7.16",
+        "vue-component-type-helpers": "^2.1.10"
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/",
+        "main": "dist/index.cjs.js",
+        "module": "src/index.ts",
+        "unpkg": "dist/index.umd.js",
+        "types": "src/index.ts",
+        "exports": {
+            ".": {
+                "browser": "./src/index.ts",
+                "types": "./src/index.ts",
+                "import": "./src/index.ts",
+                "require": "./dist/index.cjs.js"
+            },
+            "./*": "./*"
+        }
+    }
+}
