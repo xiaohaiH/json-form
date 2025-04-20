@@ -49,7 +49,6 @@ export interface InputSlotOption<T, Query extends Record<string, any>, Option, O
 /** 组件传参 - 私有 */
 export const inputPropsPrivate = inputPropsGeneric();
 /** 组件传参 - 外部调用 */
-
 export const inputProps = emits2props({
     ...elInputProps,
     ...inputPropsPrivate,

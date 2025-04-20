@@ -85,7 +85,7 @@ export function selectEmitsGeneric<T>() {
 export const selectEmitsPrivate = selectEmitsGeneric();
 /** 组件事件 - 外部调用 */
 export const selectEmits = {
-    change: (value: true) => true,
+    change: (value: any) => true,
     visibleChange: (visible: boolean) => true,
     removeTag: (tagValue: any) => true,
     clear: () => true,

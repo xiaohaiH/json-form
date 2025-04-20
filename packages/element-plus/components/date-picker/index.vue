@@ -16,7 +16,7 @@
             <ElDatePicker
                 v-bind="contentStaticProps"
                 :value-format="valueFormat"
-                :model-value="checked as string"
+                :model-value="(checked as string)"
                 class="json-form-item__content"
                 v-bind.prop="contentDynamicProps"
                 @update:model-value="change"

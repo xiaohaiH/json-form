@@ -14,7 +14,7 @@ let fileId = 1000;
 export const genFileId = () => Date.now() + ++fileId;
 /** 组件传参 - 私有 */
 export function uploadPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
-    type _Prop = typeof elUploadProps & ReturnType<typeof emits2props<null, [NonNullable<typeof ElUpload.emits>]>>;
+    type _Prop = typeof elUploadProps; // & ReturnType<typeof emits2props<null, [NonNullable<typeof ElUpload.emits>]>>;
 
     return {
         ...{} as _Prop,

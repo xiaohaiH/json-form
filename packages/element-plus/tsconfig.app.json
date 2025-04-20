@@ -10,7 +10,7 @@
             "@/*": ["./src/*"]
         },
         /* 包含类型定义的文件夹. */
-        "typeRoots": ["node_modules/@types", "types"],
+        "typeRoots": ["node_modules/@types"],
 
         /* Linting */
         "allowImportingTsExtensions": true,

@@ -15,7 +15,7 @@
         <slot v-else v-bind="slotProps">
             <ElRate
                 v-bind="contentStaticProps"
-                :model-value="checked as number"
+                :model-value="(checked as number)"
                 class="json-form-item__content"
                 v-bind.prop="contentDynamicProps"
                 @change="change"

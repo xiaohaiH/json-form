@@ -106,7 +106,7 @@ export default defineComponent({
             else return r;
         }
         function handleExceed(files: File[], uploadFiles: UploadUserFile[]) {
-            const _props = formItemStaticProps.value;
+            const _props = contentStaticProps.value;
             if (_props.limit !== 1) return _props.onExceed?.(files, uploadFiles);
             const file = files[0] as UploadRawFile;
             if (props.fileMaxSize && file.size > props.fileMaxSize) {

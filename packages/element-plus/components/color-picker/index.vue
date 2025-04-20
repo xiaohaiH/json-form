@@ -15,10 +15,10 @@
         <slot v-else v-bind="slotProps">
             <ElColorPicker
                 v-bind="contentStaticProps"
-                :model-value="checked as string"
+                :model-value="(checked as string)"
                 class="json-form-item__content"
                 v-bind.prop="contentDynamicProps"
-                @change="change as () => void"
+                @change="(change as () => void)"
             >
                 <template v-for="(item, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">
                     <component :is="getNode(item)" v-bind="slotProps" v-bind.prop="row" />

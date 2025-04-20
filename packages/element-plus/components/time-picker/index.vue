@@ -15,7 +15,7 @@
         <slot v-else v-bind="slotProps">
             <ElTimePicker
                 v-bind="contentStaticProps"
-                :model-value="checked as string"
+                :model-value="(checked as string)"
                 :value-format="valueFormat"
                 class="json-form-item__content"
                 v-bind.prop="contentDynamicProps"

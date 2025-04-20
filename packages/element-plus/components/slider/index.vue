@@ -15,7 +15,7 @@
         <slot v-else v-bind="slotProps">
             <ElSlider
                 v-bind="contentStaticProps"
-                :model-value="checked as number"
+                :model-value="(checked as number)"
                 class="json-form-item__content"
                 v-bind.prop="contentDynamicProps"
                 @update:model-value="(change as () => void)"
