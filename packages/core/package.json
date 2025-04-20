@@ -20,9 +20,6 @@
     "jsdelivr": "dist/index.umd.js",
     "types": "index.ts",
     "scripts": {
-        "vue2": "vue-demi-switch 2",
-        "vue2.7": "vue-demi-switch 2.7",
-        "vue3": "vue-demi-switch 3",
         "build": "rimraf dist && rollup -c rollup.config.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },

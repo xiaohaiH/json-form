@@ -1,5 +1,4 @@
 import type { VNode } from 'vue-demi';
-import { markRaw } from 'vue-demi';
 import type { Hyphenate } from './base';
 
 /**
@@ -93,7 +92,7 @@ export function getChained<T extends Record<string, any>>(
 export function getNode(node: string | number | Record<string, any> | ((...args: any[]) => VNode) | undefined | null) {
     // 直接抛出 null, template 中会报错
     if (!node && node !== 0) return null as unknown as {};
-    return typeof node === 'function' ? node : typeof node === 'object' ? markRaw(node) : () => node;
+    return typeof node === 'function' ? node : typeof node === 'object' ? node : () => node;
 }
 
 /**

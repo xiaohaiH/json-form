@@ -1,7 +1,11 @@
 import type { UnionToIntersection } from 'utility-types';
 import type { PropType } from 'vue-demi';
-import { camelize } from 'vue-demi';
+// import { camelize } from 'vue-demi';
 
+const wordReg = /-\w/g;
+function camelize(name: string) {
+    return name.replace(wordReg, ($1) => $1.slice(1).toUpperCase());
+}
 /**
  * 将 emits 转为 props
  * @param {object | undefined | null} props 待合并的 props
