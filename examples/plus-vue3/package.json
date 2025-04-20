@@ -16,7 +16,7 @@
         "element-plus": "^2.9.5",
         "monaco-editor": "^0.44.0",
         "split.js": "^1.6.5",
-        "vue": "3.5.13"
+        "vue": "^3.5.13"
     },
     "devDependencies": {
         "@babel/generator": "^7.24.10",

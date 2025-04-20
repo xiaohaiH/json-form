@@ -6,7 +6,11 @@
 
         "baseUrl": ".",
         "paths": {
-            "~share/*": ["./src/share/*"]
+            "~share/*": ["./src/share/*"],
+            // "vue": ["vue/dist/vue.d.ts"],
+            // "vue-demi": ["vue-demi/lib/v3/index.d.ts"],
+            // "element-plus": ["element-plus/es/index.d.ts"]
+            "element-plus/es/utils": ["element-plus/es/utils/index.d.ts"]
         },
         "typeRoots": ["node_modules/@types", "src/types"]
     },

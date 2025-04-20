@@ -1,6 +1,5 @@
-const { set, h } = window.Vue;
-const { defineOption } = window.JSONForm;
-const { ElFormItem } = window.Ui;
+import { defineOption } from '@xiaohaih/json-form-plus';
+import { ElFormItem } from 'element-plus';
 
 export function conditionFactory() {
     return {
@@ -83,15 +82,15 @@ export function conditionFactory() {
                 t: 'input',
                 label: 'input1',
                 placeholder: '哈哈哈',
-                itemSlots: {
-                    append: ({ plain, onChange }) => {
-                        return (
-                            <div style="cursor: pointer;" onClick={() => onChange('234')}>
-                                点我
-                            </div>
-                        );
-                    },
-                },
+                // itemSlots: {
+                //     append: ({ plain, onChange }) => {
+                //         return (
+                //             <div style="cursor: pointer;" onClick={() => onChange('234')}>
+                //                 点我
+                //             </div>
+                //         );
+                //     },
+                // },
             },
             input2: {
                 t: 'input',

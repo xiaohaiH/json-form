@@ -20,11 +20,12 @@ export default defineConfig({
     define: {
         'process.env': { BABEL_TYPES_8_BREAKING: false },
     },
-    // resolve: {
-    //     alias: {
-    //         vue: 'vue/dist/vue.esm-bundler.js',
-    //     },
-    // },
+    resolve: {
+        alias: {
+            'vue': 'vue/dist/vue.esm-bundler.js',
+            'vue-demi': 'vue-demi/lib/v3/index.mjs',
+        },
+    },
     esbuild: {
         jsxFactory: 'h',
         jsxFragment: 'Fragment',
