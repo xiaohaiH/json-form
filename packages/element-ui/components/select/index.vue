@@ -109,7 +109,7 @@ export default defineComponent({
         };
         const filterSource = computed(() => {
             const val = filterValue.value;
-            return val ? plain.finalOption.value.filter(props.filterMethod!.bind(null, val)) : plain.finalOption.value;
+            return (val ? plain.finalOption.value.filter(props.filterMethod!.bind(null, val)) : plain.finalOption.value) as any;
         });
         const slotProps = computed(() => ({
             getFormItemProps: () => formItemActualProps.value,

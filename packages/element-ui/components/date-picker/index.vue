@@ -40,7 +40,7 @@
 <script lang="ts">
 import { hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { DatePicker as ElDatePicker, FormItem as ElFormItem } from 'element-ui';
-import { computed, defineComponent, reactive, toRefs } from 'vue-demi';
+import { computed, defineComponent, reactive } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
 import { formItemPropKeys } from '../share';
 import type { DatePickerSlots } from './types';

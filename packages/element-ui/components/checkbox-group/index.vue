@@ -54,6 +54,7 @@
 import { hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { Checkbox as ElCheckbox, CheckboxButton as ElCheckboxButton, CheckboxGroup as ElCheckboxGroup, FormItem as ElFormItem } from 'element-ui';
 // import type { SlotsType } from 'vue-demi';
+import type { Ref } from 'vue-demi';
 import { computed, defineComponent, ref } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
 import { formItemPropKeys } from '../share';
@@ -105,6 +106,8 @@ export default defineComponent({
         });
 
         const plain = usePlain(props);
+        // 重写声明, 防止报错
+        const finalOption = plain.finalOption as Ref<any[]>;
 
         // 计算插槽属性
         const slotProps = computed(() => ({
@@ -124,6 +127,7 @@ export default defineComponent({
             getNode,
             checkboxType,
             ...plain,
+            finalOption,
             formItemActualProps,
             contentActualProps,
             slotProps,

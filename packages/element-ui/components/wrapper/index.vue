@@ -49,7 +49,7 @@ export default defineComponent({
     props,
     emits,
     // slots: Object as SlotsType<FormSlots<any, any, any, any>>,
-    setup(props, {emit}) {
+    setup(props, { emit }) {
         // 表单引用
         const formRef = ref<InstanceType<typeof ElForm>>();
 

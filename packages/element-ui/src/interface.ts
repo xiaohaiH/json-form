@@ -45,7 +45,7 @@ export type JSONFormOption<T, Query extends Record<string, any>, Option, OptionQ
     | SwitchProps<T, Query, Option, OptionQuery>
     | TimePickerProps<T, Query, Option, OptionQuery>
     | UploadProps<T, Query, Option, OptionQuery>
-    | CustomRenderProps<T, Query, Option, OptionQuery>
+    | CustomRenderProps<T, Query, Option, OptionQuery>;
 
 export interface InputProps<
     T,

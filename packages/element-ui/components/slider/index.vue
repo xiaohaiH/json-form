@@ -42,7 +42,7 @@
 <script lang="ts">
 import { hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { FormItem as ElFormItem, Slider as ElSlider } from 'element-ui';
-import { computed, defineComponent, reactive, ref, toRefs } from 'vue-demi';
+import { computed, defineComponent, reactive, ref } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
 import { formItemPropKeys } from '../share';
 import type { SliderSlots } from './types';

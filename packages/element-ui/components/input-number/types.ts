@@ -14,7 +14,7 @@ import type { CommonProps, CommonSlots, DynamicProps, ElObj2Props, FormItemProps
 import { commonProps, formItemProps } from '../share';
 
 /** 获取Element UI数字输入框属性定义，并添加label和placeholder属性 */
-const elInputNumberProps = (ElInputNumber as any).props as ElObj2Props<ElInputNumber & { label: string, placeholder: string }>;
+const elInputNumberProps = (ElInputNumber as any).props as ElObj2Props<ElInputNumber & { label: string; placeholder: string }>;
 
 /** Element UI数字输入框事件定义 */
 const elInputNumberEmits = {

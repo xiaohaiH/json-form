@@ -52,7 +52,7 @@
 import { hyphenate, isEmptyValue, usePlain } from '@xiaohaih/json-form-core';
 import { Cascader as ElCascader, FormItem as ElFormItem } from 'element-ui';
 import type { PropType } from 'vue-demi';
-import { computed, defineComponent, h, nextTick, reactive, toRefs } from 'vue-demi';
+import { computed, defineComponent, nextTick, reactive } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
 import { formItemPropKeys } from '../share';
 import type { CascaderSlots } from './types';

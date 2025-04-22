@@ -77,7 +77,6 @@ import { hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { FormItem as ElFormItem, Upload as ElUpload } from 'element-ui';
 import type { ElUploadInternalFileDetail as UploadFile, ElUploadInternalRawFile as UploadRawFile, HttpRequestOptions as UploadRequestOptions } from 'element-ui/types/upload.d';
 import { computed, defineComponent, onMounted, ref } from 'vue-demi';
-import { filter } from 'vue/types/umd';
 import { getNode, pick } from '../../src/utils';
 import { formItemPropKeys } from '../share';
 import type { UploadSlots } from './types';

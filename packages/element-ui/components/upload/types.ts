@@ -61,7 +61,7 @@ export function uploadPropsGeneric<T, Query extends Record<string, any>, Option,
         /** 组件静态属性(与 formItem 或内置的属性冲突时, 可通过该属性传递) */
         staticProps: { type: Object as PropType<StaticProps<_Prop>> },
         /** 组件动态属性 */
-        dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option> & Partial<{ fileMaxSize: number, override: boolean }>> },
+        dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option> & Partial<{ fileMaxSize: number; override: boolean }>> },
         /** 重声明该字段并做优化, 内部处理 success 和 promise 结果只执行一次 */
         httpRequest: {
             type: Function as PropType<(option: UploadRequestOptions) => Promise<unknown> | XMLHttpRequest | void>,

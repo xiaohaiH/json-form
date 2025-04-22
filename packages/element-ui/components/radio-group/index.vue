@@ -53,6 +53,7 @@
 import { hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { FormItem as ElFormItem, Radio as ElRadio, RadioButton as ElRadioButton, RadioGroup as ElRadioGroup } from 'element-ui';
 // import type { SlotsType } from 'vue-demi';
+import type { Ref } from 'vue-demi';
 import { computed, defineComponent, ref } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
 import { formItemPropKeys } from '../share';
@@ -108,6 +109,8 @@ export default defineComponent({
         });
 
         const plain = usePlain(props);
+        // 重写声明, 防止报错
+        const finalOption = plain.finalOption as Ref<any[]>;
 
         /**
          * 自定义单选框选中事件处理
@@ -140,6 +143,7 @@ export default defineComponent({
             getNode,
             radioType,
             ...plain,
+            finalOption,
             formItemActualProps,
             contentActualProps,
             eventName,
