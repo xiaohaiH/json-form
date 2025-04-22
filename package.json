@@ -23,7 +23,7 @@
         "publish:plus": "pnpm --filter @xiaohaih/json-form-plus publish --access=public",
         "publish:el": "pnpm --filter @xiaohaih/json-form-el publish --access=public",
         "|---------------------------": "----------------------------",
-        "build": "run-s -c build:core build:plus build:el switch3",
+        "build": "run-s -c build:core build:plus build:el",
         "build:core": "pnpm --filter @xiaohaih/json-form-core build",
         "build:plus": "pnpm --filter @xiaohaih/json-form-plus build",
         "build:el": "pnpm --filter @xiaohaih/json-form-el build",

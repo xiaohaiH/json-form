@@ -20,7 +20,7 @@
         /* 不解析符号链接的真实路径. */
         "preserveSymlinks": true,
         "noUncheckedSideEffectImports": true
-    },
+    }
     // "include": [
     //     "packages/**/*.ts",
     //     "packages/**/*.tsx",

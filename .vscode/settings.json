@@ -98,7 +98,7 @@
     "vue.server.maxOldSpaceSize": 4096,
     "typescript.tsserver.maxTsServerMemory": 4096,
     "[github-actions-workflow]": {
-        "editor.defaultFormatter": "bluebrown.yamlfmt"
+        "editor.defaultFormatter": "bluebrown.yamlfmt",
     },
     // "typescript.tsserver.nodePath": "node",
 }
