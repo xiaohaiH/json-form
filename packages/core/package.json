@@ -15,7 +15,7 @@
         "./*": "./*"
     },
     "main": "dist/index.cjs.js",
-    "module": "index.ts",
+    "module": "dist/index.js",
     "unpkg": "dist/index.umd.js",
     "jsdelivr": "dist/index.umd.js",
     "types": "index.ts",
@@ -61,7 +61,7 @@
         "types": "dist/types/index.d.ts",
         "exports": {
             ".": {
-                "browser": "./dist/index.esm.js",
+                "browser": "./index.ts",
                 "types": "./index.ts",
                 "import": "./index.ts",
                 "require": "./dist/index.cjs.js"

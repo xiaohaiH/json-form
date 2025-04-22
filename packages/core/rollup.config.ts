@@ -31,7 +31,7 @@ const pkg = pkgJson.publishConfig || pkgJson;
  */
 function retainMinSuffix(name: string, flag: boolean) {
     const _name = name.replace(/min/, '');
-    return flag ? _name.replace(/(\.m?[j|t]s)$/, '.min$1') : _name;
+    return flag ? _name.replace(/\.(m?)[j|t]s$/, '.min.$1js') : _name.replace(/\.(m?)ts$/, '.$1js');
 }
 
 /** @type {import('rollup').RollupOptions[]} */
@@ -46,7 +46,7 @@ const options: RollupOptions[] = [
                 babelHelpers: 'bundled',
                 presets: [['@vue/babel-preset-jsx', { compositionAPI: 'vue-demi' }]],
                 extensions: [...DEFAULT_EXTENSIONS, 'ts', 'tsx'],
-            })
+            }),
         ],
         external,
         output: [

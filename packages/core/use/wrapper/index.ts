@@ -82,7 +82,8 @@ export function useWrapper<T, Query, Option, OptionQuery>(props: WrapperProps<T,
             // vue2.7 实例挂载在 proxy 上, 内部逻辑取的 proxy 上的值
             // 虽然 @vue/composition-api 实例挂载在 proxy 上
             // 但是内部逻辑取的是整个 getCurrentInstance
-            // @ts-expect-error vue2.7中取proxy属性
+            // eslint-disable-next-line ts/ban-ts-comment
+            // @ts-ignore vue2.7中取proxy属性
             childInstance && onBeforeUnmount(unregister, IS_COMPOSITION_VERSION ? childInstance.proxy : childInstance);
             return unregister;
         },

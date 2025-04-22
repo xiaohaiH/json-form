@@ -1,4 +1,4 @@
-import type { ExtractPropTypes, MaybeRef } from 'vue-demi';
+import type { ExtractPropTypes, Ref } from 'vue-demi';
 import {
     computed,
     inject,
@@ -20,8 +20,10 @@ type PlainProps<T, Query, Option, OptionQuery> = ExtractPropTypes<typeof plainPr
 
 type ValueType = string | number | boolean | null | undefined | Record<string, any>;
 
+type MaybeRef<T> = T | Ref<T>;
+
 /** 封装扁平组件必备的信息 */
-export function usePlain<T, Query, Option, OptionQuery>(props: MaybeRef<PlainProps<T, Query, Option, OptionQuery>>) {
+export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = Record<string, any>>(props: MaybeRef<PlainProps<T, Query, Option, OptionQuery>>) {
     /** 初始 props */
     const initialProps = unref(props);
 
@@ -49,7 +51,7 @@ export function usePlain<T, Query, Option, OptionQuery>(props: MaybeRef<PlainPro
     /** 当前选中值 */
     const checked = ref<ValueType | ValueType[]>(initialBackfillValue !== undefined ? initialBackfillValue : getResetValue());
     /** 远程获取的数据源 */
-    const remoteOption = ref<Option[]>([]);
+    const remoteOption = ref<Option[]>([]) as Ref<Option[]>;
     /** 渲染的数据源(远程数据源 > 本地数据源) */
     const finalOption = computed(() => (remoteOption.value.length ? remoteOption.value : unref(props).options));
     unwatchs.push(

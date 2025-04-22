@@ -1,4 +1,4 @@
-import type { ExtractPublicPropTypes, PropType, WatchOptions } from 'vue-demi';
+import type { ExtractPropTypes, PropType, WatchOptions } from 'vue-demi';
 import type { emptyToValue } from '../utils/index';
 import type { CommonMethod } from './constant';
 
@@ -53,7 +53,7 @@ export interface TriggerOption<T, Query extends Record<string, any>, OptionQuery
 
 /** 自定义返回字段 */
 export interface GetQuery<T, Query extends Record<string, any>> {
-    (value: any | any[], empty2Value: typeof emptyToValue, props: ExtractPublicPropTypes<CommonProps<T, Query>>): Record<string, any>;
+    (value: any | any[], empty2Value: typeof emptyToValue, props: Partial<ExtractPropTypes<Omit<CommonProps<T, Query>, 'field' | 'query'>>> & ExtractPropTypes<Pick<CommonProps<T, Query>, 'field' | 'query'>>): Record<string, any>;
 }
 
 /** 公共 props - 泛型 */

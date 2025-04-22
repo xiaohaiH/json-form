@@ -118,6 +118,8 @@ export function get<TDefault = unknown>(value: any, path: string, defaultValue?:
  * @example hasOwn({}, 'a')
  */
 export function hasOwn<T extends Record<string, any>, K extends keyof T = keyof T>(obj: T, key: K) {
+    // eslint-disable-next-line ts/ban-ts-comment
+    // @ts-ignore 忽视vue2版本报目标库错误
     // eslint-disable-next-line no-prototype-builtins
     return Object.hasOwn ? Object.hasOwn(obj, key) : obj.hasOwnProperty(key);
 }

@@ -1,4 +1,4 @@
-import type { ExtractPropTypes, MaybeRef } from 'vue-demi';
+import type { ExtractPropTypes } from 'vue-demi';
 import { computed, nextTick, onBeforeUnmount, ref, unref, watch } from 'vue-demi';
 import type { CommonMethod } from './constant';
 import type { commonProps } from './share';
