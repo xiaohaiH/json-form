@@ -7,6 +7,6 @@ import 'uno.css';
 import './style.css';
 import '~share/style.scss';
 
-const app = new Vue({ render: (h) => h(App)});
+const app = new Vue({ render: (h) => h(App) });
 Vue.use(ElementUI);
 app.$mount('#app');

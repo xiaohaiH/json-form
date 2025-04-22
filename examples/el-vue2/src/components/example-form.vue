@@ -13,8 +13,8 @@
             :render-btn="false"
             :realtime="true"
             :immediate-search="true"
-            @search="query = $event"
-            @reset="query = $event"
+            @search="querySearch"
+            @reset="querySearch"
         />
         <ElButton @click="validate">
             校验
@@ -32,16 +32,17 @@
 </template>
 
 <script lang="tsx">
+import type { HFormInstance } from '@xiaohaih/json-form-el';
 import { defineOption, HForm } from '@xiaohaih/json-form-el';
 import { conditionFactory } from '~share/form';
-import { defineComponent, markRaw, nextTick, onMounted, ref } from 'vue';
+import { defineComponent, markRaw, nextTick, onMounted, ref, set } from 'vue';
 
 /** @file 作为表单显示 */
 export default defineComponent({
     name: 'ExampleForm',
     components: { HForm },
     setup() {
-        const hFormRef = ref<InstanceType<typeof HForm>>();
+        const hFormRef = ref<HFormInstance>();
         const query = ref<Record<string, any>>({
             // input1: '1',
             // input2: '2',
@@ -74,6 +75,7 @@ export default defineComponent({
             radio1: [{ required: true, message: 'radio form FormRules' }],
         };
         function validate() {
+            hFormRef.value?.validateToast
             hFormRef.value?.validate();
         }
         const keys = Object.keys(formCondition);
@@ -89,6 +91,10 @@ export default defineComponent({
         function reset() {
             hFormRef.value?.reset();
         }
+        function querySearch(_query: Record<string, any>) {
+            // console.log(_query)
+            set(query, 'value', _query);
+        }
 
         return {
             hFormRef,
@@ -98,6 +104,7 @@ export default defineComponent({
             validate,
             validateField,
             clearValidate,
+            querySearch,
             reset,
         };
     },

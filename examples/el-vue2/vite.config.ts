@@ -1,3 +1,4 @@
+import { resolve } from 'node:path';
 import process from 'node:process';
 import UnoCSS from 'unocss/vite';
 import { defineConfig } from 'vite';
@@ -5,11 +6,11 @@ import { createVuePlugin } from 'vite-plugin-vue2';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 /**
- * @file vue3 环境配置
+ * @file vue2 环境配置
  */
 // https://vitejs.dev/config/
 export default defineConfig({
-    base: process.env.NODE_ENV === 'development' ? '/' : '/json-form/example-el-vue2',
+    // base: process.env.NODE_ENV === 'development' ? '/' : '/json-form/example-el-vue2',
     plugins: [
         createVuePlugin({
             jsx: true,
@@ -22,8 +23,9 @@ export default defineConfig({
     },
     resolve: {
         alias: {
-            'vue': 'vue/dist/vue.runtime.esm.js',
-            'vue-demi': 'vue-demi/lib/v2.7/index.mjs',
+            // 由于 monorepo 依赖的工作空间包, 不显示设置版本会导致打包使用的版本发生错误
+            'vue': resolve(__dirname, './node_modules/vue/dist/vue.runtime.esm.js'),
+            'vue-demi': resolve(__dirname, './node_modules/@xiaohaih/json-form-el/node_modules/vue-demi/lib/v2.7/index.mjs'),
         },
     },
     preview: {

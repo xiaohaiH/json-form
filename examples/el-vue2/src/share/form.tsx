@@ -8,14 +8,19 @@ export function conditionFactory() {
             custom: {
                 t: 'custom-render',
                 label: '自定义',
-                // render({ plain }) {
-                //     const checked = plain.checked as { value?: number };
+                render({ plain }) {
+                    const checked = plain.checked as { value?: number };
 
-                //     function onClick() {
-                //         plain.change(checked.value ? checked.value + 1 : 1);
-                //     }
-                //     return ({ render: (h) => <div onClick={onClick}>自定义渲染 {checked.value||0}</div> });
-                // },
+                    function onClick() {
+                        plain.change(checked.value ? checked.value + 1 : 1);
+                    }
+                    return ({ render: (h) => (
+                        <div onClick={onClick}>
+                            自定义渲染
+                            {checked.value || 0}
+                        </div>
+                    ) });
+                },
             },
             upload: {
                 t: 'upload',
@@ -261,14 +266,6 @@ export function conditionFactory() {
                 staticProps: { label: '男生' },
                 // type: 'button',
                 // initialValue: '1',
-            },
-            radio2: {
-                t: 'radio',
-                label: '单选框可取消',
-                value: '1',
-                staticProps: { label: '女生' },
-                // type: 'button',
-                initialValue: '1',
             },
         }),
     };
