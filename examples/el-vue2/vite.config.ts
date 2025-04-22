@@ -10,7 +10,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
  */
 // https://vitejs.dev/config/
 export default defineConfig({
-    // base: process.env.NODE_ENV === 'development' ? '/' : '/json-form/example-el-vue2',
+    base: process.env.NODE_ENV === 'development' ? '/' : '/json-form/example-el-vue2',
     plugins: [
         createVuePlugin({
             jsx: true,
