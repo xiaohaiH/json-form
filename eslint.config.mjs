@@ -132,6 +132,7 @@ export default antfu(
             /** 允许类型中使用空对象(eg: null as unknown as {}) */
             'ts/no-empty-object-type': ['off'],
         },
+        'ignores': ['.github/**/*.yml'],
     },
     // {
     //     files: ['src/**/*.ts', 'scripts/**/*.ts', '*.ts', 'src/**/*.tsx', 'scripts/**/*.tsx', '*.tsx'],

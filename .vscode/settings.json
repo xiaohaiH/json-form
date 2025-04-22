@@ -56,6 +56,9 @@
     "[yaml]": {
         "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     },
+    // "[yaml]": {
+    //     "editor.defaultFormatter": "esbenp.prettier-vscode",
+    // },
     // 禁止 IDE 对以下规则报错, 但在保存的时候自动修复
     "eslint.rules.customizations": [
         { "rule": "style/*", "severity": "off", "fixable": true },
@@ -97,8 +100,5 @@
     "postman.settings.dotenv-detection-notification-visibility": false,
     "vue.server.maxOldSpaceSize": 4096,
     "typescript.tsserver.maxTsServerMemory": 4096,
-    "[github-actions-workflow]": {
-        "editor.defaultFormatter": "bluebrown.yamlfmt",
-    },
     // "typescript.tsserver.nodePath": "node",
 }
