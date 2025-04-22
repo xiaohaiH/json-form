@@ -289,15 +289,6 @@ export function conditionFactory() {
                 // type: 'button',
                 // initialValue: '1',
             },
-            radio2: {
-                t: 'radio',
-                label: '单选框可取消',
-                value: '1',
-                staticProps: { label: '女生' },
-                // type: 'button',
-                cancelable: true,
-                initialValue: '1',
-            },
             aite: {
                 t: 'mention',
                 label: '@提及',

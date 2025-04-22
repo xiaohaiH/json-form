@@ -32,6 +32,7 @@
 </template>
 
 <script lang="tsx" setup>
+import type { HFormInstance } from '@xiaohaih/json-form-plus';
 import { defineOption, HForm } from '@xiaohaih/json-form-plus';
 import { conditionFactory } from '~share/form';
 import { ElCascader } from 'element-plus';
@@ -42,7 +43,7 @@ defineOption({
     name: 'ExampleForm',
 });
 
-const hFormRef = ref<InstanceType<typeof HForm>>();
+const hFormRef = ref<HFormInstance>();
 const query = ref<Record<string, any>>({
     // input1: '1',
     // input2: '2',
