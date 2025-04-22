@@ -18,7 +18,7 @@ const pkg = pkgJson.publishConfig || pkgJson;
  */
 function retainMinSuffix(name: string, flag: boolean) {
     const _name = name.replace(/^dist\//, '').replace(/min/, '');
-    return flag ? _name.replace(/(\.m?[j|t]s)$/, '.min$1') : _name;
+    return flag ? _name.replace(/\.(m?)[j|t]s$/, '.min.$1js') : _name.replace(/\.(m?)ts$/, '.$1js');
 }
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -47,6 +47,7 @@ export default defineConfig({
         },
         outDir: 'dist',
         sourcemap: true,
+        minify: false,
         rollupOptions: {
             external,
             output: [
@@ -57,11 +58,7 @@ export default defineConfig({
                     // @ts-expect-error 兼容 rollup 插件
                     plugins: [terser({ format: { comments: false } })],
                 },
-                {
-                    entryFileNames: retainMinSuffix(pkg.main, false),
-                    format: 'cjs',
-                    exports: 'named',
-                },
+                { entryFileNames: retainMinSuffix(pkg.main, false), format: 'cjs', exports: 'named' },
                 {
                     entryFileNames: retainMinSuffix(pkg.main, true),
                     format: 'cjs',
@@ -69,12 +66,7 @@ export default defineConfig({
                     // @ts-expect-error 兼容 rollup 插件
                     plugins: [terser({ format: { comments: false } })],
                 },
-                {
-                    entryFileNames: retainMinSuffix(pkg.unpkg, false),
-                    format: 'umd',
-                    name: 'JSONForm',
-                    globals,
-                },
+                { entryFileNames: retainMinSuffix(pkg.unpkg, false), format: 'umd', name: 'JSONForm', globals },
                 {
                     entryFileNames: retainMinSuffix(pkg.unpkg, true),
                     format: 'umd',
