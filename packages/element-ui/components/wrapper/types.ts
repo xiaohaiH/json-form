@@ -12,6 +12,7 @@ import { wrapperProps as coreWrapperProps, emits2obj, emits2props } from '@xiaoh
 import { Form as ElForm, Message as ElMessage } from 'element-ui';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
+import type { defineOption } from '../../src/assist';
 import type { ElObj2Props } from '../share';
 
 /**
@@ -28,27 +29,15 @@ const elFormEmits = {
     validate: () => true,
 };
 
-/**
- * 表单属性生成函数 - 泛型版本
- * 生成表单组件所需的所有属性定义
- *
- * @template T 表单数据类型
- * @template Query 查询参数类型
- * @template Option 选项类型
- * @template OptionQuery 选项查询类型
- * @returns 表单属性定义对象
- */
-export function formPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+/** 由于 formPropsGeneric 需要重载, 所以需要一个辅助函数 */
+function formAssist() {
     type _Prop = typeof elFormProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elFormEmits>]>> & {
         class: { type: PropType<string | Record<string, any> | any[]> };
         style: { type: PropType<string | Record<string, any> | any[]> };
     };
-
     return {
         ...{} as Omit<_Prop, 'model'>,
-        ...coreWrapperProps as CoreWrapperProps<T, Query, Option, OptionQuery>,
-        /** 数据源 - 表单项配置对象 */
-        datum: { type: Object as PropType<Record<string, any>>, default: () => ({}) },
+        ...coreWrapperProps,
         // /** 是否启用排序 */
         // sortable: { type: Boolean as PropType<boolean> },
         /** 初始是否触发一次事件来返回当前的 query */
@@ -64,6 +53,26 @@ export function formPropsGeneric<T, Query extends Record<string, any>, Option, O
     } as const;
 }
 
+/**
+ * 表单属性生成函数 - 泛型版本
+ * 生成表单组件所需的所有属性定义
+ *
+ * @template T 表单数据类型
+ * @template Query 查询参数类型
+ * @template Option 选项类型
+ * @template OptionQuery 选项查询类型
+ * @returns 表单属性定义对象
+ */
+export function formPropsGeneric<T extends Record<string, any>, O extends Record<keyof T, any>>(): ReturnType<typeof formAssist> & { datum: { type: PropType<() => ReturnType<typeof defineOption<T, O>>>; default: () => ({}) } };
+export function formPropsGeneric<T extends Record<string, Record<'value' | 'options', any>>>(): ReturnType<typeof formAssist> & { datum: { type: PropType<() => ReturnType<typeof defineOption<T>>>; default: () => ({}) } };
+export function formPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+    return {
+        ...formAssist(),
+        /** 数据源 - 表单项配置对象 */
+        datum: { type: [Object, Function] as PropType<() => ReturnType<typeof defineOption>>, default: () => ({}) },
+    } as const;
+}
+
 /** 表单组件内部使用的属性定义 */
 export const formPropsPrivate = formPropsGeneric();
 
@@ -75,12 +84,6 @@ export const formProps = emits2props({
     ...elFormProps,
     ...formPropsPrivate,
 });
-
-/**
- * 表单属性类型定义
- * 用于表单组件属性的类型检查和提示
- */
-export type FormProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof formPropsGeneric<T, Query, Option, OptionQuery>>>>;
 
 /**
  * 表单事件生成函数 - 泛型版本
@@ -147,7 +150,7 @@ export interface FormSlots<T, Query extends Record<string, any>, Option, OptionQ
  */
 export interface FormSlotProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
     /** 获取表单属性的方法 */
-    getProps: () => FormProps<T, Query, Option, OptionQuery>;
+    getProps: () => ExtractPropTypes<ReturnType<typeof formPropsGeneric<any>>>;
     /** 表单包装器实例 */
-    plain: ReturnType<typeof useWrapper<T, Query, Option, OptionQuery>>;
+    plain: ReturnType<typeof useWrapper>;
 }

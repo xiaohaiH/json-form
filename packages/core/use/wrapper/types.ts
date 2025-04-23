@@ -1,7 +1,7 @@
 import type { PropType } from 'vue-demi';
 
 /** 容器类 props - 泛型 */
-export function wrapperPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any> = Record<string, any>>() {
+export function wrapperPropsGeneric() {
     return {
         /** 是否在数据发生变动后实时触发搜索事件 */
         realtime: { type: Boolean as PropType<boolean>, default: undefined },
@@ -19,4 +19,4 @@ export function wrapperPropsGeneric<T, Query extends Record<string, any>, Option
 }
 /** 容器类 props */
 export const wrapperProps = wrapperPropsGeneric();
-export type WrapperProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any> = Record<string, any>> = ReturnType<typeof wrapperPropsGeneric<T, Query, Option, OptionQuery>>;
+export type WrapperProps = ReturnType<typeof wrapperPropsGeneric>;

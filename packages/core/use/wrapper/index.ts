@@ -18,7 +18,7 @@ import { defineProvideValue, IS_COMPOSITION_VERSION, provideKey } from '../const
 import type { wrapperProps } from './types';
 
 /** 外部需传递的 props */
-type WrapperProps<T, Query, Option, OptionQuery> = ExtractPropTypes<typeof wrapperProps>;
+type WrapperProps = ExtractPropTypes<typeof wrapperProps>;
 /** 外部传递的方法 */
 export interface WrapperOption {
     /** 触发搜索事件 */
@@ -37,7 +37,7 @@ export interface WrapperOption {
 }
 
 /** 封装 wrapper 组件必备的信息 */
-export function useWrapper<T, Query, Option, OptionQuery>(props: WrapperProps<T, Query, Option, OptionQuery>, option?: WrapperOption) {
+export function useWrapper(props: WrapperProps, option?: WrapperOption) {
     const child: CommonMethod[] = [];
     onBeforeUnmount(() => child.splice(0));
     const emptyValue = computed(() => props.emptyValue?.());

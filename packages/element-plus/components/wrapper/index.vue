@@ -1,8 +1,8 @@
 <template>
     <ElForm v-bind="$attrs" ref="formRef" :model="query">
         <slot name="prepend" v-bind="slotProps" />
-        <template v-for="(item, key) of datum" :key="key">
-            <component :is="getComponent(item.t)!" v-bind="item" :field="item.as || key" :query="query" />
+        <template v-for="(item, key) of options" :key="key">
+            <component :is="getComponent((item as Exclude<typeof item, string | number | true>).t)!" v-if="item" v-bind="(item as Exclude<typeof item, string | number | true>)" :field="(item as Exclude<typeof item, string | number | true>).as || key" :query="query" />
         </template>
         <slot v-bind="slotProps" />
         <slot name="btn" :search="search" :reset="reset" :resetAndSearch="resetAndSearch">
@@ -22,7 +22,7 @@
 import { useWrapper } from '@xiaohaih/json-form-core';
 import { ElButton, ElForm } from 'element-plus';
 import type { SlotsType } from 'vue';
-import { computed, defineComponent, markRaw, onMounted, ref } from 'vue';
+import { computed, defineComponent, markRaw, onMounted, ref, watch } from 'vue';
 import { pick } from '../../src/utils';
 import { getComponent } from './component-assist';
 import type { FormSlots } from './types';
@@ -42,9 +42,15 @@ export default defineComponent({
     inheritAttrs: false,
     props,
     emits,
-    slots: Object as SlotsType<FormSlots<any, any, any, any>>,
+    slots: Object as SlotsType<FormSlots<any>>,
     setup(props, { emit }) {
         const formRef = ref<InstanceType<typeof ElForm>>();
+        const options = ref<typeof props.datum extends (...args: any[]) => any ? ReturnType<typeof props.datum> : typeof props.datum>(setOption());
+        function setOption() {
+            return typeof props.datum === 'function' ? props.datum() : props.datum;
+        }
+        watch(props.datum, setOption);
+
         function validate(...args: Parameters<InstanceType<typeof ElForm>['validate']>) {
             return formRef.value!.validate(...args);
         }
@@ -73,6 +79,7 @@ export default defineComponent({
         return {
             ...wrapper,
             formRef,
+            options,
             validate,
             validateField,
             clearValidate,

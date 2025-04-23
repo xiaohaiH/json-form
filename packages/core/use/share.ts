@@ -40,7 +40,7 @@ export interface TriggerOption<T, Query extends Record<string, any>, OptionQuery
      * @param {boolean} [option.updateInitialValue] 是否将该值设为初始值
      * @param {boolean} [option.updateDefaultValue] 是否将该值设为默认值
      */
-    change: (value: T, option?: Record<'updateInitialValue' | 'updateDefaultValue', boolean>) => this;
+    change: (value: T, option?: Partial<Record<'updateInitialValue' | 'updateDefaultValue', boolean>>) => this;
     /**
      * 触发搜索事件
      * @param {*} value 需改变的值
@@ -48,7 +48,7 @@ export interface TriggerOption<T, Query extends Record<string, any>, OptionQuery
      * @param {boolean} [option.updateInitialValue] 是否将该值设为初始值
      * @param {boolean} [option.updateDefaultValue] 是否将该值设为默认值
      */
-    search: (value: T, option?: Record<'updateInitialValue' | 'updateDefaultValue', boolean>) => this;
+    search: (value: T, option?: Partial<Record<'updateInitialValue' | 'updateDefaultValue', boolean>>) => this;
 }
 
 /** 自定义返回字段 */

@@ -6,7 +6,6 @@ import type {
     ColorPickerProps as PureColorPickerProps,
     CustomRenderProps as PureCustomRenderProps,
     DatePickerProps as PureDatePickerProps,
-    FormProps as PureFormProps,
     InputNumberProps as PureInputNumberProps,
     InputProps as PureInputProps,
     RadioGroupProps as PureRadioGroupProps,
@@ -20,13 +19,6 @@ import type {
 } from '../components/index';
 
 type BuiltInField<T = ''> = CoreOption.BuiltInField | 'customGetQuery' | 'backfillToValue' | T;
-
-export type FormProps<
-    T = any,
-    Query extends Record<string, any> = Record<string, any>,
-    Option = any,
-    QueryOption extends Record<string, any> = Record<string, any>,
-> = PureFormProps<T, Query, Option, QueryOption>;
 
 /** 条件声明集合 */
 export type JSONFormOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> =

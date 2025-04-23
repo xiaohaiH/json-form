@@ -5,8 +5,8 @@
         <!-- 前置插槽 -->
         <slot name="prepend" v-bind="slotProps" />
         <!-- 循环渲染表单项组件 -->
-        <template v-for="(item, key) of datum">
-            <component :is="getComponent(item.t)" :key="key" v-bind="item" :field="item.as || key" :query="query" />
+        <template v-for="(item, key) of options">
+            <component :is="getComponent(item.t)" v-if="item" :key="key" v-bind="item" :field="item.as || key" :query="query" />
         </template>
         <!-- 默认插槽 -->
         <slot v-bind="slotProps" />
@@ -27,7 +27,7 @@
 <script lang="ts">
 import { useWrapper } from '@xiaohaih/json-form-core';
 import { Button as ElButton, Form as ElForm } from 'element-ui';
-import { computed, defineComponent, markRaw, onMounted, ref, version } from 'vue-demi';
+import { computed, defineComponent, markRaw, onMounted, ref, watch } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
 import { getComponent } from './component-assist';
 import type { FormSlots } from './types';
@@ -52,6 +52,12 @@ export default defineComponent({
     setup(props, { emit }) {
         // 表单引用
         const formRef = ref<InstanceType<typeof ElForm>>();
+        /** 格式化表单配置项(防止 template 中报错, 直接设置为 Record<string, any>) */
+        const options = ref<Record<string, any>>(setOption());
+        function setOption() {
+            return typeof props.datum === 'function' ? props.datum() : props.datum;
+        }
+        watch(props.datum, setOption);
 
         /**
          * 验证表单
@@ -106,6 +112,7 @@ export default defineComponent({
         return {
             ...wrapper,
             formRef,
+            options,
             validate,
             validateField,
             clearValidate,

@@ -3,22 +3,20 @@ import { wrapperProps as coreWrapperProps, emits2obj, emits2props } from '@xiaoh
 import { ElForm, ElMessage } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
+import type { defineOption } from '../../src/assist';
 
 const elFormProps = ElForm.props as Obj2Props<ComponentProps<typeof ElForm>>;
 const elFormEmits = emits2obj(ElForm.emits);
 
-/** 组件传参 - 私有 */
-export function formPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+/** 由于 formPropsGeneric 需要重载, 所以需要一个辅助函数 */
+function formAssist() {
     type _Prop = typeof elFormProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elFormEmits>]>> & {
         class: { type: PropType<string | Record<string, any> | any[]> };
         style: { type: PropType<string | Record<string, any> | any[]> };
     };
-
     return {
         ...{} as Omit<_Prop, 'model'>,
-        ...coreWrapperProps as CoreWrapperProps<T, Query, Option, OptionQuery>,
-        /** 数据源 */
-        datum: { type: Object as PropType<Record<string, any>>, default: () => ({}) },
+        ...coreWrapperProps,
         // /** 是否启用排序 */
         // sortable: { type: Boolean as PropType<boolean> },
         /** 初始是否触发一次事件来返回当前的 query */
@@ -34,13 +32,22 @@ export function formPropsGeneric<T, Query extends Record<string, any>, Option, O
     } as const;
 }
 /** 组件传参 - 私有 */
+export function formPropsGeneric<T extends Record<string, any>, O extends Record<keyof T, any>>(): ReturnType<typeof formAssist> & { datum: { type: PropType<() => ReturnType<typeof defineOption<T, O>>>, default: () => ({}) } }
+export function formPropsGeneric<T extends Record<string, Record<'value' | 'options', any>>>(): ReturnType<typeof formAssist> & { datum: { type: PropType<() => ReturnType<typeof defineOption<T>>>, default: () => ({}) } }
+export function formPropsGeneric<T, O>() {
+    return {
+        ...formAssist(),
+        /** 数据源 - 表单项配置对象 */
+        datum: { type: [Object, Function] as PropType<() => ReturnType<typeof defineOption>>, default: () => ({}) },
+    } as const;
+}
+/** 组件传参 - 私有 */
 export const formPropsPrivate = formPropsGeneric();
 /** 组件传参 - 外部调用 */
 export const formProps = emits2props({
     ...elFormProps,
     ...formPropsPrivate,
 });
-export type FormProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof formPropsGeneric<T, Query, Option, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function formEmitsGeneric<T>() {
@@ -72,16 +79,16 @@ export const formEmits = {
 };
 export type FormEmits<T> = ReturnType<typeof formEmitsGeneric<T>>;
 
-export interface FormSlots<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
+export interface FormSlots<T> {
     /** 取代默认组件 */
-    default?: ((props: FormSlotProps<T, Query, Option, OptionQuery>) => any);
+    default?: ((props: FormSlotProps<T>) => any);
     /** 取代默认组件 */
-    prepend?: ((props: FormSlotProps<T, Query, Option, OptionQuery>) => any);
+    prepend?: ((props: FormSlotProps<T>) => any);
     /** 取代默认组件 */
     btn?: ((props: Record<'search' | 'reset' | 'resetAndSearch', string>) => any);
 }
-export interface FormSlotProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
-    getProps: () => FormProps<T, Query, Option, OptionQuery>;
-    plain: ReturnType<typeof useWrapper<T, Query, Option, OptionQuery>>;
+export interface FormSlotProps<T> {
+    getProps: () => ExtractPublicPropTypes<ReturnType<typeof formPropsGeneric<any>>>;
+    plain: ReturnType<typeof useWrapper>;
 
 }

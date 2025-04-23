@@ -44,13 +44,13 @@ export default defineComponent({
             return formItemDynamicProps ? formItemDynamicProps({ query }) : undefined;
         });
         const plain = usePlain(props);
-        const slotProps = computed(() => ({
+        const slotProps = {
             getFormItemProps: () => ({ ...formItemStaticProps.value, ...formItemFinalDynamicProps.value }),
             getProps: () => props,
             class: 'json-form-item__content',
             plain,
-        }));
-        const customRender = getNode(props.render);
+        };
+        const customRender = getNode(props.render(slotProps));
 
         return {
             hyphenate,
