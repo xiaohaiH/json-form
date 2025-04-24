@@ -129,7 +129,7 @@ export default defineComponent({
             // 清除现有计时器
             timer && clearTimeout(timer);
             // 直接从事件目标获取值并更新
-            plain.checked.value = (ev.target as HTMLInputElement).value;
+            (plain.checked as any).value = (ev.target as HTMLInputElement).value;
             // 更新查询参数并触发搜索
             plain.option.updateWrapperQuery();
             plain.wrapper?.search();

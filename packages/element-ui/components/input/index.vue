@@ -150,7 +150,7 @@ export default defineComponent({
          */
         function enterHandle(ev: Event | KeyboardEvent) {
             timer && clearTimeout(timer);
-            plain.checked.value = (ev.target as HTMLInputElement).value;
+            (plain.checked as any).value = (ev.target as HTMLInputElement).value;
             plain.option.updateWrapperQuery();
             plain.wrapper?.search();
         }

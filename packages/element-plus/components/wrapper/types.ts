@@ -38,7 +38,7 @@ export function formPropsGeneric<T, O>() {
     return {
         ...formAssist(),
         /** 数据源 - 表单项配置对象 */
-        datum: { type: [Object, Function] as PropType<() => ReturnType<typeof defineOption>>, default: () => ({}) },
+        datum: { type: [Object, Function] as any, default: () => ({}) },
     } as const;
 }
 /** 组件传参 - 私有 */

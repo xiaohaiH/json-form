@@ -116,7 +116,7 @@ export default defineComponent({
          */
         function insetChange(val: any) {
             if (!isEmptyValue(props.defaultValue) && isEmptyValue(val)) {
-                plain.checked.value = undefined;
+                (plain.checked as any).value = undefined;
                 nextTick(() => plain.change(props.defaultValue));
             }
             else {
