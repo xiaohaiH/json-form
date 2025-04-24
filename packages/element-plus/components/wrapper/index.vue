@@ -2,7 +2,7 @@
     <ElForm v-bind="$attrs" ref="formRef" :model="query">
         <slot name="prepend" v-bind="slotProps" />
         <template v-for="(item, key) of options" :key="key">
-            <component :is="getComponent((item as Exclude<typeof item, string | number | true>).t)!" v-if="item" v-bind="(item as Exclude<typeof item, string | number | true>)" :field="(item as Exclude<typeof item, string | number | true>).as || key" :query="query" />
+            <component :is="getComponent(item.t)!" v-if="item" v-bind="item" :field="item.as || key" :query="query" />
         </template>
         <slot v-bind="slotProps" />
         <slot name="btn" :search="search" :reset="reset" :resetAndSearch="resetAndSearch">
@@ -45,7 +45,7 @@ export default defineComponent({
     slots: Object as SlotsType<FormSlots<any>>,
     setup(props, { emit }) {
         const formRef = ref<InstanceType<typeof ElForm>>();
-        const options = ref<typeof props.datum extends (...args: any[]) => any ? ReturnType<typeof props.datum> : typeof props.datum>(setOption());
+        const options = ref<any>(setOption());
         function setOption() {
             return typeof props.datum === 'function' ? props.datum() : props.datum;
         }
