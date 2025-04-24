@@ -32,8 +32,14 @@ function formAssist() {
     } as const;
 }
 /** 组件传参 - 私有 */
-export function formPropsGeneric<T extends Record<string, any>, O extends Record<keyof T, any>>(): ReturnType<typeof formAssist> & { datum: { type: PropType<() => ReturnType<typeof defineOption<T, O>>>, default: () => ({}) } }
-export function formPropsGeneric<T extends Record<string, Record<'value' | 'options', any>>>(): ReturnType<typeof formAssist> & { datum: { type: PropType<() => ReturnType<typeof defineOption<T>>>, default: () => ({}) } }
+export function formPropsGeneric<T extends Record<string, any>, O extends Record<keyof T, any>>(): ReturnType<typeof formAssist> & {
+    /** 数据源 - 表单项配置对象 */
+    datum: { type: PropType<ReturnType<typeof defineOption<T, O>> | (() => ReturnType<typeof defineOption<T, O>>)>; default: () => ({}) };
+};
+export function formPropsGeneric<T extends Record<string, Record<'value' | 'options', any>>>(): ReturnType<typeof formAssist> & {
+    /** 数据源 - 表单项配置对象 */
+    datum: { type: PropType<ReturnType<typeof defineOption<T>> | (() => ReturnType<typeof defineOption<T>>)>; default: () => ({}) };
+};
 export function formPropsGeneric<T, O>() {
     return {
         ...formAssist(),

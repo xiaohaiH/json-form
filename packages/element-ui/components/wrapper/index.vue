@@ -13,10 +13,10 @@
         <!-- 按钮插槽，提供搜索、重置等方法 -->
         <slot name="btn" :search="search" :reset="reset" :resetAndSearch="resetAndSearch">
             <template v-if="renderBtn">
-                <ElButton @click="search">
+                <ElButton :size="$attrs.size" @click="search">
                     {{ searchText }}
                 </ElButton>
-                <ElButton @click="triggerSearchAtReset ? resetAndSearch() : reset()">
+                <ElButton :size="$attrs.size" @click="triggerSearchAtReset ? resetAndSearch() : reset()">
                     {{ resetText }}
                 </ElButton>
             </template>

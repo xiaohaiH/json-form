@@ -63,13 +63,19 @@ function formAssist() {
  * @template OptionQuery 选项查询类型
  * @returns 表单属性定义对象
  */
-export function formPropsGeneric<T extends Record<string, any>, O extends Record<keyof T, any>>(): ReturnType<typeof formAssist> & { datum: { type: PropType<() => ReturnType<typeof defineOption<T, O>>>; default: () => ({}) } };
-export function formPropsGeneric<T extends Record<string, Record<'value' | 'options', any>>>(): ReturnType<typeof formAssist> & { datum: { type: PropType<() => ReturnType<typeof defineOption<T>>>; default: () => ({}) } };
+export function formPropsGeneric<T extends Record<string, any>, O extends Record<keyof T, any>>(): ReturnType<typeof formAssist> & {
+    /** 数据源 - 表单项配置对象 */
+    datum: { type: PropType<ReturnType<typeof defineOption<T, O>> | (() => ReturnType<typeof defineOption<T, O>>)>; default: () => ({}) };
+};
+export function formPropsGeneric<T extends Record<string, Record<'value' | 'options', any>>>(): ReturnType<typeof formAssist> & {
+    /** 数据源 - 表单项配置对象 */
+    datum: { type: PropType<ReturnType<typeof defineOption<T>> | (() => ReturnType<typeof defineOption<T>>)>; default: () => ({}) };
+};
 export function formPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
     return {
         ...formAssist(),
         /** 数据源 - 表单项配置对象 */
-        datum: { type: [Object, Function] as PropType<() => ReturnType<typeof defineOption>>, default: () => ({}) },
+        datum: { type: [Object, Function] as any, default: () => ({}) },
     } as const;
 }
 
