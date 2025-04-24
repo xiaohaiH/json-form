@@ -1,6 +1,6 @@
 <template>
     <ElCard class="example-form">
-        <ElAlert class="mb-10px" type="success" :closable="false">
+        <ElAlert class="mb-10px flex-none" type="success" :closable="false">
             {{ query }}
         </ElAlert>
         <HForm
