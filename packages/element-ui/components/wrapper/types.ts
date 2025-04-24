@@ -57,11 +57,9 @@ function formAssist() {
  * 表单属性生成函数 - 泛型版本
  * 生成表单组件所需的所有属性定义
  *
- * @template T 表单数据类型
- * @template Query 查询参数类型
- * @template Option 选项类型
- * @template OptionQuery 选项查询类型
- * @returns 表单属性定义对象
+ * @template T 表单数据类型，必须是一个对象
+ * @template O 表单项配置对象类型，键与T的键相同
+ * @returns 包含表单辅助函数返回值和表单项配置对象的属性定义
  */
 export function formPropsGeneric<T extends Record<string, any>, O extends Record<keyof T, any>>(): ReturnType<typeof formAssist> & {
     /** 数据源 - 表单项配置对象 */
@@ -147,7 +145,7 @@ export interface FormSlots<T, Query extends Record<string, any>, Option, OptionQ
     /** 前置插槽 - 在表单项之前 */
     prepend?: ((props: FormSlotProps<T, Query, Option, OptionQuery>) => any);
     /** 按钮插槽 - 可自定义表单按钮区域 */
-    btn?: ((props: Record<'search' | 'reset' | 'resetAndSearch', string>) => any);
+    btn?: ((props: Record<'search' | 'reset', (query: Record<string, any>) => void> & Record<'resetAndSearch', () => void>) => any);
 }
 
 /**
