@@ -288,7 +288,6 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
     };
 }
 
-
 type Primitive = string | number | boolean | bigint | symbol | undefined | null;
 // eslint-disable-next-line ts/no-unsafe-function-type
 type Builtin = Primitive | Function | Date | Error | RegExp;

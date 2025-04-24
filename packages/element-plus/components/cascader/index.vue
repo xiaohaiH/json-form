@@ -70,7 +70,7 @@ export default defineComponent({
         const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
         const contentActualProps = computed(() => {
             const { query, dynamicProps } = props;
-            return dynamicProps ? {...contentStaticProps.value, ...dynamicProps({ query })} : contentStaticProps.value;
+            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
         });
         const plain = usePlain(props);
         const slotProps = computed(() => ({
