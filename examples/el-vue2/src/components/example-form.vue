@@ -1,8 +1,8 @@
 <template>
-    <div>
-        <div class="min-h-50px lh-50px">
+    <ElCard class="example-form">
+        <ElAlert class="mb-10px" type="success" :closable="false">
             {{ query }}
-        </div>
+        </ElAlert>
         <HForm
             ref="hFormRef"
             class="example-form flex flex-wrap"
@@ -16,19 +16,21 @@
             @search="querySearch"
             @reset="querySearch"
         />
-        <ElButton @click="validate">
-            校验
-        </ElButton>
-        <ElButton @click="validateField">
-            逐个校验
-        </ElButton>
-        <ElButton @click="clearValidate">
-            清空校验
-        </ElButton>
-        <ElButton @click="reset">
-            重置
-        </ElButton>
-    </div>
+        <div class="flex">
+            <ElButton @click="validate">
+                校验
+            </ElButton>
+            <ElButton @click="validateField">
+                逐个校验
+            </ElButton>
+            <ElButton @click="clearValidate">
+                清空校验
+            </ElButton>
+            <ElButton @click="reset">
+                重置
+            </ElButton>
+        </div>
+    </ElCard>
 </template>
 
 <script lang="tsx">
@@ -75,7 +77,6 @@ export default defineComponent({
             radio1: [{ required: true, message: 'radio form FormRules' }],
         };
         function validate() {
-            hFormRef.value?.validateToast
             hFormRef.value?.validate();
         }
         const keys = Object.keys(formCondition);

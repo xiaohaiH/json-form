@@ -1,11 +1,11 @@
 <template>
-    <div>
-        <div class="min-h-50px lh-50px">
+    <ElCard class="example-form">
+        <ElAlert class="mb-10px" type="success" :closable="false">
             {{ query }}
-        </div>
+        </ElAlert>
         <HForm
             ref="hFormRef"
-            class="example-form flex flex-wrap"
+            class="flex flex-wrap"
             label-width="110px"
             :datum="formCondition"
             :rules="rules"
@@ -16,26 +16,27 @@
             @search="query = $event"
             @reset="query = $event"
         />
-        <ElButton @click="validate">
-            校验
-        </ElButton>
-        <ElButton @click="validateField">
-            逐个校验
-        </ElButton>
-        <ElButton @click="clearValidate">
-            清空校验
-        </ElButton>
-        <ElButton @click="reset">
-            重置
-        </ElButton>
-    </div>
+        <div class="flex">
+            <ElButton @click="validate">
+                校验
+            </ElButton>
+            <ElButton @click="validateField">
+                逐个校验
+            </ElButton>
+            <ElButton @click="clearValidate">
+                清空校验
+            </ElButton>
+            <ElButton @click="reset">
+                重置
+            </ElButton>
+        </div>
+    </ElCard>
 </template>
 
 <script lang="tsx" setup>
 import type { HFormInstance } from '@xiaohaih/json-form-plus';
 import { defineOption, HForm } from '@xiaohaih/json-form-plus';
 import { conditionFactory } from '~share/form';
-import { ElCascader } from 'element-plus';
 import { markRaw, nextTick, onMounted, ref } from 'vue';
 
 /** @file 作为表单显示 */

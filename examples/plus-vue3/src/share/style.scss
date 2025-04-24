@@ -1,6 +1,6 @@
 .condition-form {
     .el-card__body {
-        --uno: h-full overflow-hidden flex flex-col justify-between;
+        --uno: h-full overflow-auto flex flex-col items-start;
     }
     .el-input {
         --uno: w-150px;
@@ -24,6 +24,9 @@
 }
 
 .example-form {
+    .el-card__body {
+        --uno: h-full overflow-auto flex flex-col items-start;
+    }
     .el-input {
         // --uno: w-150px;
     }

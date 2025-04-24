@@ -1,17 +1,23 @@
 <template>
     <div class="size-full flex flex-col overflow-auto p-10px">
-        <ElAlert class="flex-none mb-10px" type="warning" :closable="false">
-            vue 版本: {{ version }} - 表单校验
+        <ElAlert class="flex-none" type="success" :closable="false">
+            <span>vue 版本: {{ version }}</span>
+            <span class="mx-10px">json-form 版本: {{ JSONFormVersion }}</span>
+            <span class="mx-10px">json-form-core 版本: {{ coreVersion }}</span>
         </ElAlert>
-        <ExampleForm />
         <ElAlert class="flex-none my-10px" type="error" :closable="false">
-            vue 版本: {{ version }} - 条件
+            表单校验
         </ElAlert>
-        <Condition />
+        <ExampleForm class="h-65%" />
+        <ElAlert class="flex-none my-10px" type="error" :closable="false">
+            条件
+        </ElAlert>
+        <Condition class="h-35%" />
     </div>
 </template>
 
 <script lang="ts" setup>
+import { coreVersion, version as JSONFormVersion } from '@xiaohaih/json-form-plus';
 import { version } from 'vue';
 import Condition from './components/condition.vue';
 import ExampleForm from './components/example-form.vue';
