@@ -30,7 +30,7 @@
     "jsdelivr": "dist/index.umd.js",
     "types": "src/index.ts",
     "scripts": {
-        "build": "vite build",
+        "build": "node ./scripts/generate-version.mjs && vite build",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "peerDependencies": {
@@ -45,17 +45,18 @@
     },
     "dependencies": {
         "@xiaohaih/json-form-core": "workspace:*",
-        "vite": "^6.1.0",
-        "vite-plugin-inspect": "^11.0.1",
-        "vite-plugin-vue2": "^2.0.3",
         "vue-demi": "0.14.5"
     },
     "devDependencies": {
         "@rollup/plugin-terser": "^0.4.4",
         "element-ui": "^2.15.14",
+        "vite": "^6.1.0",
         "vite-plugin-dts": "^4.5.3",
+        "vite-plugin-inspect": "^11.0.1",
+        "vite-plugin-vue2": "^2.0.3",
         "vue": "^2.7.16",
-        "vue-component-type-helpers": "^2.1.10"
+        "vue-component-type-helpers": "^2.1.10",
+        "vue-template-compiler": "2.7.16"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/",

@@ -20,7 +20,7 @@
     "jsdelivr": "dist/index.umd.js",
     "types": "index.ts",
     "scripts": {
-        "build": "rimraf dist && rollup -c rollup.config.js",
+        "build": "rimraf dist && node ./scripts/generate-version.mjs && rollup -c rollup.config.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "peerDependencies": {

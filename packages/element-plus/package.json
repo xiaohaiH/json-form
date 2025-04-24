@@ -30,7 +30,7 @@
     "jsdelivr": "dist/index.umd.js",
     "types": "src/index.ts",
     "scripts": {
-        "build": "vite build",
+        "build": "node ./scripts/generate-version.mjs && vite build",
         "postinstall": "node -e \"try{require('./scripts/postinstall.cjs')}catch(e){}\"",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
