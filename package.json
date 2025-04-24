@@ -29,7 +29,7 @@
         "build:el": "pnpm --filter @xiaohaih/json-form-el build",
         "------|---------------------": "---------|-------------------",
         "cg": "pnpm changeset",
-        "cg:version": "pnpm changeset version",
+        "cg:version": "pnpm changeset version && pnpm build",
         "cg:publish": "pnpm changeset publish",
         "test": "echo \"Error: no test specified\" && exit 1",
         "lint": "eslint .",
