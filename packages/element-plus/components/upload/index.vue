@@ -2,9 +2,8 @@
     <ElFormItem
         v-if="!insetHide"
         :class="`json-form-item json-form-item--upload json-form-item--${field} json-form-item--${!!slots?.postfix}`"
-        v-bind="formItemStaticProps"
-        :prop="formItemStaticProps.prop || field"
-        v-bind.prop="formItemFinalDynamicProps"
+        v-bind="formItemActualProps"
+        :prop="formItemActualProps.prop || field"
     >
         <template v-if="slots?.before || ($slots as UploadSlots).before">
             <component :is="getNode(slots?.before || ($slots as UploadSlots).before)" v-bind="slotProps" />
@@ -16,13 +15,12 @@
             <ElUpload
                 ref="uploadRef"
                 action="-"
-                v-bind="contentStaticProps"
                 :file-list="(checked as any[])"
                 class="json-form-item__content"
                 :before-upload="finalBeforeUpload"
                 :httpRequest="(finalHttpRequest as any)"
                 :onExceed="handleExceed"
-                v-bind.prop="contentDynamicProps"
+                v-bind="contentActualProps"
                 @update:file-list="change"
             >
                 <template #default>
@@ -75,14 +73,14 @@ export default defineComponent({
             const { formItemProps } = props;
             return { ...pick(props, formItemPropKeys), ...formItemProps };
         });
-        const formItemFinalDynamicProps = computed(() => {
+        const formItemActualProps = computed(() => {
             const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? formItemDynamicProps({ query }) : undefined;
+            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
         });
         const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-        const contentDynamicProps = computed(() => {
+        const contentActualProps = computed(() => {
             const { query, dynamicProps } = props;
-            return dynamicProps ? dynamicProps({ query }) : undefined;
+            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
         });
         const plain = usePlain(props);
         const finalHttpRequest = computed(() => props.httpRequest && customHttpRequest);
@@ -135,8 +133,8 @@ export default defineComponent({
         }
 
         const slotProps = computed(() => ({
-            getFormItemProps: () => ({ ...formItemStaticProps.value, ...formItemFinalDynamicProps.value }),
-            getItemProps: () => ({ ...contentStaticProps.value, ...contentDynamicProps.value }),
+            getFormItemProps: () => formItemActualProps.value,
+            getItemProps: () => contentActualProps.value,
             getProps: () => props,
             options: plain.finalOption.value,
             modelValue: plain.checked.value,
@@ -148,15 +146,13 @@ export default defineComponent({
         return {
             uploadRef,
             hyphenate,
+            getNode,
             ...plain,
-            formItemStaticProps,
-            formItemFinalDynamicProps,
-            contentStaticProps,
-            contentDynamicProps,
+            formItemActualProps,
+            contentActualProps,
             finalHttpRequest,
             finalBeforeUpload,
             handleExceed,
-            getNode,
             slotProps,
         };
     },

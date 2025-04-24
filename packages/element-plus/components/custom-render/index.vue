@@ -3,9 +3,8 @@
         <ElFormItem
             v-if="!insetHide"
             :class="`json-form-item json-form-item--custom-render json-form-item--${field} json-form-item--${!!slots?.postfix}`"
-            v-bind="formItemStaticProps"
-            :prop="formItemStaticProps.prop || field"
-            v-bind.prop="formItemFinalDynamicProps"
+            v-bind="formItemActualProps"
+            :prop="formItemActualProps.prop || field"
         >
             <component :is="customRender" v-bind="slotProps" />
         </ElFormItem>
@@ -39,13 +38,13 @@ export default defineComponent({
             const { formItemProps } = props;
             return { ...pick(props, formItemPropKeys), ...formItemProps };
         });
-        const formItemFinalDynamicProps = computed(() => {
+        const formItemActualProps = computed(() => {
             const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? formItemDynamicProps({ query }) : undefined;
+            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
         });
         const plain = usePlain(props);
         const slotProps = {
-            getFormItemProps: () => ({ ...formItemStaticProps.value, ...formItemFinalDynamicProps.value }),
+            getFormItemProps: () => formItemActualProps.value,
             getProps: () => props,
             class: 'json-form-item__content',
             plain,
@@ -56,8 +55,7 @@ export default defineComponent({
             hyphenate,
             getNode,
             ...plain,
-            formItemStaticProps,
-            formItemFinalDynamicProps,
+            formItemActualProps,
             slotProps,
             customRender,
         };

@@ -2,9 +2,8 @@
     <ElFormItem
         v-if="!insetHide"
         :class="`json-form-item json-form-item--mention json-form-item--${field} json-form-item--${!!slots?.postfix}`"
-        v-bind="formItemStaticProps"
-        :prop="formItemStaticProps.prop || field"
-        v-bind.prop="formItemFinalDynamicProps"
+        v-bind="formItemActualProps"
+        :prop="formItemActualProps.prop || field"
     >
         <template v-if="slots?.before || ($slots as MentionSlots).before">
             <component :is="getNode(slots?.before || ($slots as MentionSlots).before)" v-bind="slotProps" />
@@ -14,12 +13,11 @@
         </template>
         <slot v-else v-bind="slotProps">
             <ElMention
-                v-bind="contentStaticProps"
                 :clearable="clearable"
-                :model-value="checked as string"
-                :options="finalOption as any[]"
+                :model-value="(checked as string)"
+                :options="(finalOption as any[])"
                 class="json-form-item__content"
-                v-bind.prop="contentDynamicProps"
+                v-bind="contentActualProps"
                 @update:model-value="debounceChange"
                 @keydown.enter="enterHandle"
             >
@@ -65,19 +63,19 @@ export default defineComponent({
             const { formItemProps } = props;
             return { ...pick(props, formItemPropKeys), ...formItemProps };
         });
-        const formItemFinalDynamicProps = computed(() => {
+        const formItemActualProps = computed(() => {
             const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? formItemDynamicProps({ query }) : undefined;
+            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
         });
         const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-        const contentDynamicProps = computed(() => {
+        const contentActualProps = computed(() => {
             const { query, dynamicProps } = props;
-            return dynamicProps ? dynamicProps({ query }) : undefined;
+            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
         });
         const plain = usePlain(props);
         const slotProps = computed(() => ({
-            getFormItemProps: () => ({ ...formItemStaticProps.value, ...formItemFinalDynamicProps.value }),
-            getItemProps: () => ({ ...contentStaticProps.value, ...contentDynamicProps.value }),
+            getFormItemProps: () => formItemActualProps.value,
+            getItemProps: () => contentActualProps.value,
             getProps: () => props,
             options: plain.finalOption.value,
             modelValue: plain.checked.value,
@@ -107,21 +105,19 @@ export default defineComponent({
         /** 回车事件 */
         function enterHandle(ev: Event | KeyboardEvent) {
             timer && clearTimeout(timer);
-            plain.checked.value = (ev.target as HTMLInputElement).value;
+            (plain.checked as any).value = (ev.target as HTMLInputElement).value;
             plain.option.updateWrapperQuery();
             plain.wrapper?.search();
         }
 
         return {
             hyphenate,
+            getNode,
             ...plain,
-            formItemStaticProps,
-            formItemFinalDynamicProps,
-            contentStaticProps,
-            contentDynamicProps,
+            formItemActualProps,
+            contentActualProps,
             debounceChange,
             enterHandle,
-            getNode,
             slotProps,
         };
     },

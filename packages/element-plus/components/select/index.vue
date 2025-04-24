@@ -2,9 +2,8 @@
     <ElFormItem
         v-if="!insetHide"
         :class="`json-form-item json-form-item--select json-form-item--${field} json-form-item--${!!slots?.postfix}`"
-        v-bind="formItemStaticProps"
-        :prop="formItemStaticProps.prop || field"
-        v-bind.prop="formItemFinalDynamicProps"
+        v-bind="formItemActualProps"
+        :prop="formItemActualProps.prop || field"
     >
         <template v-if="slots?.before || ($slots as SelectSlots).before">
             <component :is="getNode(slots?.before || ($slots as SelectSlots).before)" v-bind="slotProps" />
@@ -14,14 +13,13 @@
         </template>
         <slot v-else v-bind="slotProps">
             <ElSelect
-                v-bind="contentStaticProps"
                 :filterable="filterable"
                 :clearable="clearable"
                 :model-value="(checked as string[])"
                 :filter-method="filterMethod && customFilterMethod"
                 :valueKey="valueKey"
                 class="json-form-item__content"
-                v-bind.prop="contentDynamicProps"
+                v-bind="contentActualProps"
                 @update:model-value="change"
             >
                 <template v-for="item of filterSource" :key="(item as any)[valueKey]">
@@ -105,14 +103,14 @@ export default defineComponent({
             const { formItemProps } = props;
             return { ...pick(props, formItemPropKeys), ...formItemProps };
         });
-        const formItemFinalDynamicProps = computed(() => {
+        const formItemActualProps = computed(() => {
             const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? formItemDynamicProps({ query }) : undefined;
+            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
         });
         const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-        const contentDynamicProps = computed(() => {
+        const contentActualProps = computed(() => {
             const { query, dynamicProps } = props;
-            return dynamicProps ? dynamicProps({ query }) : undefined;
+            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
         });
 
         const plain = usePlain(props);
@@ -126,8 +124,8 @@ export default defineComponent({
             return val ? plain.finalOption.value.filter(props.filterMethod!.bind(null, val)) : plain.finalOption.value;
         });
         const slotProps = computed(() => ({
-            getFormItemProps: () => ({ ...formItemStaticProps.value, ...formItemFinalDynamicProps.value }),
-            getItemProps: () => ({ ...contentStaticProps.value, ...contentDynamicProps.value }),
+            getFormItemProps: () => formItemActualProps.value,
+            getItemProps: () => contentActualProps.value,
             getProps: () => props,
             options: filterSource.value,
             modelValue: plain.checked.value,
@@ -140,13 +138,11 @@ export default defineComponent({
 
         return {
             hyphenate,
+            getNode,
             ...plain,
             formDisabled,
-            formItemStaticProps,
-            formItemFinalDynamicProps,
-            contentStaticProps,
-            contentDynamicProps,
-            getNode,
+            formItemActualProps,
+            contentActualProps,
             filterValue,
             customFilterMethod,
             filterSource,

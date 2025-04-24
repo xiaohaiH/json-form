@@ -2,9 +2,8 @@
     <ElFormItem
         v-if="!insetHide"
         :class="`json-form-item json-form-item--datepicker json-form-item--${field} json-form-item--${!!slots?.postfix}`"
-        v-bind="formItemStaticProps"
-        :prop="formItemStaticProps.prop || field"
-        v-bind.prop="formItemFinalDynamicProps"
+        v-bind="formItemActualProps"
+        :prop="formItemActualProps.prop || field"
     >
         <template v-if="slots?.before || ($slots as DatePickerSlots).before">
             <component :is="getNode(slots?.before || ($slots as DatePickerSlots).before)" v-bind="slotProps" />
@@ -14,11 +13,10 @@
         </template>
         <slot v-else v-bind="slotProps">
             <ElDatePicker
-                v-bind="contentStaticProps"
                 :value-format="valueFormat"
                 :model-value="(checked as string)"
                 class="json-form-item__content"
-                v-bind.prop="contentDynamicProps"
+                v-bind="contentActualProps"
                 @update:model-value="change"
             >
                 <template v-for="(item, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">
@@ -68,20 +66,20 @@ export default defineComponent({
             const { formItemProps } = props;
             return { ...pick(props, formItemPropKeys), ...formItemProps };
         });
-        const formItemFinalDynamicProps = computed(() => {
+        const formItemActualProps = computed(() => {
             const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? formItemDynamicProps({ query }) : undefined;
+            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
         });
 
         const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-        const contentDynamicProps = computed(() => {
+        const contentActualProps = computed(() => {
             const { query, dynamicProps } = props;
-            return dynamicProps ? dynamicProps({ query }) : undefined;
+            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
         });
         const plain = usePlain(props);
         const slotProps = computed(() => ({
-            getFormItemProps: () => ({ ...formItemStaticProps.value, ...formItemFinalDynamicProps.value }),
-            getItemProps: () => ({ ...contentStaticProps.value, ...contentDynamicProps.value }),
+            getFormItemProps: () => formItemActualProps.value,
+            getItemProps: () => contentActualProps.value,
             getProps: () => props,
             options: plain.finalOption.value,
             modelValue: plain.checked.value,
@@ -92,12 +90,10 @@ export default defineComponent({
 
         return {
             hyphenate,
-            ...plain,
-            formItemStaticProps,
-            formItemFinalDynamicProps,
-            contentStaticProps,
-            contentDynamicProps,
             getNode,
+            ...plain,
+            formItemActualProps,
+            contentActualProps,
             slotProps,
         };
     },
