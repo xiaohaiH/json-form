@@ -1,7 +1,7 @@
 /**
  * 表单包装器类型定义文件
  *
- * 定义表单组件所需的各种类型、属性和事件，包括：
+ * 定义表单组件所需的各种类型、属性和事件, 包括:
  * - 表单属性定义
  * - 表单事件定义
  * - 表单插槽类型
@@ -56,24 +56,33 @@ function formAssist() {
 /**
  * 表单属性生成函数 - 泛型版本
  * 生成表单组件所需的所有属性定义
+ * vue 在不补充泛型的情况下, 默认取的第一个
  *
  * @template T 表单数据类型，必须是一个对象
  * @template O 表单项配置对象类型，键与T的键相同
  * @returns 包含表单辅助函数返回值和表单项配置对象的属性定义
  */
+// 第一个重载: 无泛型参数约束的兜底版本
+export function formPropsGeneric(): ReturnType<typeof formAssist> & {
+    /** 数据源 - 表单项配置对象 */
+    datum: { type: PropType<Record<string, any> | (() => Record<string, any>)>; default: () => ({}) };
+};
+// 第二个重载: 处理双对象类型
 export function formPropsGeneric<T extends Record<string, any>, O extends Record<keyof T, any>>(): ReturnType<typeof formAssist> & {
     /** 数据源 - 表单项配置对象 */
     datum: { type: PropType<ReturnType<typeof defineOption<T, O>> | (() => ReturnType<typeof defineOption<T, O>>)>; default: () => ({}) };
 };
+// 第三个重载: 处理具有 value 和 options 结构的对象类型
 export function formPropsGeneric<T extends Record<string, Record<'value' | 'options', any>>>(): ReturnType<typeof formAssist> & {
     /** 数据源 - 表单项配置对象 */
     datum: { type: PropType<ReturnType<typeof defineOption<T>> | (() => ReturnType<typeof defineOption<T>>)>; default: () => ({}) };
 };
+// 具体实现
 export function formPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
     return {
         ...formAssist(),
         /** 数据源 - 表单项配置对象 */
-        datum: { type: [Object, Function] as any, default: () => ({}) },
+        datum: { type: [Object, Function] as PropType<any>, default: () => ({}) },
     } as const;
 }
 
