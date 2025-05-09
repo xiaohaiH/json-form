@@ -90,21 +90,22 @@ export interface RadioGroupSlotOption<T, Query extends Record<string, any>, Opti
     getItemProps: () => Partial<ExtractPropTypes<typeof elRadioGroupProps>>;
     /** 获取所有组件属性 */
     getProps: () => RadioGroupProps<T, Query, Option, OptionQuery>;
-    /** 单选框选项数组 */
-    options: Option[];
-    /** 当前选中值 */
-    value: T;
-    /** 值变更处理函数 */
-    onChange: (value: T) => void;
-    /**
-     * 可取消选择处理函数
-     * 比较新值和当前值，实现可取消选择功能
-     */
-    onCancelable: (newVal: T, currentVal: T, cb: (value: T) => void) => void;
-    /** 单选框类型，普通单选框或按钮式单选框 */
-    radioType: 'ElRadioButton' | 'ElRadio';
-    /** 组件类名 */
-    class: string;
+    /** 额外选项 */
+    extraOptions: {
+        /** 当前选中值 */
+        value: T;
+        /** 单选框选项数组 */
+        options: Option[];
+        /** 值变更处理函数 */
+        onChange: (value: T) => void;
+        /**
+         * 可取消选择处理函数
+         * 比较新值和当前值，实现可取消选择功能
+         */
+        onCancelable: (newVal: T, currentVal: T, cb: (value: T) => void) => void;
+        /** 单选框类型，普通单选框或按钮式单选框 */
+        radioType: 'ElRadioButton' | 'ElRadio';
+    };
     /** 平台状态管理对象 */
     plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
 }

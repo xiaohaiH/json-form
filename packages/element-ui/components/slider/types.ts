@@ -71,14 +71,15 @@ export interface SliderSlotOption<T, Query extends Record<string, any>, Option, 
     getItemProps: () => Partial<ExtractPropTypes<typeof elSliderProps>>;
     /** 获取所有组件属性 */
     getProps: () => SliderProps<T, Query, Option, OptionQuery>;
-    /** 滑块选项数组 */
-    options: Option[];
-    /** 当前值 */
-    value: T;
-    /** 值变更处理函数 */
-    onChange: (value: T) => void;
-    /** 组件类名 */
-    class: string;
+    /** 额外选项 */
+    extraOptions: {
+        /** 当前值 */
+        value: T;
+        /** 滑块选项数组 */
+        options: Option[];
+        /** 值变更处理函数 */
+        onChange: (value: T) => void;
+    };
     /** 平台状态管理对象 */
     plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
 }

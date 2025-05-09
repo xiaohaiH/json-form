@@ -65,14 +65,15 @@ export interface RateSlotOption<T, Query extends Record<string, any>, Option, Op
     getItemProps: () => Partial<ExtractPropTypes<typeof elRateProps>>;
     /** 获取所有属性的方法 */
     getProps: () => RateProps<T, Query, Option, OptionQuery>;
-    /** 可用选项列表 */
-    options: Option[];
-    /** 当前绑定的值 */
-    value: T;
-    /** 值变更处理函数 */
-    onChange: (value: T) => void;
-    /** 组件类名 */
-    class: string;
+    /** 额外选项 */
+    extraOptions: {
+        /** 当前绑定的值 */
+        value: T;
+        /** 可用选项列表 */
+        options: Option[];
+        /** 值变更处理函数 */
+        onChange: (value: T) => void;
+    };
     /** 组件扁平化数据对象 */
     plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
 }

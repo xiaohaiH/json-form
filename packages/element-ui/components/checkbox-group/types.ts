@@ -84,16 +84,17 @@ export interface CheckboxGroupSlotOption<T, Query extends Record<string, any>, O
     getItemProps: () => Partial<ExtractPropTypes<typeof elCheckboxGroupProps>>;
     /** 获取所有组件属性 */
     getProps: () => CheckboxGroupProps<T, Query, Option, OptionQuery>;
-    /** 复选框选项数组 */
-    options: Option[];
-    /** 当前选中值 */
-    value: T;
-    /** 值变更处理函数 */
-    onChange: (value: T) => void;
-    /** 复选框类型，普通复选框或按钮式复选框 */
-    checkboxType: 'ElCheckboxButton' | 'ElCheckbox';
-    /** 组件类名 */
-    class: string;
+    /** 额外选项 */
+    extraOptions: {
+        /** 当前选中值 */
+        value: T;
+        /** 复选框选项数组 */
+        options: Option[];
+        /** 值变更处理函数 */
+        onChange: (value: T) => void;
+        /** 复选框类型，普通复选框或按钮式复选框 */
+        checkboxType: 'ElCheckboxButton' | 'ElCheckbox';
+    };
     /** 平台状态管理对象 */
     plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
 }

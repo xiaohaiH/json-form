@@ -68,14 +68,17 @@ export interface RadioSlotOption<T, Query extends Record<string, any>, Option, O
     getItemProps: () => Partial<ExtractPropTypes<typeof elRadioProps>>;
     /** 获取所有属性的方法 */
     getProps: () => RadioProps<T, Query, Option, OptionQuery>;
-    /** 可用选项列表 */
-    options: Option[];
-    /** 当前绑定的值 */
-    value: T;
-    /** 值变更处理函数 */
-    onChange: (value: T) => void;
-    /** 组件类名 */
-    class: string;
+    /** 额外选项 */
+    extra: {
+        /** 当前绑定的值 */
+        value: T;
+        /** 可用选项列表 */
+        options: Option[];
+        /** 值变更处理函数 */
+        onChange: (value: T) => void;
+        /** 单选框类型 */
+        radioType: 'ElRadio' | 'ElRadioButton';
+    };
     /** 组件扁平化数据对象 */
     plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
 }

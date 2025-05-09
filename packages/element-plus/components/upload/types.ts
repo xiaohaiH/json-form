@@ -1,6 +1,6 @@
 import type { CamelCase, Obj2Props, PlainProps, usePlain } from '@xiaohaih/json-form-core';
 import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
-import type { buttonProps, UploadFile, UploadHooks, UploadRequestOptions } from 'element-plus';
+import type { buttonProps, UploadFile, UploadHooks, UploadRequestOptions, UploadUserFile } from 'element-plus';
 import { ElMessage, ElUpload } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
@@ -62,10 +62,13 @@ export interface UploadSlotOption<T, Query extends Record<string, any>, Option, 
     getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
     getItemProps: () => Partial<ExtractPublicPropTypes<typeof elUploadProps>>;
     getProps: () => UploadProps<T, Query, Option, OptionQuery>;
-    options: Option[];
-    modelValue: T;
-    onChange: (value: T) => void;
-    class: string;
+    extraOptions: {
+        modelValue: T;
+        options: Option[];
+        onChange: (value: T) => void;
+        httpRequest: (option: UploadRequestOptions) => Promise<unknown> | XMLHttpRequest | void;
+        onExceed: (file: File[], fileList: UploadUserFile[]) => void;
+    };
     plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
 }
 /** 组件传参 - 私有 */

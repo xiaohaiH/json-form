@@ -115,14 +115,14 @@ export default defineComponent({
             getItemProps: () => contentActualProps.value,
             /** 获取全部属性 */
             getProps: () => props,
-            /** 选项列表 */
-            options: plain.finalOption.value,
-            /** 当前值 */
-            value: plain.checked.value,
-            /** 值变更函数 */
-            onChange: plain.change,
-            /** 内容样式类 */
-            class: 'json-form-item__content',
+            extraOptions: {
+                /** 当前值 */
+                value: plain.checked.value,
+                /** 选项列表 */
+                options: plain.finalOption.value,
+                /** 值变更函数 */
+                onChange: plain.change,
+            },
             /** plain工具对象 */
             plain,
         }));

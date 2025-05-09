@@ -101,10 +101,11 @@ export default defineComponent({
             getFormItemProps: () => formItemActualProps.value,
             getItemProps: () => contentActualProps.value,
             getProps: () => props,
-            options: plain.finalOption.value,
-            modelValue: plain.checked.value === 0 ? 0 : (plain.checked.value as number) || undefined,
-            onChange: debounceChange,
-            class: 'json-form-item__content',
+            extraOptions: {
+                modelValue: plain.checked.value === 0 ? 0 : (plain.checked.value as number) || undefined,
+                options: plain.finalOption.value,
+                onChange: debounceChange,
+            },
             plain,
         }));
 

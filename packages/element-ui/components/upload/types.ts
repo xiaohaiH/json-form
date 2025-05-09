@@ -128,22 +128,23 @@ export interface UploadSlotOption<T, Query extends Record<string, any>, Option, 
     getItemProps: () => Partial<ExtractPropTypes<typeof elUploadProps>>;
     /** 获取所有属性的方法 */
     getProps: () => UploadProps<T, Query, Option, OptionQuery>;
-    /** 可用选项列表 */
-    options: Option[];
-    /** 当前绑定的值 */
-    value: T;
-    /** 自定义上传请求方法 */
-    httpRequest: (option: UploadRequestOptions) => Promise<unknown> | XMLHttpRequest | void;
-    /** 文件超出限制处理函数 */
-    onExceed: (file: File[], fileList: UploadFile[]) => void;
-    /** 文件移除处理函数 */
-    onRemove: (file: UploadFile, files: UploadFile[]) => void;
-    /** 上传错误处理函数 */
-    onError: (err: ErrorEvent, file: UploadFile, files: UploadFile[]) => void;
-    /** 值变更处理函数 */
-    onChange: (value: T) => void;
-    /** 组件类名 */
-    class: string;
+    /** 额外选项 */
+    extra: {
+        /** 当前绑定的值 */
+        value: T;
+        /** 可用选项列表 */
+        options: Option[];
+        /** 值变更处理函数 */
+        onChange: (value: T) => void;
+        /** 自定义上传请求方法 */
+        httpRequest: (option: UploadRequestOptions) => Promise<unknown> | XMLHttpRequest | void;
+        /** 文件超出限制处理函数 */
+        onExceed: (file: File[], fileList: UploadFile[]) => void;
+        /** 文件移除处理函数 */
+        onRemove: (file: UploadFile, files: UploadFile[]) => void;
+        /** 上传错误处理函数 */
+        onError: (err: ErrorEvent, file: UploadFile, files: UploadFile[]) => void;
+    };
     /** 组件扁平化数据对象 */
     plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
 }

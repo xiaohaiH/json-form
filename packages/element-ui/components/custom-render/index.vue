@@ -60,7 +60,6 @@ export default defineComponent({
         const slotProps = {
             getFormItemProps: () => formItemActualProps.value,
             getProps: () => props,
-            class: 'json-form-item__content',
             plain,
         };
 

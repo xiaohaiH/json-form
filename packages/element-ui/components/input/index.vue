@@ -163,11 +163,12 @@ export default defineComponent({
             getFormItemProps: () => formItemActualProps.value,
             getItemProps: () => contentActualProps.value,
             getProps: () => props,
-            options: plain.finalOption.value,
-            value: plain.checked.value,
-            onChange: debounceChange,
-            onEnter: enterHandle,
-            class: 'json-form-item__content',
+            extraOptions: {
+                value: plain.checked.value,
+                options: plain.finalOption.value,
+                onChange: debounceChange,
+                onEnter: enterHandle,
+            },
             plain,
         }));
 

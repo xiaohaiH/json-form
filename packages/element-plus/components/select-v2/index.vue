@@ -86,12 +86,13 @@ export default defineComponent({
             getFormItemProps: () => formItemActualProps.value,
             getItemProps: () => contentActualProps.value,
             getProps: () => props,
-            options: filterSource.value,
-            modelValue: plain.checked.value,
-            onChange: plain.change,
-            filterValue: filterValue.value,
-            filterMethod: props.filterMethod && customFilterMethod,
-            class: 'json-form-item__content',
+            extraOptions: {
+                modelValue: plain.checked.value,
+                options: filterSource.value,
+                filterValue: filterValue.value,
+                filterMethod: props.filterMethod && customFilterMethod,
+                onChange: plain.change,
+            },
             plain,
         }));
 

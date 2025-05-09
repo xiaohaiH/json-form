@@ -44,11 +44,12 @@ export interface CheckboxGroupSlotOption<T, Query extends Record<string, any>, O
     getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
     getItemProps: () => Partial<ExtractPublicPropTypes<typeof elCheckboxGroupProps>>;
     getProps: () => CheckboxGroupProps<T, Query, Option, OptionQuery>;
-    options: Option[];
-    modelValue: T;
-    onChange: (value: T) => void;
-    checkboxType: 'ElCheckboxButton' | 'ElCheckbox';
-    class: string;
+    extraOptions: {
+        modelValue: T;
+        options: Option[];
+        onChange: (value: T) => void;
+        checkboxType: 'ElCheckboxButton' | 'ElCheckbox';
+    };
     plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
 }
 /** 组件传参 - 私有 */

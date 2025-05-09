@@ -37,10 +37,11 @@ export interface InputNumberSlotOption<T, Query extends Record<string, any>, Opt
     getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
     getItemProps: () => Partial<ExtractPublicPropTypes<typeof elInputNumberProps>>;
     getProps: () => InputNumberProps<T, Query, Option, OptionQuery>;
-    options: Option[];
-    modelValue: T;
-    onChange: (value: T) => void;
-    class: string;
+    extraOptions: {
+        modelValue: T;
+        options: Option[];
+        onChange: (value: T) => void;
+    };
     plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
 }
 /** 组件传参 - 私有 */

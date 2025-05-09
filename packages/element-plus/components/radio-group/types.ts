@@ -43,12 +43,13 @@ export interface RadioGroupSlotOption<T, Query extends Record<string, any>, Opti
     getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
     getItemProps: () => Partial<ExtractPublicPropTypes<typeof elRadioGroupProps>>;
     getProps: () => RadioGroupProps<T, Query, Option, OptionQuery>;
-    options: Option[];
-    modelValue: T;
-    onChange: (value: T) => void;
-    onCancelable: (newVal: T, currentVal: T, cb: (value: T) => void) => void;
-    radioType: 'ElRadioButton' | 'ElRadio';
-    class: string;
+    extraOptions: {
+        modelValue: T;
+        options: Option[];
+        onChange: (value: T) => void;
+        onCancelable: (newVal: T, currentVal: T, cb: (value: T) => void) => void;
+        radioType: 'ElRadioButton' | 'ElRadio';
+    };
     plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
 }
 /** 组件传参 - 私有 */

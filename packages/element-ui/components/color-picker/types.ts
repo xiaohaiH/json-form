@@ -73,14 +73,15 @@ export interface ColorPickerSlotOption<T, Query extends Record<string, any>, Opt
     getItemProps: () => Partial<ExtractPropTypes<typeof elColorPickerProps>>;
     /** 获取所有组件属性 */
     getProps: () => ColorPickerProps<T, Query, Option, OptionQuery>;
-    /** 选项列表 */
-    options: Option[];
-    /** 当前选中的颜色值 */
-    value: T;
-    /** 颜色值变更处理函数 */
-    onChange: (value: T) => void;
-    /** 组件类名 */
-    class: string;
+    /** 额外选项 */
+    extraOptions: {
+        /** 当前选中的颜色值 */
+        value: T;
+        /** 选项列表 */
+        options: Option[];
+        /** 颜色值变更处理函数 */
+        onChange: (value: T) => void;
+    };
     /** 平台状态管理对象 */
     plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
 }

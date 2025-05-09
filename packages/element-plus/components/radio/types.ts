@@ -37,12 +37,12 @@ export interface RadioSlotOption<T, Query extends Record<string, any>, Option, O
     getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
     getItemProps: () => Partial<ExtractPublicPropTypes<typeof elRadioProps>>;
     getProps: () => RadioProps<T, Query, Option, OptionQuery>;
-    options: Option[];
-    modelValue: T;
-    onChange: (value: T) => void;
-    onCancelable: (newVal: T, currentVal: T, cb: (value: T) => void) => void;
-    radioType: 'ElRadioButton' | 'ElRadio';
-    class: string;
+    extraOptions: {
+        modelValue: T;
+        options: Option[];
+        onChange: (value: T) => void;
+        radioType: 'ElRadioButton' | 'ElRadio';
+    };
     plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
 }
 /** 组件传参 - 私有 */

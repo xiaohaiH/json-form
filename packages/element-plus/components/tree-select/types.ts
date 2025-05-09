@@ -45,12 +45,13 @@ export interface TreeSelectSlotOption<T, Query extends Record<string, any>, Opti
     getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
     getItemProps: () => Partial<ExtractPublicPropTypes<typeof elSelectProps>>;
     getProps: () => TreeSelectProps<T, Query, Option, OptionQuery>;
-    options: Option[];
-    modelValue: T;
-    onChange: (value: T) => void;
-    filterValue: string;
-    filterMethod: ((val: string) => void) | undefined;
-    class: string;
+    extraOptions: {
+        modelValue: T;
+        options: Option[];
+        filterValue: string;
+        filterMethod: ((val: string) => void) | undefined;
+        onChange: (value: T) => void;
+    };
     plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
 }
 /** 组件传参 - 私有 */

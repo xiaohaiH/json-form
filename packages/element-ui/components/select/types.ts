@@ -93,18 +93,19 @@ export interface SelectSlotOption<T, Query extends Record<string, any>, Option, 
     getItemProps: () => Partial<ExtractPropTypes<typeof elSelectProps>>;
     /** 获取所有属性的方法 */
     getProps: () => SelectProps<T, Query, Option, OptionQuery>;
-    /** 可用选项列表 */
-    options: Option[];
-    /** 当前绑定的值 */
-    value: T;
-    /** 值变更处理函数 */
-    onChange: (value: T) => void;
-    /** 过滤值 */
-    filterValue: string;
-    /** 过滤方法 */
-    filterMethod: ((val: string) => void) | undefined;
-    /** 组件类名 */
-    class: string;
+    /** 额外选项 */
+    extra: {
+        /** 当前绑定的值 */
+        value: T;
+        /** 可用选项列表 */
+        options: Option[];
+        /** 过滤值 */
+        filterValue: string;
+        /** 过滤方法 */
+        filterMethod: ((val: string) => void) | undefined;
+        /** 值变更处理函数 */
+        onChange: (value: T) => void;
+    };
     /** 组件扁平化数据对象 */
     plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
 }

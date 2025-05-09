@@ -100,14 +100,14 @@ export interface CascaderSlotOption<T, Query extends Record<string, any>, Option
     getItemProps: () => Partial<ExtractPropTypes<typeof elCascaderProps>>;
     /** 获取所有组件属性 */
     getProps: () => CascaderProps<T, Query, Option, OptionQuery>;
-    /** 级联选择器选项数组 */
-    options: Option[];
-    /** 当前选中值 */
-    value: T;
-    /** 值变更处理函数 */
-    onChange: (value: T) => void;
-    /** 组件类名 */
-    class: string;
+    extraOptions: {
+        /** 当前选中值 */
+        value: T;
+        /** 级联选择器选项数组 */
+        options: Option[];
+        /** 值变更处理函数 */
+        onChange: (value: T) => void;
+    };
     /** 平台状态管理对象 */
     plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
 }
