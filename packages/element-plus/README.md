@@ -24,5 +24,7 @@
     - <a href="#api-time-select">`time-select` (时间下拉)</a>
     - <a href="#api-tree-select">`tree-select` (树形下拉)</a>
     - <a href="#api-upload">`upload` (文件上传)</a>
+    - <a href="#api-input-tag">`input-tag` (标签输入框)</a>
+    - <a href="#api-segmented">`segmented` (分段控制器)</a>
 
 > **[在线`demo`](https://xiaohaih.github.io/json-form/example-plus-vue3/index.html)**

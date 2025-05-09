@@ -8,10 +8,12 @@ import type {
     DatePickerProps as PureDatepickerProps,
     InputNumberProps as PureInputNumberProps,
     InputProps as PureInputProps,
+    InputTagProps as PureInputTagProps,
     MentionProps as PureMentionProps,
     RadioGroupProps as PureRadioGroupProps,
     RadioProps as PureRadioProps,
     RateProps as PureRateProps,
+    SegmentedProps as PureSegmentedProps,
     SelectProps as PureSelectProps,
     SelectV2Props as PureSelectV2Props,
     SliderProps as PureSliderProps,
@@ -45,7 +47,9 @@ export type JSONFormOption<T, Query extends Record<string, any>, Option, OptionQ
     | UploadProps<T, Query, Option, OptionQuery>
     | MentionProps<T, Query, Option, OptionQuery>
     | CustomRenderProps<T, Query, Option, OptionQuery>
-    | SelectV2Props<T, Query, Option, OptionQuery>;
+    | SelectV2Props<T, Query, Option, OptionQuery>
+    | InputTagProps<T, Query, Option, OptionQuery>
+    | SegmentedProps<T, Query, Option, OptionQuery>;
 
 export interface InputProps<
     T,
@@ -208,4 +212,20 @@ export interface CustomRenderProps<
     OptionQuery extends Record<string, any> = Record<string, any>,
 > extends Omit<PureCustomRenderProps<T, Query, Option, OptionQuery>, BuiltInField> {
     t: 'custom-render';
+}
+export interface InputTagProps<
+    T,
+    Query extends Record<string, any>,
+    Option,
+    OptionQuery extends Record<string, any> = Record<string, any>,
+> extends Omit<PureInputTagProps<T, Query, Option, OptionQuery>, BuiltInField> {
+    t: 'input-tag';
+}
+export interface SegmentedProps<
+    T,
+    Query extends Record<string, any>,
+    Option,
+    OptionQuery extends Record<string, any> = Record<string, any>,
+> extends Omit<PureSegmentedProps<T, Query, Option, OptionQuery>, BuiltInField> {
+    t: 'segmented';
 }

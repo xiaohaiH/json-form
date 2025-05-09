@@ -8,10 +8,12 @@ import {
     HDatePicker,
     HInput,
     HInputNumber,
+    HInputTag,
     HMention,
     HRadio,
     HRadioGroup,
     HRate,
+    HSegmented,
     HSelect,
     HSelectV2,
     HSlider,
@@ -46,6 +48,8 @@ const compMap = {
     'select-v2': markRaw(HSelectV2) as typeof HSelectV2,
     'mention': markRaw(HMention) as typeof HMention,
     'custom-render': markRaw(HCustomRender) as typeof HCustomRender,
+    'input-tag': markRaw(HInputTag) as typeof HInputTag,
+    'segmented': markRaw(HSegmented) as typeof HSegmented,
 };
 /* eslint-enable ts/no-unnecessary-type-assertion */
 const userCompMap: Record<string, any> = {};

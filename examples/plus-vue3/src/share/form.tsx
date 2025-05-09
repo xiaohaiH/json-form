@@ -304,6 +304,27 @@ export function conditionFactory() {
                 },
                 clearable: true,
             },
+            inputTag: {
+                t: 'input-tag',
+                label: '标签框',
+                placeholder: '标签输入框',
+                tagType: 'success',
+                itemSlots: {
+                    tag: ({ value, index }) => <div>{value}-{index}</div>,
+                },
+                rules: [{ required: true, message: '必填项' }],
+                clearable: true,
+            },
+            segmented: {
+                t: 'segmented',
+                label: '分段控制器',
+                rules: [{ required: true, message: '必填项' }],
+                options: [
+                    { label: 'aaa', value: 'aaa' },
+                    { label: 'bbb', value: 'bbb' },
+                    { label: 'ccc', value: 'ccc' },
+                ]
+            },
         }),
     };
 }
