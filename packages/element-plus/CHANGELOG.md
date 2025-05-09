@@ -1,5 +1,11 @@
 # @xiaohaih/json-form-plus
 
+## 0.1.1
+
+### Patch Changes
+
+- 1. radio, checkbox增加默认插槽; 2. 增加 input-tag, segmented 组件
+
 ## 0.1.0
 
 ### Minor Changes

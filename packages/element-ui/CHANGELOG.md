@@ -1,5 +1,11 @@
 # @xiaohaih/json-form-el
 
+## 0.1.1
+
+### Patch Changes
+
+- 1. radio, checkbox增加默认插槽;
+
 ## 0.1.0
 
 ### Minor Changes
