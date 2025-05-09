@@ -1,5 +1,11 @@
 # @xiaohaih/json-form-el
 
+## 0.1.2
+
+### Patch Changes
+
+- 1. 重构多个组件的插槽属性, 统一为 extraOptions 并调整声明
+
 ## 0.1.1
 
 ### Patch Changes
