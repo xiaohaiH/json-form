@@ -67,6 +67,10 @@ export function radioGroupPropsGeneric<T, Query extends Record<string, any>, Opt
         disabledKey: { type: String as PropType<string>, default: 'disabled' },
         /** 暴露给单个单选框的属性，适用于Radio或RadioButton组件 */
         itemProps: { type: Object as PropType<Partial<ExtractPropTypes<ReturnType<typeof emits2props<typeof elRadioProps, [NonNullable<typeof elRadioEmits>]>>>>> },
+        /** 传递给组件的插槽 */
+        itemSlots: { type: Object as PropType<Partial<{
+            default: ((props: RadioGroupSlotOption<T, Query, Option, OptionQuery> & { option: Option; labelKey: string; valueKey: string; disabledKey: string }) => any);
+        }>>, default: () => ({}) },
     } as const;
 }
 

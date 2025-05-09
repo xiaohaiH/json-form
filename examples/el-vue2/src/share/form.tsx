@@ -208,6 +208,9 @@ export function conditionFactory() {
                 t: 'checkbox-group',
                 label: 'che-g1',
                 type: 'button',
+                // itemSlots: {
+                //     default: ({ option, labelKey}) => ({ render: (h) => <div>6{option[labelKey]}</div> }),
+                // },
                 options: [
                     { label: 'check1', value: 'check1' },
                     { label: 'check2', value: 'check2' },
@@ -217,6 +220,9 @@ export function conditionFactory() {
                 t: 'checkbox-group',
                 label: 'che-g2',
                 rules: [{ required: true, message: '必填项' }],
+                // itemSlots: {
+                //     default: ({ option, labelKey}) => ({ render: (h) => <div>ff{option[labelKey]}</div> }),
+                // },
                 getOptions(cb) {
                     setTimeout(() => {
                         cb([
@@ -234,12 +240,18 @@ export function conditionFactory() {
                 trueLabel: '1',
                 falseLabel: '2',
                 defaultValue: '1',
+                // itemSlots: {
+                //     default: { render: (h) => <div>123</div> },
+                // },
                 rules: [{ required: true, message: '必填项' }],
             },
             radioGroup1: {
                 t: 'radio-group',
                 label: 'radio-group1',
                 type: 'button',
+                // itemSlots: {
+                //     default: ({ option, labelKey}) => ({ render: (h) => <div>s_{option[labelKey]}</div> }),
+                // },
                 options: [
                     { label: 'radio1', value: 'radio1' },
                     { label: 'radio2', value: 'radio2' },
@@ -250,6 +262,9 @@ export function conditionFactory() {
                 label: 'rdg-cancel',
                 rules: [{ required: true, message: '必填项' }],
                 cancelable: true,
+                // itemSlots: {
+                //     default: ({ option, labelKey}) => ({ render: (h) => <div>g_{option[labelKey]}</div> }),
+                // },
                 getOptions(cb) {
                     setTimeout(() => {
                         cb([
@@ -264,6 +279,9 @@ export function conditionFactory() {
                 label: 'radio',
                 value: '1',
                 staticProps: { label: '男生' },
+                // itemSlots: {
+                //     default: { render: (h) => <div>123_男生</div> },
+                // },
                 // type: 'button',
                 // initialValue: '1',
             },

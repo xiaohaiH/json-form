@@ -18,7 +18,11 @@
                 class="json-form-item__content"
                 v-bind="contentActualProps"
                 @update:model-value="(change as () => void)"
-            />
+            >
+                <template v-for="(item, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">
+                    <component :is="getNode(item)" v-bind="slotProps" v-bind.prop="row" />
+                </template>
+            </component>
         </slot>
         <template v-if="slots?.after || ($slots as CheckboxSlots).after">
             <component :is="getNode(slots?.after || ($slots as CheckboxSlots).after) " v-bind="slotProps" />

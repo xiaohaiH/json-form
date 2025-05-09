@@ -34,7 +34,12 @@
                         :value="item[valueKey]"
                         :disabled="item[disabledKey]"
                     >
-                        {{ item[labelKey] }}
+                        <!-- <template v-for="(option, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">
+                            <component :is="getNode(option)" v-bind="slotProps" v-bind.prop="row" :option="item" :labelKey="labelKey" :valueKey="valueKey" :disabledKey="disabledKey" />
+                        </template> -->
+                        <template v-if="itemSlots.default" #default>
+                            <component :is="getNode(itemSlots.default, { ...slotProps, option: item, labelKey, valueKey })" />
+                        </template>
                     </component>
                 </template>
             </ElCheckboxGroup>

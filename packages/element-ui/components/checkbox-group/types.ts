@@ -9,6 +9,7 @@ import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { Checkbox as ElCheckbox, CheckboxGroup as ElCheckboxGroup } from 'element-ui';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
+import type { CheckboxSlotOption } from '../checkbox/types';
 import type { CommonProps, CommonSlots, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
@@ -60,6 +61,10 @@ export function checkboxGroupPropsGeneric<T, Query extends Record<string, any>, 
         disabledKey: { type: String as PropType<string>, default: 'disabled' },
         /** 暴露给单个复选框的属性，适用于Checkbox或CheckboxButton组件 */
         itemProps: { type: Object as PropType<Partial<ExtractPropTypes<ReturnType<typeof emits2props<typeof elCheckboxProps, [NonNullable<typeof elCheckboxEmits>]>>>>> },
+        /** 传递给组件的插槽 */
+        itemSlots: { type: Object as PropType<Partial<{
+            default: ((props: CheckboxGroupSlotOption<T, Query, Option, OptionQuery> & { option: Option; labelKey: string; valueKey: string; disabledKey: string }) => any);
+        }>>, default: () => ({}) },
     } as const;
 }
 

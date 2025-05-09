@@ -19,7 +19,11 @@
                 v-bind="contentActualProps"
                 @update:model-value="(change as () => void)"
                 @[eventName].prevent="customChange"
-            />
+            >
+                <template v-for="(item, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">
+                    <component :is="getNode(item)" v-bind="slotProps" v-bind.prop="row" />
+                </template>
+            </component>
         </slot>
         <template v-if="slots?.after || ($slots as RadioSlots).after">
             <component :is="getNode(slots?.after || ($slots as RadioSlots).after)" v-bind="slotProps" />
@@ -75,7 +79,7 @@ export default defineComponent({
 
         /** 单选框选中事件 - 处理可取消选中 */
         function customChange() {
-            plain.change(plain.checked.value === contentStaticProps.value.value ? '' : contentStaticProps.value.value);
+            plain.change(plain.checked.value === formItemActualProps.value.value ? '' : formItemActualProps.value.value);
         }
         const slotProps = computed(() => ({
             getFormItemProps: () => formItemActualProps.value,

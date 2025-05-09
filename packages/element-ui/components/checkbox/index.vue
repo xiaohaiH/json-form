@@ -20,7 +20,14 @@
                 v-bind="contentActualProps"
                 v-on="$listeners"
                 @change="change"
-            />
+            >
+                <template v-if="itemSlots.default" #default>
+                    <component :is="getNode(itemSlots.default, slotProps)" />
+                </template>
+                <!-- <template v-for="(item, slotName) of itemSlots" #[slotName]="row">
+                    <component :is="getNode(item, { ...row, ...slotProps })" :key="slotName" />
+                </template> -->
+            </component>
         </slot>
         <template v-if="slots.after || $slots.after">
             <component :is="getNode(slots.after || $slots.after, slotProps)" />

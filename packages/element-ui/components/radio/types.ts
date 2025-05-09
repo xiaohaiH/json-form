@@ -52,7 +52,8 @@ export function radioPropsGeneric<T, Query extends Record<string, any>, Option, 
         type: { type: String as PropType<'radio' | 'button'> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-        }>> },
+            default: ((props: RadioSlotOption<T, Query, Option, OptionQuery>) => any);
+        }>>, default: () => ({}) },
     } as const;
 }
 

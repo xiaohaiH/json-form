@@ -24,6 +24,10 @@ export function checkboxPropsGeneric<T, Query extends Record<string, any>, Optio
         dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         /** 按钮类型(checkbox|button), 默认 checkbox */
         type: { type: String as PropType<'checkbox' | 'button'> },
+        /** 传递给组件的插槽 */
+        itemSlots: { type: Object as PropType<Partial<{
+            default: ((props: CheckboxSlotOption<T, Query, Option, OptionQuery>) => any);
+        }>> },
     } as const;
 }
 /** 插槽配置项 */
