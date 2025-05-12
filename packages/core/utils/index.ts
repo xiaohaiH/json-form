@@ -1,6 +1,9 @@
 import type { VNode } from 'vue-demi';
 import type { Hyphenate } from './base';
 
+/** 空函数 */
+export function loop() {}
+
 /**
  * 空值转为提供的默认值
  * @param {*} val 值为空时转为默认值

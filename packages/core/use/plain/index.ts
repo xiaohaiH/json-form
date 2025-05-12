@@ -9,7 +9,7 @@ import {
     unref,
     watch,
 } from 'vue-demi';
-import { clone, emptyToValue, get, getChained, isEmptyValue, isEqualExcludeEmptyValue } from '../../utils/index';
+import { clone, emptyToValue, get, getChained, isEmptyValue, isEqualExcludeEmptyValue, loop } from '../../utils/index';
 import { useDisableInCurrentCycle, useValue } from '../assist';
 import type { ProvideValue } from '../constant';
 import { defineCommonMethod, provideKey } from '../constant';
@@ -267,9 +267,20 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
         updateCheckedValue(value);
         wrapper?.insetSearch();
     }
+    /** 触发搜索事件 */
+    function trigger(value: T = checked.value as T) {
+        updateCheckedValue(value);
+        wrapper?.insetSearch();
+    }
 
     return {
+        /**
+         * 内部表单实例, 包含了更新表单值, 触发搜索事件等方法
+         */
         wrapper,
+        /**
+         * 表单项实例, 包含了重置, 更新表单值, 获取表单值等方法
+         */
         option,
         /**
          * 转换为只读属性, 防止被更改, 如需更改可以通过(updateCheckedValue|change)方法
@@ -279,11 +290,21 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
          * ```
          */
         checked: checked as DeepReadonly<Ref<ValueType | ValueType[]>>,
+        /** 获取表单值 */
         getQuery,
+        /** 获取最终渲染的数据源 */
         finalOption,
+        /** 是否隐藏 */
         insetHide,
+        /** 更新值 */
         updateCheckedValue,
+        /** 更新值并触发搜索事件(为实时搜索时, 会触发搜索事件) */
         change,
+        /** 触发搜索事件(为实时搜索时, 会触发搜索事件) */
+        trigger,
+        /** 搜索事件(直接触发搜索事件, 不受实时搜索影响) */
+        search: wrapper?.search || loop,
+        /** 重置表单字段 */
         reset: option.reset,
     };
 }
