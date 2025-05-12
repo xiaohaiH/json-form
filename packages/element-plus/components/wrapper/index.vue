@@ -22,7 +22,7 @@
 import { useWrapper } from '@xiaohaih/json-form-core';
 import { ElButton, ElForm } from 'element-plus';
 import type { SlotsType } from 'vue';
-import { computed, defineComponent, markRaw, onMounted, ref, watch } from 'vue';
+import { computed, defineComponent, markRaw, nextTick, onMounted, ref, watch } from 'vue';
 import { pick } from '../../src/utils';
 import { getComponent } from './component-assist';
 import type { FormSlots } from './types';
@@ -51,29 +51,37 @@ export default defineComponent({
         }
         watch(props.datum, setOption);
 
+        /** 验证 element-plus 的表单 */
         function validate(...args: Parameters<InstanceType<typeof ElForm>['validate']>) {
             return formRef.value!.validate(...args);
         }
+        /** 验证 element-plus 的表单字段 */
         function validateField(...args: Parameters<InstanceType<typeof ElForm>['validateField']>) {
             return formRef.value!.validateField(...args);
         }
+        /** 清除 element-plus 的表单验证 */
         function clearValidate(...args: Parameters<InstanceType<typeof ElForm>['clearValidate']>) {
             return formRef.value!.clearValidate(...args);
         }
-        const search = (emit as any).bind(null, 'search') as unknown as (typeof emits)['search'];
-        const reset = (emit as any).bind(null, 'reset') as unknown as (typeof emits)['reset'];
-        const fieldChange = (emit as any).bind(null, 'fieldChange') as unknown as (typeof emits)['fieldChange'];
-        const wrapper = useWrapper(props, { search, reset, fieldChange });
+        const emitSearch = (emit as any).bind(null, 'search') as unknown as (typeof emits)['search'];
+        const emitReset = (emit as any).bind(null, 'reset') as unknown as (typeof emits)['reset'];
+        const emitFieldChange = (emit as any).bind(null, 'fieldChange') as unknown as (typeof emits)['fieldChange'];
+        const wrapper = useWrapper(props, { search: emitSearch, reset: emitReset, fieldChange: emitFieldChange });
+        /** 重置并搜索 */
         function resetAndSearch() {
-            wrapper.reset();
+            reset();
             wrapper.search();
+        }
+        function reset() {
+            wrapper.reset();
+            setTimeout(clearValidate);
         }
 
         const slotProps = { getProps: () => props, wrapper };
 
         onMounted(() => {
             emit('ready', wrapper.getQuery());
-            props.immediateSearch && search(wrapper.getQuery());
+            props.immediateSearch && emitSearch(wrapper.getQuery());
         });
 
         return {
@@ -83,6 +91,7 @@ export default defineComponent({
             validate,
             validateField,
             clearValidate,
+            reset,
             getComponent,
             resetAndSearch,
             slotProps,

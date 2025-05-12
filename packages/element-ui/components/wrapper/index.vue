@@ -27,7 +27,7 @@
 <script lang="ts">
 import { useWrapper } from '@xiaohaih/json-form-core';
 import { Button as ElButton, Form as ElForm } from 'element-ui';
-import { computed, defineComponent, markRaw, onMounted, ref, watch } from 'vue-demi';
+import { computed, defineComponent, markRaw, nextTick, onMounted, ref, watch } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
 import { getComponent } from './component-assist';
 import type { FormSlots } from './types';
@@ -59,45 +59,40 @@ export default defineComponent({
         }
         watch(props.datum, setOption);
 
-        /**
-         * 验证表单
-         * 调用Element UI表单的validate方法验证整个表单
-         */
+        /** 验证 element-plus 的表单 */
         function validate(...args: Parameters<InstanceType<typeof ElForm>['validate']>) {
             return formRef.value!.validate(...args);
         }
 
-        /**
-         * 验证表单字段
-         * 调用Element UI表单的validateField方法验证特定字段
-         */
+        /** 验证 element-plus 的表单字段 */
         function validateField(...args: Parameters<InstanceType<typeof ElForm>['validateField']>) {
             return formRef.value!.validateField(...args);
         }
 
-        /**
-         * 清除验证
-         * 调用Element UI表单的clearValidate方法清除表单验证结果
-         */
+        /** 清除 element-plus 的表单验证 */
         function clearValidate(...args: Parameters<InstanceType<typeof ElForm>['clearValidate']>) {
             return formRef.value!.clearValidate(...args);
         }
 
         // 绑定事件处理函数
-        const search = (emit as any).bind(null, 'search') as unknown as (typeof emits)['search'];
-        const reset = (emit as any).bind(null, 'reset') as unknown as (typeof emits)['reset'];
-        const fieldChange = (emit as any).bind(null, 'fieldChange') as unknown as (typeof emits)['fieldChange'];
+        const emitSearch = (emit as any).bind(null, 'search') as unknown as (typeof emits)['search'];
+        const emitReset = (emit as any).bind(null, 'reset') as unknown as (typeof emits)['reset'];
+        const emitFieldChange = (emit as any).bind(null, 'fieldChange') as unknown as (typeof emits)['fieldChange'];
 
         // 使用核心库提供的wrapper钩子
-        const wrapper = useWrapper(props, { search, reset, fieldChange });
+        const wrapper = useWrapper(props, { search: emitSearch, reset: emitReset, fieldChange: emitFieldChange });
 
         /**
          * 重置并搜索
          * 先重置表单，然后执行搜索操作
          */
         function resetAndSearch() {
-            wrapper.reset();
+            reset();
             wrapper.search();
+        }
+        function reset() {
+            wrapper.reset();
+            setTimeout(clearValidate);
         }
 
         // 插槽属性，提供给子组件访问props和wrapper实例
@@ -106,7 +101,7 @@ export default defineComponent({
         // 组件挂载后触发ready事件，并根据配置执行立即搜索
         onMounted(() => {
             emit('ready', wrapper.getQuery());
-            props.immediateSearch && search(wrapper.getQuery());
+            props.immediateSearch && emitSearch(wrapper.getQuery());
         });
 
         return {
@@ -116,6 +111,7 @@ export default defineComponent({
             validate,
             validateField,
             clearValidate,
+            reset,
             getComponent,
             resetAndSearch,
             slotProps,
