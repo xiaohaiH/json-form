@@ -1,5 +1,11 @@
 # @xiaohaih/json-form-el
 
+## 0.1.3
+
+### Patch Changes
+
+- 更新 AssistOption 类型声明, 支持主动声明时可声明未在配置中的字段, 支持回调中的 query 和 options 可读取未声明的字段
+
 ## 0.1.2
 
 ### Patch Changes
