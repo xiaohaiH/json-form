@@ -13,19 +13,21 @@ type AssistOption<T extends Record<string, any>, O extends Partial<Record<keyof 
 /** 将对象中的值转为数组 */
 type objAttr2Arr<T> = { [K in keyof T]: T[K][] };
 /** 当泛型为一个参数时, 辅助推断类型 */
-type Assist2Option<T extends Record<string, Record<'value' | 'options', any>>> = {
+type Assist2Option<T extends Record<string, PartialOptions>> = {
     [K in keyof T]?: JSONFormTs.JSONFormOption<T[K]['value'], Option2Obj<T, 'value'>, T[K]['options'], objAttr2Arr<Option2Obj<T, 'options'>>> | FalsyType;
 };
 /** 提取内部的值 */
-type Option2Obj<T extends Record<string, Record<'value' | 'options', any>>, J extends 'value' | 'options'> = {
+type Option2Obj<T extends Record<string, PartialOptions>, J extends 'value' | 'options'> = {
     [K in keyof T]: T[K][J];
 };
 /** 假值类型 */
 type FalsyType = number | boolean | string | null | undefined;
+/** 可选的 options 类型 */
+type PartialOptions = Record<'value', any> & Partial<Record<'options', any>>;
 
 /** 定义配置项 */
 export function defineOption<T extends Record<string, any>, O extends Partial<Record<keyof T, any>>>(config: AssistOption<T, O>): AssistOption<T, O>;
-export function defineOption<T extends Record<string, Record<'value' | 'options', any>>>(config: Assist2Option<T>): Assist2Option<T>;
+export function defineOption<T extends Record<string, PartialOptions>>(config: Assist2Option<T>): Assist2Option<T>;
 export function defineOption(config: any) {
     return reactive(config);
 }
