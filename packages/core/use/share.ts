@@ -84,9 +84,7 @@ export function commonPropsGeneric<T, Query extends Record<string, any>>() {
         },
         /** 校验函数, 返回字符串不通过, 会触发提示 - 提交时触发 */
         validator: {
-            type: [Function] as PropType<
-                ((query: Query) => any) | ((query: Query) => Promise<any>)
-            >,
+            type: [Function] as PropType<(query: Query) => any | Promise<any>>,
         },
         /** 自定义返回字段 */
         customGetQuery: { type: Function as PropType<GetQuery<T, Query>> },

@@ -9,6 +9,8 @@ export function wrapperPropsGeneric() {
         searchAtDatumChanged: { type: Boolean as PropType<boolean>, default: undefined },
         /** 回填信息 */
         backfill: { type: Object as PropType<Record<string, any>> },
+        /** 自定义校验函数(内部校验通过后会触发此函数) */
+        validator: { type: Function as PropType<(query: Record<string, any>) => any | Promise<any>>, default: undefined },
         /** 校验失败时产生的提示 */
         toast: { type: Function as PropType<(msg: string) => void>, default: undefined },
         /** 配置空值 */

@@ -157,7 +157,7 @@ export function useWrapper(props: WrapperProps, option?: WrapperOption) {
     /** 自定义校验条件的值并弹出提示 */
     async function validateToast() {
         const r = await Promise.all(child.map((v) => v.validator?.(query.value)));
-        return r.find((v) => v && typeof v === 'string') as string;
+        return (r.find((v) => v && typeof v === 'string') as string) || props.validator?.(query.value);
     }
 
     return {
