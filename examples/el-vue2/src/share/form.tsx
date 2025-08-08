@@ -118,6 +118,7 @@ export function conditionFactory() {
                 placeholder: 'test',
                 labelKey: 'dictLabel',
                 valueKey: 'dictValue',
+                multiple: true,
                 options: [] as Record<'dictLabel' | 'dictValue', string>[],
                 getOptions(cb) {
                     setTimeout(() => {
