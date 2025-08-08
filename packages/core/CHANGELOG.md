@@ -1,5 +1,11 @@
 # @xiaohaih/json-form-core
 
+## 0.1.4
+
+### Patch Changes
+
+- 修复初始值为空数组, 且存在默认值时, 未用默认值替换空数组
+
 ## 0.1.0
 
 ### Minor Changes
