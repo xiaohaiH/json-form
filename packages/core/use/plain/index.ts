@@ -46,7 +46,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
     /** 初始是否存在回填值 */
     const initialBackfillValue = initialProps.fields?.length
         // 防止回填值不存在时产生一个空数组(undefined[])
-        ? (initialProps.fields as string[]).map((key) => initialProps.query[key]).filter(Boolean) as ValueType[]
+        ? emptyArr2Undef((initialProps.fields as string[]).map((key) => initialProps.query[key]).filter(Boolean)) as ValueType[]
         : initialProps.query[initialProps.field] as ValueType;
     /** 当前选中值 */
     const checked = ref<ValueType | ValueType[]>(initialBackfillValue !== undefined ? initialBackfillValue : getResetValue());
@@ -93,7 +93,10 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
 
     wrapper?.register(option);
     /** 不存在回填值且存在默认值或初始值时更新父级中的值 */
-    if (initialBackfillValue === undefined && (initialProps.defaultValue !== undefined || initialProps.initialValue !== undefined)) {
+    if (
+        (initialBackfillValue === undefined || initialBackfillValue === null)
+        && (initialProps.defaultValue !== undefined || initialProps.initialValue !== undefined)
+    ) {
         option.updateWrapperQuery();
     }
 
@@ -307,6 +310,10 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
         /** 重置表单字段 */
         reset: option.reset,
     };
+}
+
+function emptyArr2Undef<T>(arr: T[]): T[] | undefined {
+    return arr.length ? arr : undefined;
 }
 
 type Primitive = string | number | boolean | bigint | symbol | undefined | null;
