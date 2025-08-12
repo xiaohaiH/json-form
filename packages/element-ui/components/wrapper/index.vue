@@ -57,7 +57,7 @@ export default defineComponent({
         function setOption() {
             return typeof props.datum === 'function' ? props.datum() : props.datum;
         }
-        watch(props.datum, setOption);
+        watch(() => props.datum, setOption);
 
         /** 验证 element-plus 的表单 */
         function validate(...args: Parameters<InstanceType<typeof ElForm>['validate']>) {
