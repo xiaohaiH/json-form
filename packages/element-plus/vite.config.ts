@@ -33,12 +33,18 @@ export default defineConfig({
         vueJsx(),
         dts({
             tsconfigPath: './tsconfig.app.json',
+            // insertTypesEntry: true,
             // rollupTypes: true,
         }),
     ],
     optimizeDeps: {
         exclude: ['vue-demi'],
     },
+    // resolve: {
+    //     alias: {
+    //         'element-plus': fileURLToPath(new URL('./node_modules/element-plus/es/packages/element-plus', import.meta.url)),
+    //     },
+    // },
     build: {
         lib: {
             entry: resolve(__dirname, './src/index.ts'),

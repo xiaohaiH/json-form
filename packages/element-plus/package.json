@@ -31,6 +31,7 @@
     "types": "src/index.ts",
     "scripts": {
         "build": "node ./scripts/generate-version.mjs && vite build",
+        "build:dts": "tsdown",
         "postinstall": "node -e \"try{require('./scripts/postinstall.cjs')}catch(e){}\"",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
@@ -42,15 +43,19 @@
         "@xiaohaih/json-form-core": "workspace:*"
     },
     "devDependencies": {
+        "@popperjs/core": "^2.11.8",
         "@rollup/plugin-terser": "^0.4.4",
         "@tsconfig/node22": "^22.0.0",
         "@vitejs/plugin-vue": "^5.2.1",
         "@vitejs/plugin-vue-jsx": "^4.1.1",
         "element-plus": "^2.10.6",
+        "tsdown": "^0.14.0",
+        "unplugin-vue": "^7.0.1",
         "vite": "^6.1.0",
         "vite-plugin-dts": "^4.5.3",
         "vue": "^3.5.13",
-        "vue-component-type-helpers": "^2.1.10"
+        "vue-component-type-helpers": "^2.1.10",
+        "vue-tsc": "^3.0.5"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/",
