@@ -1,5 +1,14 @@
 # @xiaohaih/json-form-el
 
+## 0.1.5
+
+### Patch Changes
+
+- 修复element-plus在高版本中声明提示存在的问题
+- 修复 datum 更改后不生效的问题
+- Updated dependencies
+  - @xiaohaih/json-form-core@0.1.5
+
 ## 0.1.4
 
 ### Patch Changes

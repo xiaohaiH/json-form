@@ -1,2 +1,2 @@
 /** 版本号 */
-export const version = '0.1.4';
+export const version = '0.1.5';

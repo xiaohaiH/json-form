@@ -1,5 +1,11 @@
 # @xiaohaih/json-form-core
 
+## 0.1.5
+
+### Patch Changes
+
+- 修复element-plus在高版本中声明提示存在的问题
+
 ## 0.1.4
 
 ### Patch Changes
