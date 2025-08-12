@@ -82,7 +82,12 @@ export function formPropsGeneric<T = any, O = any>() {
     } as const;
 }
 /** 表单组件内部使用的属性定义 */
-export const formPropsPrivate = formPropsGeneric();
+export const formPropsPrivate = formPropsGeneric() as unknown as ReturnType<typeof formAssist> & {
+    datum: {
+        type: PropType<Record<string, any> | (() => Record<string, any>)>;
+        default: () => ({});
+    };
+};
 /**
  * 表单组件对外暴露的属性定义
  * 将表单属性和Element UI表单属性合并
@@ -90,7 +95,7 @@ export const formPropsPrivate = formPropsGeneric();
 export const formProps = emits2props({
     ...elFormProps,
     ...formPropsPrivate,
-});
+}) as unknown as typeof formPropsPrivate & typeof elFormProps;
 
 /**
  * 表单事件生成函数 - 泛型版本
@@ -121,7 +126,8 @@ export function formEmitsGeneric<T>() {
 }
 
 /** 表单组件内部使用的事件定义 */
-export const formEmitsPrivate = formEmitsGeneric();
+// eslint-disable-next-line ts/no-unnecessary-type-assertion
+export const formEmitsPrivate = formEmitsGeneric() as ReturnType<typeof formEmitsGeneric>;
 
 /**
  * 表单组件对外暴露的事件定义
@@ -130,7 +136,7 @@ export const formEmitsPrivate = formEmitsGeneric();
 export const formEmits = {
     ...elFormEmits,
     ...formEmitsPrivate,
-};
+} as typeof elFormEmits & typeof formEmitsPrivate;
 
 /**
  * 表单事件类型定义

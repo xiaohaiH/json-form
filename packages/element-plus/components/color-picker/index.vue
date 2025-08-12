@@ -35,6 +35,7 @@
 <script lang="ts">
 import { getNode, hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { ElColorPicker, ElFormItem } from 'element-plus';
+import type ElColorPickerType from 'element-plus/es/components/color-picker/src/color-picker.vue';
 import type { SlotsType } from 'vue';
 import { computed, defineComponent, ref } from 'vue';
 import { pick } from '../../src/utils';
@@ -49,7 +50,8 @@ export default defineComponent({
     name: 'HColorPicker',
     components: {
         ElFormItem,
-        ElColorPicker,
+        // fix: 修复ts4094类型报错
+        ElColorPicker: ElColorPicker as unknown as typeof ElColorPickerType,
     },
     inheritAttrs: false,
     props,

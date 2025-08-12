@@ -73,6 +73,7 @@
 <script lang="ts">
 import { getNode, hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { ElFormItem, ElOption, ElOptionGroup, ElSelect } from 'element-plus';
+import type SelectType from 'element-plus/es/components/select/index';
 import type { SlotsType } from 'vue';
 import { computed, customRef, defineComponent, ref } from 'vue';
 import { pick } from '../../src/utils';
@@ -87,7 +88,8 @@ export default defineComponent({
     name: 'HSelect',
     components: {
         ElFormItem,
-        ElSelect,
+        // fix: 修复打包时ts2742类型报错
+        ElSelect: ElSelect as unknown as typeof SelectType,
         ElOptionGroup,
         ElOption,
     },

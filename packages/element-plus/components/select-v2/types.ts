@@ -1,12 +1,13 @@
 import type { CamelCase, Obj2Props, PlainProps, usePlain } from '@xiaohaih/json-form-core';
 import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { ElSelectV2 } from 'element-plus';
+import type ElSelectV2Type from 'element-plus/es/components/select-v2/src/select.vue';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { CommonProps, CommonSlots, DynamicProps, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
-const elSelectV2Props = ElSelectV2.props as Obj2Props<ComponentProps<typeof ElSelectV2>>;
+const elSelectV2Props = ElSelectV2.props as Obj2Props<ComponentProps<typeof ElSelectV2Type>>;
 const elSelectV2Emits = emits2obj(ElSelectV2.emits);
 
 /** 组件传参 - 私有 */

@@ -21,7 +21,7 @@
 <script lang="ts">
 import { useWrapper } from '@xiaohaih/json-form-core';
 import { ElButton, ElForm } from 'element-plus';
-import type { SlotsType } from 'vue';
+import type { Ref, SlotsType } from 'vue';
 import { computed, defineComponent, markRaw, nextTick, onMounted, ref, watch } from 'vue';
 import { pick } from '../../src/utils';
 import { getComponent } from './component-assist';
@@ -36,7 +36,8 @@ export default defineComponent({
     name: 'HForm',
     components: {
         // SortComponent,
-        ElForm,
+        // fix: 修复打包时ts7056类型报错(The inferred type of this node exceeds the maximum length the compiler will serialize. An explicit type annotation is needed)
+        ElForm: ElForm as typeof ElForm,
         ElButton,
     },
     inheritAttrs: false,
@@ -86,7 +87,8 @@ export default defineComponent({
 
         return {
             ...wrapper,
-            formRef,
+            // fix: 修复打包时ts7056类型报错
+            formRef: formRef as Ref<InstanceType<typeof ElForm>>,
             options,
             validate,
             validateField,

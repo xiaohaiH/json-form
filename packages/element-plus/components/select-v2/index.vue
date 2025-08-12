@@ -39,6 +39,7 @@
 <script lang="ts">
 import { getNode, hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { ElFormItem, ElSelectV2 } from 'element-plus';
+import type ElSelectV2Type from 'element-plus/es/components/select-v2/src/select.vue';
 import type { SlotsType } from 'vue';
 import { computed, customRef, defineComponent, ref } from 'vue';
 import { pick } from '../../src/utils';
@@ -53,7 +54,8 @@ export default defineComponent({
     name: 'HSelectV2',
     components: {
         ElFormItem,
-        ElSelectV2,
+        // fix: 修复ts4094类型报错
+        ElSelectV2: ElSelectV2 as unknown as typeof ElSelectV2Type,
     },
     inheritAttrs: false,
     props,
