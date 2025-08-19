@@ -28,7 +28,7 @@ export default defineComponent({
     name: 'App',
     components: { Condition, ExampleForm },
     setup() {
-        return { version, coreVersion, JSONFormVersion };
+        return { version, UIVersion, coreVersion, JSONFormVersion };
     },
 });
 </script>

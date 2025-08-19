@@ -4,7 +4,7 @@ import { ElFormItem } from 'element-plus';
 export function conditionFactory() {
     return {
         condition: defineOption({
-            upload: {
+            上传: {
                 t: 'upload',
                 label: '上传',
                 staticProps: { class: 'flex' },
@@ -14,7 +14,7 @@ export function conditionFactory() {
                 },
                 autoUpload: false,
             },
-            selectV2: {
+            虚下拉框: {
                 t: 'select-v2',
                 label: '虚下拉框',
                 // style: { width: '240px' },
@@ -25,13 +25,13 @@ export function conditionFactory() {
                     { label: '第三', value: '3' },
                 ],
             },
-            color: {
+            颜色: {
                 t: 'color-picker',
                 label: '颜色',
                 showAlpha: true,
                 colorFormat: 'hsl',
             },
-            num: {
+            'input-num': {
                 t: 'input-number',
                 label: 'input-num',
                 placeholder: 'gs',
@@ -60,19 +60,19 @@ export function conditionFactory() {
                 showInput: true,
                 // range: true,
             },
-            switch: {
+            切换器: {
                 t: 'switch',
                 label: '切换器',
                 activeValue: '1',
                 inactiveValue: '0',
                 defaultValue: '0',
             },
-            time: {
+            时间: {
                 t: 'time-picker',
                 label: '时间',
                 placeholder: '快选择时间',
             },
-            timeSelect: {
+            时2: {
                 t: 'time-select',
                 label: '时2',
                 placeholder: '时间二',
@@ -94,11 +94,11 @@ export function conditionFactory() {
             },
             input2: {
                 t: 'input',
-                label: 'input2222',
+                label: 'input2',
                 placeholder: '666',
                 rules: [{ required: true, message: '必填项' }],
             },
-            select1: {
+            sel1: {
                 t: 'select',
                 label: 'sel1',
                 placeholder: '哈哈哈',
@@ -108,7 +108,7 @@ export function conditionFactory() {
                     { label: '第三', value: '3' },
                 ],
             },
-            select2: {
+            sel2: {
                 t: 'select',
                 label: 'sel2',
                 placeholder: 'test',
@@ -127,14 +127,14 @@ export function conditionFactory() {
                 },
                 rules: [{ required: true, message: '必填项' }],
             },
-            datepikcer1: {
+            date1: {
                 t: 'date-picker',
                 label: 'date1',
                 placeholder: 'fff',
                 // format: 'MM-DD',
                 // valueFormat: 'YYYY-MM-DD',
             },
-            date11: {
+            date2: {
                 t: 'date-picker',
                 type: 'daterange',
                 label: 'date2',
@@ -227,29 +227,31 @@ export function conditionFactory() {
                     ]);
                 },
             },
-            checkGroup1: {
+            'che-g1': {
                 t: 'checkbox-group',
                 label: 'che-g1',
                 type: 'button',
+                defaultValue: ['1'],
                 options: [
-                    { label: 'check1', value: 'check1' },
-                    { label: 'check2', value: 'check2' },
+                    { label: 'check1', value: '1' },
+                    { label: 'check2', value: '2' },
                 ],
             },
-            checkGroup2: {
+            'che-g2': {
                 t: 'checkbox-group',
                 label: 'che-g2',
+                defaultValue: ['2'],
                 rules: [{ required: true, message: '必填项' }],
                 getOptions(cb) {
                     setTimeout(() => {
                         cb([
-                            { label: 'che1', value: 'che1' },
-                            { label: 'che2', value: 'che2' },
+                            { label: 'che1', value: '1' },
+                            { label: 'che2', value: '2' },
                         ]);
                     }, 1000);
                 },
             },
-            check: {
+            多选框: {
                 t: 'checkbox',
                 label: '多选框',
                 staticProps: { label: '男生' },
@@ -259,38 +261,42 @@ export function conditionFactory() {
                 defaultValue: '1',
                 rules: [{ required: true, message: '必填项' }],
             },
-            radioGroup1: {
+            'radio-group1': {
                 t: 'radio-group',
                 label: 'radio-group1',
                 type: 'button',
+                defaultValue: '1',
                 options: [
-                    { label: 'radio1', value: 'radio1' },
-                    { label: 'radio2', value: 'radio2' },
+                    { label: 'radio1', value: '1' },
+                    { label: 'radio2', value: '2' },
                 ],
             },
-            radioGroup2: {
+            'rdg-cancel': {
                 t: 'radio-group',
                 label: 'rdg-cancel',
                 rules: [{ required: true, message: '必填项' }],
                 cancelable: true,
+                // defaultValue: '2',
                 getOptions(cb) {
                     setTimeout(() => {
                         cb([
-                            { label: 'rad1', value: 'rad1' },
-                            { label: 'rad2', value: 'rad2' },
+                            { label: 'rad1', value: '1' },
+                            { label: 'rad2', value: '2' },
                         ]);
                     }, 1000);
                 },
             },
             radio1: {
                 t: 'radio',
-                label: 'radio',
+                label: 'radio1',
                 value: '1',
                 staticProps: { label: '男生' },
+                // defaultValue: '1',
+                cancelable: true,
                 // type: 'button',
-                // initialValue: '1',
+                initialValue: '1',
             },
-            aite: {
+            '@提及': {
                 t: 'mention',
                 label: '@提及',
                 placeholder: '请输入@',
@@ -305,7 +311,7 @@ export function conditionFactory() {
                 },
                 clearable: true,
             },
-            inputTag: {
+            标签框: {
                 t: 'input-tag',
                 label: '标签框',
                 placeholder: '标签输入框',
@@ -316,7 +322,7 @@ export function conditionFactory() {
                 rules: [{ required: true, message: '必填项' }],
                 clearable: true,
             },
-            segmented: {
+            分段控制器: {
                 t: 'segmented',
                 label: '分段控制器',
                 rules: [{ required: true, message: '必填项' }],

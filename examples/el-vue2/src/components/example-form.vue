@@ -7,6 +7,7 @@
             ref="hFormRef"
             class="example-form flex flex-wrap"
             label-width="110px"
+            size="small"
             :datum="formCondition"
             :rules="rules"
             :backfill="query"
