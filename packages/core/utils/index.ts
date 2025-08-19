@@ -141,3 +141,78 @@ const hyphenateRE = /\B([A-Z])/g;
 export const hyphenate = cacheStringFunction(
     <T extends string>(str: T) => str.replace(hyphenateRE, '-$1').toLowerCase() as Hyphenate<T>,
 );
+
+/**
+ * 版本比较, 比较两个语义化版本号(支持预发布标签: alpha/beta/rc 等; 支持 `v` 前缀)
+ * @param {string} version1 待比较版本1
+ * @param {string} version2 待比较版本2
+ * @returns {number} 比较结果: -1 表示 version1 < version2, 0 表示相等, 1 表示 version1 > version2
+ * @example
+ * ```ts
+ * compareVersion('1.1.0-beta.16', '1.1.0') // -1
+ * compareVersion('2.10.7', '2.9.9') // 1
+ * compareVersion('v1.0.0', '1.0.0') // 0
+ * ```
+ */
+export function compareVersion(version1: string, version2: string): number {
+    // 移除前缀 'v' 如果存在
+    const v1 = version1.charAt(0) === 'v' ? version1.slice(1) : version1;
+    const v2 = version2.charAt(0) === 'v' ? version2.slice(1) : version2;
+
+    // 分割版本号
+    const parts1 = v1.split(/[.-]/);
+    const parts2 = v2.split(/[.-]/);
+
+    // 获取最大长度
+    const maxLength = Math.max(parts1.length, parts2.length);
+
+    for (let i = 0; i < maxLength; i++) {
+        const part1 = parts1[i] || '0';
+        const part2 = parts2[i] || '0';
+
+        // 检查是否为预发布版本(如 beta, alpha, rc 等)
+        const isPreRelease1 = /[a-z]/i.test(part1);
+        const isPreRelease2 = /[a-z]/i.test(part2);
+
+        // 如果一个是预发布版本, 另一个不是, 则非预发布版本更大
+        if (isPreRelease1 && !isPreRelease2) {
+            return -1;
+        }
+        if (!isPreRelease1 && isPreRelease2) {
+            return 1;
+        }
+
+        // 如果都是预发布版本, 按字母顺序比较
+        if (isPreRelease1 && isPreRelease2) {
+            if (part1 < part2) return -1;
+            if (part1 > part2) return 1;
+            continue;
+        }
+
+        // 数字比较
+        const num1 = Number.parseInt(part1, 10);
+        const num2 = Number.parseInt(part2, 10);
+
+        if (num1 < num2) return -1;
+        if (num1 > num2) return 1;
+    }
+
+    return 0;
+}
+
+/**
+ * 检查版本是否满足条件
+ * @param {string} currentVersion 当前版本
+ * @param {string} requiredVersion 要求的版本
+ * @param {string} operator 比较操作符 ('>=', '>', '<=', '<', '=', '==')
+ */
+export function checkVersion(currentVersion: string, requiredVersion: string, operator: '>=' | '>' | '<=' | '<' | '=' | '=='): boolean {
+    const comparison = compareVersion(currentVersion, requiredVersion);
+
+    if (operator === '>=') return comparison >= 0;
+    if (operator === '>') return comparison > 0;
+    if (operator === '<=') return comparison <= 0;
+    if (operator === '<') return comparison < 0;
+    if (operator === '=' || operator === '==') return comparison === 0;
+    return false;
+}
