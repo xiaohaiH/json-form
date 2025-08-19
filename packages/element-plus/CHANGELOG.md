@@ -1,5 +1,11 @@
 # @xiaohaih/json-form-plus
 
+## 0.1.6
+
+### Patch Changes
+
+- 修复element-plus 2.6.0以下版本单选框label无法定义
+
 ## 0.1.5
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @xiaohaih/json-form-el
 
+## 0.1.6
+
+### Patch Changes
+
+- 修复单选框label无法定义, 单个单选框无法取消选中
+
 ## 0.1.5
 
 ### Patch Changes

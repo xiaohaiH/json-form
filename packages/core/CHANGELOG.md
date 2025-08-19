@@ -1,5 +1,11 @@
 # @xiaohaih/json-form-core
 
+## 0.1.6
+
+### Patch Changes
+
+- 增加版本比较工具函数
+
 ## 0.1.5
 
 ### Patch Changes
