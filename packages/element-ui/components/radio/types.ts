@@ -50,6 +50,8 @@ export function radioPropsGeneric<T, Query extends Record<string, any>, Option, 
         dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         /** 按钮类型(radio|button), 默认 radio */
         type: { type: String as PropType<'radio' | 'button'> },
+        /** 选中状态是否可以被取消 */
+        cancelable: { type: Boolean as PropType<boolean>, default: undefined },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
             default: ((props: RadioSlotOption<T, Query, Option, OptionQuery>) => any);

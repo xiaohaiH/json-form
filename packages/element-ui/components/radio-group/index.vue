@@ -33,6 +33,7 @@
                         :disabled="item[disabledKey]"
                         @[eventName].native.prevent="customChange(item[valueKey], checked)"
                     >
+                        {{ item[labelKey] }}
                         <!-- <template v-for="(option, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">
                             <component :is="getNode(option)" v-bind="slotProps" v-bind.prop="row" :option="item" :labelKey="labelKey" :valueKey="valueKey" :disabledKey="disabledKey" />
                         </template> -->
@@ -126,7 +127,9 @@ export default defineComponent({
          */
         function customChange(newVal: string, currentVal: any) {
             // 如果点击的是当前已选中项，则设置为空值；否则设置为新值
-            plain.change(newVal === currentVal ? '' : newVal);
+            const val = newVal === currentVal ? '' : newVal;
+            plain.change(val);
+            val === '' && (document.activeElement as HTMLInputElement)?.blur?.();
         }
 
         // 计算插槽属性
@@ -137,7 +140,7 @@ export default defineComponent({
             extraOptions: {
                 value: plain.checked.value,
                 options: plain.finalOption.value,
-                onChange: customChange,
+                onChange: plain.change,
                 onCancelable: customChange,
                 radioType: radioType.value,
             },

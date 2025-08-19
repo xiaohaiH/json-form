@@ -17,9 +17,11 @@
                 :model-value="(checked as boolean)"
                 class="json-form-item__content"
                 v-bind="contentActualProps"
+                :label="contentActualProps[realLabelProp]"
                 @update:model-value="(change as () => void)"
                 @[eventName].prevent="customChange"
             >
+                {{ contentActualProps.label }}
                 <template v-for="(item, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">
                     <component :is="getNode(item)" v-bind="slotProps" v-bind.prop="row" />
                 </template>
@@ -35,14 +37,17 @@
 </template>
 
 <script lang="ts">
-import { getNode, hyphenate, usePlain } from '@xiaohaih/json-form-core';
-import { ElFormItem, ElRadio, ElRadioButton, ElRadioGroup } from 'element-plus';
+import { checkVersion, getNode, hyphenate, usePlain } from '@xiaohaih/json-form-core';
+import { ElFormItem, ElRadio, ElRadioButton, ElRadioGroup, version } from 'element-plus';
 import type { SlotsType } from 'vue';
 import { computed, defineComponent, ref } from 'vue';
 import { pick } from '../../src/utils';
 import { formItemPropKeys } from '../share';
 import type { RadioSlots } from './types';
 import { radioEmitsPrivate as emits, radioPropsPrivate as props } from './types';
+
+/** 小于 2.6 版本时, label 作为 value 使用 */
+const VALUE_KEY = checkVersion(version, '2.6.0', '<') ? 'value' as const : 'label' as const;
 
 /**
  * @file 单选框
@@ -79,7 +84,7 @@ export default defineComponent({
 
         /** 单选框选中事件 - 处理可取消选中 */
         function customChange() {
-            plain.change(plain.checked.value === formItemActualProps.value.value ? '' : formItemActualProps.value.value);
+            plain.change(plain.checked.value === contentActualProps.value.value ? '' : contentActualProps.value.value);
         }
         const slotProps = computed(() => ({
             getFormItemProps: () => formItemActualProps.value,
@@ -103,6 +108,7 @@ export default defineComponent({
             contentActualProps,
             radioType,
             eventName,
+            realLabelProp: VALUE_KEY,
             customChange,
             slotProps,
         };

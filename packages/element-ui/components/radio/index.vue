@@ -18,9 +18,12 @@
                 :value="checked"
                 class="json-form-item__content"
                 v-bind="contentActualProps"
+                :label="contentActualProps.value"
                 v-on="$listeners"
                 @input="change"
+                @[eventName].native.prevent="customChange"
             >
+                {{ contentActualProps.label }}
                 <template v-if="itemSlots.default" #default>
                     <component :is="getNode(itemSlots.default, slotProps)" />
                 </template>
@@ -64,6 +67,7 @@ export default defineComponent({
     // slots: Object as SlotsType<RadioSlots>,
     setup(props, ctx) {
         const radioType = computed(() => (props.type === 'button' ? 'ElRadioButton' : 'ElRadio'));
+        const eventName = computed(() => (props.cancelable ? 'click' : null));
 
         const formItemStaticProps = computed(() => {
             const { formItemProps } = props;
@@ -79,6 +83,12 @@ export default defineComponent({
             return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
         });
         const plain = usePlain(props);
+        /** 单选框选中事件 - 处理可取消选中 */
+        function customChange() {
+            const val = plain.checked.value === contentActualProps.value.value ? '' : contentActualProps.value.value;
+            plain.change(val);
+            val === '' && (document.activeElement as HTMLInputElement)?.blur?.();
+        }
         const slotProps = computed(() => ({
             getFormItemProps: () => formItemActualProps.value,
             getItemProps: () => contentActualProps.value,
@@ -97,8 +107,10 @@ export default defineComponent({
             getNode,
             ...plain,
             radioType,
+            eventName,
             formItemActualProps,
             contentActualProps,
+            customChange,
             slotProps,
         };
     },

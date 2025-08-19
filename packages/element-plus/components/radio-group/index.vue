@@ -22,11 +22,12 @@
                     <component
                         :is="radioType"
                         v-bind="itemProps"
-                        :label="(item as any)[labelKey]"
+                        :label="(item as any)[realLabelProp]"
                         :value="(item as any)[valueKey]"
                         :disabled="(item as any)[disabledKey]"
                         @[eventName].prevent="customChange((item as any)[valueKey], checked as string)"
                     >
+                        {{ (item as any)[labelKey] }}
                         <template v-for="(option, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">
                             <component :is="getNode(option)" v-bind="slotProps" v-bind.prop="row" :option="item" :labelKey="labelKey" :valueKey="valueKey" :disabledKey="disabledKey" />
                         </template>
@@ -44,14 +45,17 @@
 </template>
 
 <script lang="ts">
-import { getNode, hyphenate, usePlain } from '@xiaohaih/json-form-core';
-import { ElFormItem, ElRadio, ElRadioButton, ElRadioGroup } from 'element-plus';
+import { checkVersion, getNode, hyphenate, usePlain } from '@xiaohaih/json-form-core';
+import { ElFormItem, ElRadio, ElRadioButton, ElRadioGroup, version } from 'element-plus';
 import type { SlotsType } from 'vue';
 import { computed, defineComponent, ref } from 'vue';
 import { pick } from '../../src/utils';
 import { formItemPropKeys } from '../share';
 import type { RadioGroupSlots } from './types';
 import { radioGroupEmitsPrivate as emits, radioGroupPropsPrivate as props } from './types';
+
+/** 小于 2.6 版本时, label 作为 value 使用 */
+const VALUE_KEY = checkVersion(version, '2.6.0', '<') ? 'valueKey' : 'labelKey';
 
 /**
  * @file 单选框组
@@ -71,6 +75,7 @@ export default defineComponent({
     setup(props, ctx) {
         const radioType = computed(() => (props.type === 'button' ? 'ElRadioButton' : 'ElRadio'));
         const eventName = computed(() => (props.cancelable ? 'click' : null));
+        const realLabelProp = computed(() => props[VALUE_KEY]);
 
         const formItemStaticProps = computed(() => {
             const { formItemProps } = props;
@@ -117,6 +122,7 @@ export default defineComponent({
             contentActualProps,
             radioType,
             eventName,
+            realLabelProp,
             customChange,
             slotProps,
         };

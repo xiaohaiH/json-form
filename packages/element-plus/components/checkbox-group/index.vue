@@ -22,10 +22,11 @@
                     <component
                         :is="checkboxType"
                         v-bind="itemProps"
-                        :label="(item as any)[labelKey]"
+                        :label="(item as any)[realLabelProp]"
                         :value="(item as any)[valueKey]"
                         :disabled="(item as any)[disabledKey]"
                     >
+                        {{ (item as any)[labelKey] }}
                         <template v-for="(option, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">
                             <component :is="getNode(option)" v-bind="slotProps" v-bind.prop="row" :option="item" :labelKey="labelKey" :valueKey="valueKey" :disabledKey="disabledKey" />
                         </template>
@@ -43,14 +44,17 @@
 </template>
 
 <script lang="ts">
-import { getNode, hyphenate, usePlain } from '@xiaohaih/json-form-core';
-import { ElCheckbox, ElCheckboxButton, ElCheckboxGroup, ElFormItem } from 'element-plus';
+import { checkVersion, getNode, hyphenate, usePlain } from '@xiaohaih/json-form-core';
+import { ElCheckbox, ElCheckboxButton, ElCheckboxGroup, ElFormItem, version } from 'element-plus';
 import type { SlotsType } from 'vue';
 import { computed, defineComponent, ref } from 'vue';
 import { pick } from '../../src/utils';
 import { formItemPropKeys } from '../share';
 import type { CheckboxGroupSlots } from './types';
 import { checkboxGroupEmitsPrivate as emits, checkboxGroupPropsPrivate as props } from './types';
+
+/** 小于 2.6 版本时, label 作为 value 使用 */
+const VALUE_KEY = checkVersion(version, '2.6.0', '<') ? 'valueKey' : 'labelKey';
 
 /**
  * @file 复选框组
@@ -69,6 +73,7 @@ export default defineComponent({
     slots: Object as SlotsType<CheckboxGroupSlots>,
     setup(props, ctx) {
         const checkboxType = computed(() => (props.type === 'button' ? 'ElCheckboxButton' : 'ElCheckbox'));
+        const realLabelProp = computed(() => props[VALUE_KEY]);
 
         const formItemStaticProps = computed(() => {
             const { formItemProps } = props;
@@ -108,6 +113,7 @@ export default defineComponent({
             formItemActualProps,
             contentActualProps,
             checkboxType,
+            realLabelProp,
             slotProps,
         };
     },
