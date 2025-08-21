@@ -13,7 +13,11 @@
             <component :is="getNode(slots.default, slotProps)" />
         </template>
         <slot v-else v-bind="slotProps">
-            <ElRate :value="checked" class="json-form-item__content" v-bind="contentActualProps" v-on="$listeners" @input="change" />
+            <ElRate
+                :value="checked" class="json-form-item__content" v-bind="contentActualProps"
+                :disabled="globalReadonly || globalDisabled || contentActualProps.disabled"
+                v-on="$listeners" @input="change"
+            />
         </slot>
         <template v-if="slots.after || $slots.after">
             <component :is="getNode(slots.after || $slots.after, slotProps)" />

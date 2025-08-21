@@ -24,6 +24,7 @@
                 :value="checked"
                 class="json-form-item__content"
                 v-bind="contentActualProps"
+                :disabled="globalReadonly || globalDisabled || contentActualProps.disabled"
                 v-on="$listeners"
                 @input="change"
             />

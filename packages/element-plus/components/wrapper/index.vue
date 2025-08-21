@@ -1,5 +1,5 @@
 <template>
-    <ElForm v-bind="$attrs" ref="formRef" :model="query">
+    <ElForm v-bind="$attrs" ref="formRef" :disabled="disabled" :model="query">
         <slot name="prepend" v-bind="slotProps" />
         <template v-for="(item, key) of options" :key="key">
             <component :is="getComponent(item.t)!" v-if="item" v-bind="item" :field="item.as || key" :query="query" />

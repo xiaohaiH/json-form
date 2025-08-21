@@ -18,6 +18,7 @@
                 class="json-form-item__content"
                 v-bind="contentActualProps"
                 :label="contentActualProps[realLabelProp]"
+                :disabled="globalReadonly || globalDisabled || contentActualProps.disabled"
                 @update:model-value="(change as () => void)"
                 @[eventName].prevent="customChange"
             >

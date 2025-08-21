@@ -19,6 +19,8 @@
                 :model-value="checked === 0 ? 0 : (checked as number) || undefined"
                 class="json-form-item__content"
                 v-bind="contentActualProps"
+                :readonly="globalReadonly || contentActualProps.readonly"
+                :disabled="globalDisabled || contentActualProps.disabled"
                 @update:model-value="debounceChange"
             >
                 <template v-for="(item, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">

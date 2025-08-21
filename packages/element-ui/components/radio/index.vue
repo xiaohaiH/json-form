@@ -19,6 +19,7 @@
                 class="json-form-item__content"
                 v-bind="contentActualProps"
                 :label="contentActualProps.value"
+                :disabled="globalReadonly || globalDisabled || contentActualProps.disabled"
                 v-on="$listeners"
                 @input="change"
                 @[eventName].native.prevent="customChange"

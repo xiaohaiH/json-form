@@ -9,6 +9,10 @@ export const provideKey = 'json-form-wrapper';
 
 /** 容器注入值的类型 */
 export interface ProvideValue {
+    /** 表单是否只读 */
+    readonly?: Ref<boolean | undefined>;
+    /** 表单是否禁用 */
+    disabled?: Ref<boolean | undefined>;
     /**
      * 是否实时触发
      */

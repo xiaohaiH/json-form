@@ -23,6 +23,7 @@
                 :value="checked === 0 ? 0 : checked || undefined"
                 class="json-form-item__content"
                 v-bind="contentActualProps"
+                :disabled="globalReadonly || globalDisabled || contentActualProps.disabled"
                 v-on="$listeners"
                 @input="debounceChange"
             >

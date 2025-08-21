@@ -21,6 +21,7 @@
                 :httpRequest="(finalHttpRequest as any)"
                 :onExceed="handleExceed"
                 v-bind="contentActualProps"
+                :disabled="globalReadonly || globalDisabled || contentActualProps.disabled"
                 @update:file-list="change"
             >
                 <template #default>

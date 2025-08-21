@@ -311,6 +311,10 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
         search: wrapper?.search || loop,
         /** 重置表单字段 */
         reset: option.reset,
+        /** 表单级别的只读 */
+        globalReadonly: wrapper?.readonly || ref(false),
+        /** 表单级别的禁用 */
+        globalDisabled: wrapper?.disabled || ref(false),
     };
 }
 

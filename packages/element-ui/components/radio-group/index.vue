@@ -21,6 +21,7 @@
                 :value="checked"
                 class="json-form-item__content"
                 v-bind="contentActualProps"
+                :disabled="globalReadonly || globalDisabled || contentActualProps.disabled"
                 @input="change"
             >
                 <!-- 遍历选项生成单选框 -->

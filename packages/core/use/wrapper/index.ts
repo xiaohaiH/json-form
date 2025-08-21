@@ -59,6 +59,8 @@ export function useWrapper(props: WrapperProps, option?: WrapperOption) {
     const optionsObj = reactive<Record<string, any>>({});
     /** 提供给子条件组件的方法 */
     const wrapperInstance = defineProvideValue({
+        readonly: toRef(props, 'readonly', false),
+        disabled: toRef(props, 'disabled', false),
         realtime: toRef(props, 'realtime', false),
         register(compOption) {
             child.push(compOption);

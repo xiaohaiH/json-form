@@ -17,6 +17,8 @@
                 :model-value="(checked as string)"
                 class="json-form-item__content"
                 v-bind="contentActualProps"
+                :readonly="globalReadonly || contentActualProps.readonly"
+                :disabled="globalDisabled || contentActualProps.disabled"
                 @update:model-value="change"
             >
                 <template v-for="(item, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">
@@ -37,7 +39,7 @@
 import { getNode, hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { ElDatePicker, ElFormItem } from 'element-plus';
 import type { SlotsType } from 'vue';
-import { computed, defineComponent, reactive, toRefs } from 'vue';
+import { computed, defineComponent, reactive, readonly, toRefs } from 'vue';
 import { pick } from '../../src/utils';
 import { formItemPropKeys } from '../share';
 import type { DatePickerSlots } from './types';

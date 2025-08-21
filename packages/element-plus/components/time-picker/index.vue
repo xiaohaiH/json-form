@@ -17,6 +17,8 @@
                 :value-format="valueFormat"
                 class="json-form-item__content"
                 v-bind="contentActualProps"
+                :readonly="globalReadonly || contentActualProps.readonly"
+                :disabled="globalDisabled || contentActualProps.disabled"
                 @update:model-value="change"
             >
                 <template v-for="(item, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">

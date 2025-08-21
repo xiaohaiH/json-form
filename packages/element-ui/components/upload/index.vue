@@ -30,6 +30,7 @@
                 :on-error="handleError"
                 :file-list="checked"
                 v-bind="contentActualProps2"
+                :disabled="globalReadonly || globalDisabled || contentActualProps2.disabled"
                 v-on="$listeners"
             >
                 <!-- 自定义默认内容插槽，暂时注释掉

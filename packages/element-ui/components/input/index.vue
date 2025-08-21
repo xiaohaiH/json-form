@@ -23,6 +23,8 @@
                 class="json-form-item__content"
                 v-bind="contentActualProps"
                 v-on="$listeners"
+                :readonly="globalReadonly || contentActualProps.readonly"
+                :disabled="globalDisabled || contentActualProps.disabled"
                 @input="debounceChange"
                 @keydown.native.enter="enterHandle"
             >

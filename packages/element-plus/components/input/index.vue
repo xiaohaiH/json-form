@@ -17,6 +17,8 @@
                 :model-value="(checked as string)"
                 class="json-form-item__content"
                 v-bind="contentActualProps"
+                :readonly="globalReadonly || contentActualProps.readonly"
+                :disabled="globalDisabled || contentActualProps.disabled"
                 @update:model-value="debounceChange"
                 @keydown.enter="enterHandle"
             >

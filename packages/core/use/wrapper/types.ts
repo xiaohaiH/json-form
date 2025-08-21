@@ -17,6 +17,10 @@ export function wrapperPropsGeneric() {
         emptyValues: { type: Array as PropType<any[]>, default: () => ['', null, undefined] },
         /** 设置空值时返回的值 */
         emptyValue: { type: Function as PropType<() => any>, default: undefined },
+        /** 表单是否只读(元素没有只读属性的直接禁用) */
+        readonly: { type: Boolean as PropType<boolean>, default: undefined },
+        /** 表单是否禁用 */
+        disabled: { type: Boolean as PropType<boolean>, default: undefined },
     } as const;
 }
 /** 容器类 props */

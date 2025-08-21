@@ -16,6 +16,7 @@
                 :model-value="(checked as any)"
                 class="json-form-item__content"
                 v-bind="contentActualProps"
+                :disabled="globalReadonly || globalDisabled || contentActualProps.disabled"
                 @update:model-value="(change as () => void)"
             >
                 <template v-for="item of finalOption" :key="item[valueKey]">
