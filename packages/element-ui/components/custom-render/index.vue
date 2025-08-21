@@ -20,7 +20,7 @@
 <script lang="ts">
 import { hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { FormItem as ElFormItem } from 'element-ui';
-import { computed, defineComponent, markRaw, reactive, ref } from 'vue-demi';
+import { computed, defineComponent, markRaw, reactive, ref, watch } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
 import { formItemPropKeys } from '../share';
 import { customRenderEmitsPrivate as emits, customRenderPropsPrivate as props } from './types';
@@ -63,6 +63,9 @@ export default defineComponent({
             plain,
         };
 
+        // 主动监听 checked 变量, 在发生改变后自动触发搜索事件(如果是实时搜索时), 便于外部开发
+        // 不需要监听深层, 因为深层是引用类型
+        watch(plain.checked, plain.change);
         // 调用自定义渲染函数获取渲染内容
         const customRender = getNode(props.render(slotProps));
 

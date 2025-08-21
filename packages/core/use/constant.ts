@@ -29,8 +29,9 @@ export interface ProvideValue {
     updateQueryValue: (field: string, value: any, nativeField: string) => void;
     /**
      * 子组件内部值发生了变动, 由父级决定是否触发搜索事件(实时搜索时需要区分这两种方式)
+     * @param {string | string[]} [tryFields] 比较 query[tryFields] 与 backfill[tryFields]是否一致, 不一致时才触发搜索
      */
-    insetSearch: () => void;
+    insetSearch: (tryFields?: string | string[]) => void;
     /**
      * 提供给组件内部的直接触发到外部的搜索事件
      */

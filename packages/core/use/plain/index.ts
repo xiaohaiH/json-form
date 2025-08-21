@@ -60,7 +60,9 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
     const getQuery = () => {
         const _props = unref(props);
         if (_props.customGetQuery) return _props.customGetQuery(checked.value, emptyToValue, _props);
-        const _checked = clone(checked.value);
+        // fix: 上层或 custom-render 手动改变 query[field] 时无法触发
+        // 比如 query.a 是数组时, 由于此处深拷贝了, 导致 custom-render push事件无法触发
+        const _checked = checked.value;
         return _props.fields
             ? (_props.fields as string[]).reduce(
                     // eslint-disable-next-line no-sequences
@@ -144,7 +146,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                     isSyncedQueryValue = true;
                     isEmptyValue(_val) && !isEmptyValue(insetDefaultValue.value)
                         ? change(_val as T)
-                        : (checked.value = _val);
+                        : assignValueAndTrySearch(_val);
                 }
             },
             { flush: 'sync' },
@@ -275,6 +277,12 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
         updateCheckedValue(value);
         wrapper?.insetSearch();
     }
+    /** 直接赋值, 不触发父级同步值且触发搜索事件(如果是实时触发时) */
+    function assignValueAndTrySearch(value: any) {
+        checked.value = value;
+        const _props = unref(props);
+        wrapper?.insetSearch((_props.fields as string[]) || _props.field);
+    }
 
     return {
         /**
@@ -285,14 +293,8 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
          * 表单项实例, 包含了重置, 更新表单值, 获取表单值等方法
          */
         option,
-        /**
-         * 转换为只读属性, 防止被更改, 如需更改可以通过(updateCheckedValue|change)方法
-         * ```ts
-         * change('a');
-         * updateCheckedValue('a');
-         * ```
-         */
-        checked: checked as DeepReadonly<Ref<ValueType | ValueType[]>>,
+        /** 当前表单项的值 */
+        checked,
         /** 获取表单值 */
         getQuery,
         /** 获取最终渲染的数据源 */

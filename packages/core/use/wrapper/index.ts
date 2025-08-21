@@ -94,8 +94,20 @@ export function useWrapper(props: WrapperProps, option?: WrapperOption) {
             changedQueryObj[field] = value;
             option?.fieldChange?.({ field, value, query: query.value, nativeField });
         },
-        insetSearch() {
-            props.realtime && search();
+        insetSearch(tryFields?: string | string[]) {
+            if (!props.realtime) return;
+            const { backfill } = props;
+            const { value: _query } = query;
+            // query.value[tryFields]与props.backfill?.[tryFields]不一致时
+            // 说明是 query.value 更新了且未同步到外面
+            // 因此需要触发事件
+            if (tryFields
+                && (typeof tryFields === 'string'
+                    ? backfill?.[tryFields] === _query[tryFields]
+                    : tryFields.every((k) => backfill?.[k] === _query[k]))) {
+                return;
+            }
+            search();
         },
         search,
         removeUnreferencedField(field: string) {
@@ -120,9 +132,19 @@ export function useWrapper(props: WrapperProps, option?: WrapperOption) {
     // const getQuery = () => ({ ...query.value, ...props.backfill, ...changedQueryObj });
     const getQuery = () => ({ ...query.value });
     watch(
-        () => ({ ...props.backfill }),
+        // 扩大 backfill 的监听层级
+        // 以便直属子属性发生变化时也可触发
+        // 再深层的无需处理(存在引用关系)
+        () => {
+            const { backfill } = props;
+            if (!backfill) return {};
+            return Object.entries(backfill).reduce((p, [k, v]) => {
+                p[k] = v;
+                return p;
+            }, {} as Record<string, any>);
+        },
         (val, oldVal) => {
-            // 手动处理 query 的值于 backfill 保持一致
+            // 手动处理 query 的值与 backfill 保持一致
             // 防止 query.value 对象改变导致内部监听误触发
             Object.keys(query.value).forEach((k) => {
                 (val && hasOwn(val, k)) || delete query.value[k];
@@ -139,7 +161,9 @@ export function useWrapper(props: WrapperProps, option?: WrapperOption) {
             isChanged && Object.assign(query.value, newQuery);
             child.forEach((o) => o.onChangeByBackfill?.());
         },
-        { deep: true },
+        // 取消深度监听, 只监听直属属性
+        // 因为第二层的值是直接赋值的
+        // { deep: true },
     );
 
     async function search() {
