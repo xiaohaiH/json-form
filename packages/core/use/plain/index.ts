@@ -134,7 +134,8 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                 const _val = _props.backfillToValue(val, _field, _props.query);
                 if (
                     checked.value === _val
-                    || _field.toString() !== __field.toString()
+                    // 只做浅比较(引用对象不一致则重赋值)
+                    // || _field.toString() !== __field.toString()
                     || isEqualExcludeEmptyValue(_val, checked.value)
                 ) {
                     return;

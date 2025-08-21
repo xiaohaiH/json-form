@@ -17,7 +17,8 @@ export function emptyToValue<T>(val: any, defaultVal: T) {
 
 /** 判断两个值是否相等, 排除掉空值 */
 export function isEqualExcludeEmptyValue(x: any, y: any) {
-    return (isEmptyValue(x) && isEmptyValue(y)) || isEqual(x, y);
+    // 不做引用类型的比较, 防止引用地址不同 导致无法赋值
+    return (isEmptyValue(x) && isEmptyValue(y)); // || isEqual(x, y);
 }
 
 /** 判断是否是空值(null, undefined, '') */
