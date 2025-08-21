@@ -1,5 +1,11 @@
 # @xiaohaih/json-form-core
 
+## 0.1.8
+
+### Patch Changes
+
+- 取消引用类型的比较
+
 ## 0.1.7
 
 ### Patch Changes

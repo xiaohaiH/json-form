@@ -1,5 +1,13 @@
 # @xiaohaih/json-form-el
 
+## 0.1.8
+
+### Patch Changes
+
+- 取消引用类型的比较
+- Updated dependencies
+  - @xiaohaih/json-form-core@0.1.8
+
 ## 0.1.7
 
 ### Patch Changes
