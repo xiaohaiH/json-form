@@ -1,5 +1,13 @@
 # @xiaohaih/json-form-el
 
+## 0.1.7
+
+### Patch Changes
+
+- 支持表单级别的只读, 优化custom-render的开发体验
+- Updated dependencies
+  - @xiaohaih/json-form-core@0.1.7
+
 ## 0.1.6
 
 ### Patch Changes
