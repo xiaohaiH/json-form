@@ -52,12 +52,12 @@ export default defineComponent({
     setup(props, { emit }) {
         // 表单引用
         const formRef = ref<InstanceType<typeof ElForm>>();
-        /** 格式化表单配置项(防止 template 中报错, 直接设置为 Record<string, any>) */
-        const options = ref<Record<string, any>>(setOption());
+        /** 格式化表单配置项(防止 template 中报错, 直接设置为 any) */
+        const options = ref<any>();
         function setOption() {
-            return typeof props.datum === 'function' ? props.datum() : props.datum;
+            options.value = typeof props.datum === 'function' ? props.datum() : props.datum;
         }
-        watch(() => props.datum, setOption);
+        watch(() => props.datum, setOption, { immediate: true });
 
         /** 验证 element-plus 的表单 */
         function validate(...args: Parameters<InstanceType<typeof ElForm>['validate']>) {

@@ -46,11 +46,11 @@ export default defineComponent({
     slots: Object as SlotsType<FormSlots<any>>,
     setup(props, { emit }) {
         const formRef = ref<InstanceType<typeof ElForm>>();
-        const options = ref<any>(setOption());
+        const options = ref<any>();
         function setOption() {
-            return typeof props.datum === 'function' ? props.datum() : props.datum;
+            options.value = typeof props.datum === 'function' ? props.datum() : props.datum;
         }
-        watch(() => props.datum, setOption);
+        watch(() => props.datum, setOption, { immediate: true });
 
         /** 验证 element-plus 的表单 */
         function validate(...args: Parameters<InstanceType<typeof ElForm>['validate']>) {
