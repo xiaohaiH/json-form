@@ -1,6 +1,6 @@
 import type { CamelCase, Obj2Props, PlainProps, usePlain } from '@xiaohaih/json-form-core';
 import { emits2props, plainProps } from '@xiaohaih/json-form-core';
-import type { TreeComponentProps } from 'element-plus';
+import type { ElSelect, TreeComponentProps } from 'element-plus';
 import { ElTree, ElTreeSelect } from 'element-plus';
 // import { SelectProps as elSelectProps } from 'element-plus/es/components/select/src/select';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
@@ -9,7 +9,7 @@ import type { CommonProps, CommonSlots, DynamicProps, FormItemProps, StaticProps
 import { commonProps, formItemProps } from '../share';
 
 // 主动提取 props, 不从内部导入, 防止 2.9.5版本与高版本导出名称不一致
-const elSelectProps = ElTreeSelect.props as Obj2Props<ComponentProps<typeof ElTreeSelect>>;
+const elSelectProps = ElTreeSelect.props as Obj2Props<ComponentProps<typeof ElSelect> & ComponentProps<typeof ElTree>>;
 
 /** 组件传参 - 私有 */
 export function treeSelectPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
@@ -28,10 +28,6 @@ export function treeSelectPropsGeneric<T, Query extends Record<string, any>, Opt
         filterable: { type: Boolean as PropType<boolean>, default: true },
         /** 是否可清除 */
         clearable: { type: Boolean as PropType<boolean>, default: true },
-        /** 过滤方法 */
-        filterMethod: {
-            type: Function as unknown as PropType<(val: string, option: unknown, index: number, arr: unknown[]) => boolean>,
-        },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
             header: ((props: TreeSelectSlotOption<T, Query, Option, OptionQuery>) => any);
