@@ -18,8 +18,10 @@
                 :model-value="(checked as string[])"
                 :filter-method="filterMethod && customFilterMethod"
                 :valueKey="valueKey"
+                :loading="loading"
                 class="json-form-item__content"
                 v-bind="contentActualProps"
+                :remote-method="remoteMethod"
                 :disabled="globalReadonly || globalDisabled || contentActualProps.disabled"
                 @update:model-value="change"
             >
@@ -122,9 +124,12 @@ export default defineComponent({
         const customFilterMethod = (val: string) => {
             filterValue.value = val;
         };
+        function remoteMethod(val: string) {
+            plain.getOptions('other', { filterValue: val });
+        }
         const filterSource = computed(() => {
             const val = filterValue.value;
-            if (!val) return plain.finalOption.value;
+            if (!val || contentActualProps.value.remote) return plain.finalOption.value;
             // 如果是分组数据, 只过滤实际选项
             const { groupChildrenKey: key, group } = props;
             return plain.finalOption.value.reduce<any[]>((p, v: any) => {
@@ -147,6 +152,7 @@ export default defineComponent({
                 options: filterSource.value,
                 filterValue: filterValue.value,
                 filterMethod: props.filterMethod && customFilterMethod,
+                remoteMethod,
                 onChange: plain.change,
             },
             plain,
@@ -161,6 +167,7 @@ export default defineComponent({
             contentActualProps,
             filterValue,
             customFilterMethod,
+            remoteMethod,
             filterSource,
             slotProps,
         };

@@ -62,6 +62,8 @@ export interface SelectSlotOption<T, Query extends Record<string, any>, Option, 
         options: Option[];
         filterValue: string;
         filterMethod: ((val: string) => void) | undefined;
+        /** 主动触发远程搜索 */
+        remoteMethod: (val: string) => void;
         onChange: (value: T) => void;
     };
     plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;

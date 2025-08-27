@@ -17,8 +17,10 @@
                 :clearable="clearable"
                 :data="finalOption"
                 :model-value="(checked as string[])"
+                :loading="loading"
                 class="json-form-item__content"
                 v-bind="contentActualProps"
+                :remote-method="contentActualProps.remote ? remoteMethod : undefined"
                 :disabled="globalReadonly || globalDisabled || contentActualProps.disabled"
                 @update:model-value="change"
             >
@@ -75,6 +77,9 @@ export default defineComponent({
         });
         const plain = usePlain(props);
 
+        function remoteMethod(val: string) {
+            plain.getOptions('other', { filterValue: val });
+        }
         const slotProps = computed(() => ({
             getFormItemProps: () => formItemActualProps.value,
             getItemProps: () => contentActualProps.value,
@@ -93,6 +98,7 @@ export default defineComponent({
             ...plain,
             formItemActualProps,
             contentActualProps,
+            remoteMethod,
             slotProps,
         };
     },

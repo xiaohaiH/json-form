@@ -103,6 +103,8 @@ export interface SelectSlotOption<T, Query extends Record<string, any>, Option, 
         filterValue: string;
         /** 过滤方法 */
         filterMethod: ((val: string) => void) | undefined;
+        /** 主动触发远程搜索 */
+        remoteMethod: (val: string) => void;
         /** 值变更处理函数 */
         onChange: (value: T) => void;
     };
