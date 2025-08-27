@@ -83,7 +83,19 @@ export default defineComponent({
         };
         const filterSource = computed(() => {
             const val = filterValue.value;
-            return val ? plain.finalOption.value.filter(props.filterMethod!.bind(null, val)) : plain.finalOption.value;
+            if (!val) return plain.finalOption.value;
+            // 如果是分组数据, 只过滤实际选项
+            const key = contentActualProps.value.props?.options || 'options';
+            return plain.finalOption.value.reduce<any[]>((p, v: any) => {
+                if (v[key]) {
+                    const r = v[key].filter(props.filterMethod!.bind(null, val));
+                    r.length && p.push({ ...v, [key]: r });
+                }
+                else {
+                    props.filterMethod!(val, v) && p.push(v);
+                }
+                return p;
+            }, []);
         });
         const slotProps = computed(() => ({
             getFormItemProps: () => formItemActualProps.value,

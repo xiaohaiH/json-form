@@ -55,7 +55,7 @@ export function selectPropsGeneric<T, Query extends Record<string, any>, Option,
         dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         /** 是否将选项进行分组 */
         group: { type: Boolean as PropType<boolean>, default: undefined },
-        /** 存在分组时的子级键 @default true */
+        /** 存在分组时的子级键 @default children */
         groupChildrenKey: { type: String as PropType<string>, default: 'children' },
         /** 展示的字段 */
         labelKey: { type: String as PropType<string>, default: 'label' },
