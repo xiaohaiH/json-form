@@ -1,5 +1,11 @@
 # @xiaohaih/json-form-el
 
+## 0.1.9
+
+### Patch Changes
+
+- 修复下拉框存在分组时搜索无法过滤
+
 ## 0.1.8
 
 ### Patch Changes
