@@ -52,6 +52,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
     const checked = ref<ValueType | ValueType[]>(initialBackfillValue !== undefined ? initialBackfillValue : getResetValue());
     /** 远程获取的数据源 */
     const remoteOption = ref<Option[]>([]) as Ref<Option[]>;
+    const loading = ref(false);
     /** 渲染的数据源(远程数据源 > 本地数据源) */
     const finalOption = computed(() => (remoteOption.value.length ? remoteOption.value : unref(props).options));
     unwatchs.push(
@@ -218,23 +219,27 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
     );
 
     // 监听 getOptions 选项
-    unwatchs.push(watch(() => unref(props).getOptions, getOption.bind(null, 'initial')));
+    unwatchs.push(watch(() => unref(props).getOptions, async () => getOption('initial')));
     nextTick(getOption.bind(null, 'initial'));
 
     /** 获取数据源发生变化事件 */
-    function getOption(trigger: 'initial' | 'depend') {
+    async function getOption(trigger: 'initial' | 'depend' | 'other', option?: { filterValue?: string }) {
         const _props = unref(props);
-        _props.getOptions?.(
+        if (!_props.getOptions) return;
+        loading.value = true;
+        const maybePromise = _props.getOptions(
             (data) => {
                 const _checked = checked.value;
                 // 重置 checked, 防止增加 option 后, select 值没更新的问题
                 checked.value = undefined as any;
                 remoteOption.value = (data as Option[]) || [];
                 checked.value = _checked;
+                loading.value = false;
             },
             _props.query || {},
             {
                 trigger,
+                ...option,
                 options: toRaw(wrapper?.options) || {},
                 changeInitialValue(value) {
                     insetInitialValue.value = value;
@@ -261,6 +266,10 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                 },
             },
         );
+        if (maybePromise) {
+            await maybePromise;
+            loading.value = false;
+        }
     }
     /**
      * 更新选中值(父级也同步更改)
@@ -306,10 +315,16 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
          * 表单项实例, 包含了重置, 更新表单值, 获取表单值等方法
          */
         option,
+        /** 数据源获取状态 */
+        loading,
+        /** 主动更新数据源 */
+        getOptions: getOption,
         /** 当前表单项的值 */
         checked,
         /** 获取表单值 */
         getQuery,
+        /** 远程获取的数据源 */
+        remoteOption,
         /** 获取最终渲染的数据源 */
         finalOption,
         /** 是否隐藏 */

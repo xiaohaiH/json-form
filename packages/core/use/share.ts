@@ -21,9 +21,11 @@ export type ValueType = number | string | boolean | any[] | Record<string, any>;
 export interface TriggerOption<T, Query extends Record<string, any>, OptionQuery extends Record<string, any>> {
     /**
      * 触发来源
-     * @enum {('initial'|'depend')} initial(初始化), depend(依赖项改变)
+     * @enum {('initial'|'depend'|'other')} initial(初始化), depend(依赖项改变)
      */
     trigger: string;
+    /** 用于下拉框等存在筛选值的组件 */
+    filterValue?: string;
     /**
      * 所有条件的数据源
      * @enum {Record<string, Record<string, any>[]>}
@@ -49,6 +51,7 @@ export interface TriggerOption<T, Query extends Record<string, any>, OptionQuery
      * @param {boolean} [option.updateDefaultValue] 是否将该值设为默认值
      */
     search: (value: T, option?: Partial<Record<'updateInitialValue' | 'updateDefaultValue', boolean>>) => this;
+    [index: string]: any;
 }
 
 /** 自定义返回字段 */
