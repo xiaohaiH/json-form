@@ -15,9 +15,8 @@
             <ElTreeSelect
                 :filterable="filterable"
                 :clearable="clearable"
-                :data="filterSource"
+                :data="finalOption"
                 :model-value="(checked as string[])"
-                :filter-method="filterMethod && customFilterMethod"
                 class="json-form-item__content"
                 v-bind="contentActualProps"
                 :disabled="globalReadonly || globalDisabled || contentActualProps.disabled"
@@ -76,23 +75,13 @@ export default defineComponent({
         });
         const plain = usePlain(props);
 
-        const filterValue = ref('');
-        const customFilterMethod = (val: string) => {
-            filterValue.value = val;
-        };
-        const filterSource = computed(() => {
-            const val = filterValue.value;
-            return val ? plain.finalOption.value.filter(props.filterMethod!.bind(null, val)) : plain.finalOption.value;
-        });
         const slotProps = computed(() => ({
             getFormItemProps: () => formItemActualProps.value,
             getItemProps: () => contentActualProps.value,
             getProps: () => props,
             extraOptions: {
                 modelValue: plain.checked.value,
-                options: filterSource.value,
-                filterValue: filterValue.value,
-                filterMethod: props.filterMethod && customFilterMethod,
+                options: plain.finalOption.value,
                 onChange: plain.change,
             },
             plain,
@@ -104,9 +93,6 @@ export default defineComponent({
             ...plain,
             formItemActualProps,
             contentActualProps,
-            filterValue,
-            customFilterMethod,
-            filterSource,
             slotProps,
         };
     },
