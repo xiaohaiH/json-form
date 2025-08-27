@@ -4,7 +4,7 @@ import { ElFormItem } from 'element-plus';
 export function conditionFactory() {
     return {
         condition: defineOption({
-            上传: {
+            '上传': {
                 t: 'upload',
                 label: '上传',
                 staticProps: { class: 'flex' },
@@ -14,18 +14,28 @@ export function conditionFactory() {
                 },
                 autoUpload: false,
             },
-            虚下拉框: {
+            '虚下拉框': {
                 t: 'select-v2',
                 label: '虚下拉框',
                 // style: { width: '240px' },
                 placeholder: '虚拟列表下拉框',
-                options: [
-                    { label: '第一', value: '1' },
-                    { label: '第二', value: '2' },
-                    { label: '第三', value: '3' },
-                ],
+                // options: [
+                //     { label: '第一', value: '1' },
+                //     { label: '第二', value: '2' },
+                //     { label: '第三', value: '3' },
+                // ],
+                remote: true,
+                getOptions(cb, query, { filterValue }) {
+                    if (!filterValue) return cb([]);
+                    setTimeout(() => {
+                        cb(Array.from({ length: ~~(Math.random() * 6) + 1 }, (_, i) => ({
+                            label: `${filterValue}-${i + 1}`,
+                            value: `${filterValue}-${i + 1}`,
+                        })));
+                    }, 1000);
+                },
             },
-            颜色: {
+            '颜色': {
                 t: 'color-picker',
                 label: '颜色',
                 showAlpha: true,
@@ -45,7 +55,7 @@ export function conditionFactory() {
                 // decreaseIcon: <div>123</div>,
                 // increaseIcon: <div>456</div>,
             },
-            rate: {
+            'rate': {
                 t: 'rate',
                 label: 'rate',
                 colors: ['#99A9BF', '#F7BA2A', '#FF9900'],
@@ -53,32 +63,32 @@ export function conditionFactory() {
                 showScore: true,
                 scoreTemplate: '{value} 分',
             },
-            slider: {
+            'slider': {
                 t: 'slider',
                 // style: { width: '400px' },
                 label: 'slider',
                 showInput: true,
                 // range: true,
             },
-            切换器: {
+            '切换器': {
                 t: 'switch',
                 label: '切换器',
                 activeValue: '1',
                 inactiveValue: '0',
                 defaultValue: '0',
             },
-            时间: {
+            '时间': {
                 t: 'time-picker',
                 label: '时间',
                 placeholder: '快选择时间',
             },
-            时2: {
+            '时2': {
                 t: 'time-select',
                 label: '时2',
                 placeholder: '时间二',
                 // style: { width: '160px' },
             },
-            input1: {
+            'input1': {
                 t: 'input',
                 label: 'input1',
                 placeholder: '哈哈哈',
@@ -92,13 +102,13 @@ export function conditionFactory() {
                 //     },
                 // },
             },
-            input2: {
+            'input2': {
                 t: 'input',
                 label: 'input2',
                 placeholder: '666',
                 rules: [{ required: true, message: '必填项' }],
             },
-            sel1: {
+            'sel1': {
                 t: 'select',
                 label: 'sel1',
                 placeholder: '哈哈哈',
@@ -108,33 +118,33 @@ export function conditionFactory() {
                     { label: '第三', value: '3' },
                 ],
             },
-            sel2: {
+            'sel2': {
                 t: 'select',
                 label: 'sel2',
-                placeholder: 'test',
+                placeholder: '远程搜索',
                 labelKey: 'dictLabel',
                 valueKey: 'dictValue',
                 multiple: true,
-                options: [] as Record<'dictLabel' | 'dictValue', string>[],
-                getOptions(cb) {
+                remote: true,
+                getOptions(cb, query, { filterValue }) {
+                    if (!filterValue) return cb([]);
                     setTimeout(() => {
-                        cb([
-                            { dictLabel: '第一一', dictValue: '11' },
-                            { dictLabel: '第二二', dictValue: '22' },
-                            { dictLabel: '第三三', dictValue: '33' },
-                        ]);
+                        cb(Array.from({ length: ~~(Math.random() * 6) + 1 }, (_, i) => ({
+                            dictLabel: `${filterValue}-${i + 1}`,
+                            dictValue: `${filterValue}-${i + 1}`,
+                        })));
                     }, 1000);
                 },
                 rules: [{ required: true, message: '必填项' }],
             },
-            date1: {
+            'date1': {
                 t: 'date-picker',
                 label: 'date1',
                 placeholder: 'fff',
                 // format: 'MM-DD',
                 // valueFormat: 'YYYY-MM-DD',
             },
-            date2: {
+            'date2': {
                 t: 'date-picker',
                 type: 'daterange',
                 label: 'date2',
@@ -144,33 +154,41 @@ export function conditionFactory() {
                 endPlaceholder: '止',
                 rules: [{ required: true, message: '必填项' }],
             },
-            tree: {
+            'tree': {
                 t: 'tree-select',
                 label: 'tree',
                 placeholder: '999',
                 rules: [{ required: true, message: '必填项' }],
-                getOptions(cb) {
+                filterNodeMethod: (value, item) => {
+                    return !value || (item.label2.includes(value) || item.value2.includes(value));
+                },
+                // remote: true,
+                // remoteMethod: console.log,
+                props: { label: 'label2', children: 'children2' },
+                nodeKey: 'value2',
+                getOptions(cb, query, { filterValue }) {
+                    // cb(filterValue ? Array.from({ length: 4 }, (v, i) => ({ label2: `${filterValue}-${i + 1}`, value2: `${filterValue}-${i + 1}` })) : []);
                     cb([
                         {
-                            label: 'cas2aa',
-                            value: 'cas2aa',
-                            children: [
-                                { label: 'cas2AA1', value: 'cas2AA1' },
-                                { label: 'cas2AA2', value: 'cas2AA2' },
+                            label2: 'cas2aa',
+                            value2: 'cas2aa',
+                            children2: [
+                                { label2: 'cas2埃安1', value2: 'cas2AA1' },
+                                { label2: 'cas2埃安2', value2: 'cas2AA2' },
                             ],
                         },
                         {
-                            label: 'cas2bb',
-                            value: 'cas2bb',
-                            children: [
-                                { label: 'cas2BB1', value: 'cas2BB1' },
-                                { label: 'cas2BB2', value: 'cas2BB2' },
+                            label2: 'cas2bb',
+                            value2: 'cas2bb',
+                            children2: [
+                                { label2: 'cas2BB1', value2: 'cas2BB1' },
+                                { label2: 'cas2BB2', value2: 'cas2BB2' },
                             ],
                         },
                     ]);
                 },
             },
-            cas1: {
+            'cas1': {
                 t: 'cascader',
                 label: 'cas1',
                 placeholder: 'fff',
@@ -200,7 +218,7 @@ export function conditionFactory() {
                 //     console.log(query, 111, query.date11, query.date22);
                 // },
             },
-            cas2: {
+            'cas2': {
                 t: 'cascader',
                 label: 'cas2',
                 placeholder: '999',
@@ -251,7 +269,7 @@ export function conditionFactory() {
                     }, 1000);
                 },
             },
-            多选框: {
+            '多选框': {
                 t: 'checkbox',
                 label: '多选框',
                 staticProps: { label: '男生' },
@@ -286,7 +304,7 @@ export function conditionFactory() {
                     }, 1000);
                 },
             },
-            radio1: {
+            'radio1': {
                 t: 'radio',
                 label: 'radio1',
                 value: '1',
@@ -311,18 +329,24 @@ export function conditionFactory() {
                 },
                 clearable: true,
             },
-            标签框: {
+            '标签框': {
                 t: 'input-tag',
                 label: '标签框',
                 placeholder: '标签输入框',
                 tagType: 'success',
                 itemSlots: {
-                    tag: ({ value, index }) => <div>{value}-{index}</div>,
+                    tag: ({ value, index }) => (
+                        <div>
+                            {value}
+                            -
+                            {index}
+                        </div>
+                    ),
                 },
                 rules: [{ required: true, message: '必填项' }],
                 clearable: true,
             },
-            分段控制器: {
+            '分段控制器': {
                 t: 'segmented',
                 label: '分段控制器',
                 rules: [{ required: true, message: '必填项' }],
@@ -330,7 +354,7 @@ export function conditionFactory() {
                     { label: 'aaa', value: 'aaa' },
                     { label: 'bbb', value: 'bbb' },
                     { label: 'ccc', value: 'ccc' },
-                ]
+                ],
             },
         }),
     };
