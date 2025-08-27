@@ -1,5 +1,14 @@
 # @xiaohaih/json-form-plus
 
+## 0.1.10
+
+### Patch Changes
+
+- 1. 修复 tree-select props 的错误声明
+- 2. 支持对类下拉框组件的远程数据请求
+- Updated dependencies
+  - @xiaohaih/json-form-core@0.1.10
+
 ## 0.1.9
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @xiaohaih/json-form-el
 
+## 0.1.10
+
+### Patch Changes
+
+- 支持对类下拉框组件的远程数据请求
+- Updated dependencies
+  - @xiaohaih/json-form-core@0.1.10
+
 ## 0.1.9
 
 ### Patch Changes

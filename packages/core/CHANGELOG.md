@@ -1,5 +1,11 @@
 # @xiaohaih/json-form-core
 
+## 0.1.10
+
+### Patch Changes
+
+- 增加远程加载状态, 支持对下拉筛选的远程请求
+
 ## 0.1.8
 
 ### Patch Changes
