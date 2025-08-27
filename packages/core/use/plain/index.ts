@@ -123,13 +123,13 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
     unwatchs.push(
         watch(
             [
-                () => (unref(props).fields as string[]) || unref(props).field,
+                () => ((unref(props).fields) || unref(props).field) as string[] | string,
                 () => {
-                    const _props = unref(props);
-                    return _props.fields ? (_props.fields as string[]).map((k) => _props.query[k]).filter(Boolean) : _props.query[_props.field];
+                    const { field, fields, query } = unref(props);
+                    return fields ? (fields as string[]).map((k) => query[k]).filter(Boolean) : query[field];
                 },
             ],
-            ([_field, val], [__field]) => {
+            ([_field, val], [__field, __val]) => {
                 const _props = unref(props);
                 const _val = _props.backfillToValue(val, _field, _props.query);
                 if (
@@ -161,15 +161,24 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
         watch(
             [
                 () => unref(props).depend,
-                () => unref(props).dependFields,
+                () => {
+                    const val = unref(props).dependFields;
+                    // 数组需要转字符串, 防止引用发生变化导致触发无效更新
+                    if (val && typeof val === 'object') return val.join(',');
+                    return val;
+                },
                 () => {
                     const _props = unref(props);
                     return _props.dependFields && ([] as string[]).concat(_props.dependFields).map((k) => get(_props.query, k));
                 },
             ],
-            ([_depend, _dependFields], [__depend, __dependFields]) => {
-                // 是否启用依赖, 相同时启用才走后续逻辑, 不同时直接走后续逻辑
+            ([_depend, _dependFields, _val], [__depend, __dependFields, __val]) => {
+            // 是否启用依赖, 相同时启用才走后续逻辑, 不同时直接走后续逻辑
                 if (_depend === __depend && !_depend) return;
+                // dependFields 由于是字符串, 可以做拼接
+                // 但遍历 dependFields 获取 query 的会返回一个新数组
+                // 导致引用发生变化, 所以需要做值比较
+                if (_val && __val && _val.length === __val.length && _val.every((o, i) => o === __val[i])) return;
                 const _props = unref(props);
                 getOption('depend');
                 // 类空值时, 不触发 change 事件
@@ -196,9 +205,12 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                         .concat(unref(props).optionsDependFields || unref(props).dependFields!)
                         .map((k) => wrapper.options[k]),
             ],
-            ([_depend], [__depend]) => {
+            ([_depend, _val], [__depend, __val]) => {
                 // 是否启用依赖, 相同时启用才走后续逻辑, 不同时直接走后续逻辑
                 if (_depend === __depend && !_depend) return;
+                // 但遍历 optionsDependFields 获取 query 的会返回一个新数组
+                // 导致引用发生变化, 所以需要做值比较
+                if (_val && __val && _val.length === __val.length && _val.every((o, i) => o === __val[i])) return;
                 getOption('depend');
             },
             // 不需要 immediate, 因为 getOption 初始会执行一次
