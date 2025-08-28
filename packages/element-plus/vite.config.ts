@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import terser from '@rollup/plugin-terser';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
+import type { UserConfig } from 'vite';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import pkgJson from './package.json';
@@ -27,61 +28,63 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
  * @file vite 环境配置
  */
 // https://vitejs.dev/config/
-export default defineConfig({
-    plugins: [
-        vue(),
-        vueJsx(),
-        dts({
-            tsconfigPath: './tsconfig.app.json',
-            // insertTypesEntry: true,
-            // rollupTypes: true,
-        }),
-    ],
-    optimizeDeps: {
-        exclude: ['vue-demi'],
-    },
-    // resolve: {
-    //     alias: {
-    //         'element-plus': fileURLToPath(new URL('./node_modules/element-plus/es/packages/element-plus', import.meta.url)),
-    //     },
-    // },
-    build: {
-        lib: {
-            entry: resolve(__dirname, './src/index.ts'),
-            name: 'JSONForm',
-            fileName: 'index',
+export default defineConfig((env) => {
+    return {
+        define: {
+            'process.env.NODE_ENV': env.command === 'build' ? JSON.stringify('production') : JSON.stringify('development'),
         },
-        outDir: 'dist',
-        sourcemap: true,
-        minify: false,
-        rollupOptions: {
-            external,
-            output: [
-                { entryFileNames: retainMinSuffix(pkg.module, false), format: 'es' },
-                {
-                    entryFileNames: retainMinSuffix(pkg.module, true),
-                    format: 'es',
-                    // @ts-expect-error 兼容 rollup 插件
-                    plugins: [terser({ format: { comments: false } })],
-                },
-                { entryFileNames: retainMinSuffix(pkg.main, false), format: 'cjs', exports: 'named' },
-                {
-                    entryFileNames: retainMinSuffix(pkg.main, true),
-                    format: 'cjs',
-                    exports: 'named',
-                    // @ts-expect-error 兼容 rollup 插件
-                    plugins: [terser({ format: { comments: false } })],
-                },
-                { entryFileNames: retainMinSuffix(pkg.unpkg, false), format: 'umd', name: 'JSONForm', globals },
-                {
-                    entryFileNames: retainMinSuffix(pkg.unpkg, true),
-                    format: 'umd',
-                    name: 'JSONForm',
-                    globals,
-                    // @ts-expect-error 兼容 rollup 插件
-                    plugins: [terser({ format: { comments: false } })],
-                },
-            ],
+        plugins: [
+            vue(),
+            vueJsx(),
+            dts({
+                tsconfigPath: './tsconfig.app.json',
+                // insertTypesEntry: true,
+                // rollupTypes: true,
+            }),
+        ],
+        optimizeDeps: {
+            exclude: ['vue-demi'],
         },
-    },
+        // resolve: {
+        //     alias: {
+        //         'element-plus': fileURLToPath(new URL('./node_modules/element-plus/es/packages/element-plus', import.meta.url)),
+        //     },
+        // },
+        build: {
+            lib: {
+                entry: resolve(__dirname, './src/index.ts'),
+                name: 'JSONForm',
+                fileName: 'index',
+            },
+            outDir: 'dist',
+            sourcemap: true,
+            minify: false,
+            rollupOptions: {
+                external,
+                output: [
+                    { entryFileNames: retainMinSuffix(pkg.module, false), format: 'es' },
+                    {
+                        entryFileNames: retainMinSuffix(pkg.module, true),
+                        format: 'es',
+                        plugins: [terser({ format: { comments: false } })],
+                    },
+                    { entryFileNames: retainMinSuffix(pkg.main, false), format: 'cjs', exports: 'named' },
+                    {
+                        entryFileNames: retainMinSuffix(pkg.main, true),
+                        format: 'cjs',
+                        exports: 'named',
+                        plugins: [terser({ format: { comments: false } })],
+                    },
+                    { entryFileNames: retainMinSuffix(pkg.unpkg, false), format: 'umd', name: 'JSONForm', globals },
+                    {
+                        entryFileNames: retainMinSuffix(pkg.unpkg, true),
+                        format: 'umd',
+                        name: 'JSONForm',
+                        globals,
+                        plugins: [terser({ format: { comments: false } })],
+                    },
+                ],
+            },
+        },
+    } as UserConfig;
 });
