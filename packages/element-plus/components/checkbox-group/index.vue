@@ -29,7 +29,7 @@
                     >
                         {{ (item as any)[labelKey] }}
                         <template v-for="(option, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">
-                            <component :is="getNode(option)" v-bind="slotProps" v-bind.prop="row" :option="item" :labelKey="labelKey" :valueKey="valueKey" :disabledKey="disabledKey" />
+                            <component :is="getNode(option)" v-bind="slotProps" v-bind.prop="row" :option="item" :labelKey="realLabelProp" :valueKey="valueKey" :disabledKey="disabledKey" />
                         </template>
                     </component>
                 </template>

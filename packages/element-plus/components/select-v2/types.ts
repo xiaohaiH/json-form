@@ -23,10 +23,6 @@ export function selectV2PropsGeneric<T, Query extends Record<string, any>, Optio
         staticProps: { type: Object as PropType<StaticProps<_Prop>> },
         /** 组件动态属性 */
         dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
-        /** 展示的字段 */
-        labelKey: { type: String as PropType<string>, default: 'label' },
-        /** 提交的字段 */
-        valueKey: { type: String as PropType<string>, default: 'value' },
         /** 是否可过滤 */
         filterable: { type: Boolean as PropType<boolean>, default: true },
         /** 是否可清除 */
