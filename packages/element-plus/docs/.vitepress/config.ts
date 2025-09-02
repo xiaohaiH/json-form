@@ -26,6 +26,7 @@ export default async () => {
         title: 'json-form-plus',
         description: '基于 json 驱动的表单',
         lang: 'zh-CN',
+        base: '/json-form/docs-plus/',
         themeConfig: {
             // https://vitepress.dev/reference/default-theme-config
             nav: [
