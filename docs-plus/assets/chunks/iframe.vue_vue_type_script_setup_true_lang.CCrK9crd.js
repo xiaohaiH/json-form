@@ -1,0 +1,1 @@
+import{d as r,c as s,o}from"./framework.DOCLS9hV.js";const c=["src"],p=r({__name:"iframe",props:{src:{}},setup(a){return(e,n)=>(o(),s("iframe",{class:"w-full h-400px",src:e.src,frameborder:"0"},null,8,c))}});export{p as _};
