@@ -32,6 +32,7 @@ export default async () => {
                 { text: '首页', link: '/' },
                 { text: '配置项', link: '/options/shares/share-props' },
                 { text: '友情链接', link: '/friendly-links' },
+                { text: '示例', link: '/examples/index' },
                 { text: '更新日志', link: 'https://github.com/xiaohaiH/json-form/blob/master/packages/element-plus/CHANGELOG.md' },
             ],
             sidebar: {
