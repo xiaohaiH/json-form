@@ -21,20 +21,6 @@ defineOption({
 
 除了 [共享 Props](../shares/share-props.md) 和 [ElMention 等相关组件的 Props](https://element-plus.org/zh-CN/component/mention.html#%E5%B1%9E%E6%80%A7) 外, `Mention` 组件还支持以下特定属性:
 
-### realtime
-
-- 类型: `boolean`
-- 默认: `true`
-
-是否实时触发搜索事件
-
-### waitTime
-
-- 类型: `number`
-- 默认: `300`
-
-实时触发时防抖动的时间
-
 ### clearable
 
 - 类型: `boolean`

@@ -20,19 +20,12 @@ defineOption({
 
 除了 [共享 Props](../shares/share-props.md) 和 [ElInputNumber 自带的 Props](https://element-plus.org/zh-CN/component/input-number.html#attributes) 外, `InputNumber` 组件还支持以下特定属性:
 
-### realtime
-
-- 类型: `boolean`
-- 默认: `true`
-
-是否实时触发搜索事件
-
-### waitTime
+### debounceTime
 
 - 类型: `number`
-- 默认: `300`
+- 默认: -
 
-实时触发时防抖动的时间
+延迟触发抖动时长(单位 `ms`)
 
 ## 插槽
 
@@ -97,7 +90,7 @@ defineOption({
 <Iframe src="https://code.juejin.cn/pen/7543940513415331875" />
 :::
 
-<!-- ### 实时搜索
+### 实时搜索
 
 ```tsx
 defineOption({
@@ -105,8 +98,7 @@ defineOption({
         t: 'input-number',
         label: '评分',
         placeholder: '请输入评分',
-        realtime: true,
-        waitTime: 500,
+        debounceTime: 500,
         min: 0,
         max: 100,
     },
@@ -116,12 +108,13 @@ defineOption({
 ::: details [点我查看在线示例](https://code.juejin.cn/pen/7543941425876959284)
 
 <Iframe src="https://code.juejin.cn/pen/7543941425876959284" />
-::: -->
+:::
 
 ## 注意事项
 
 1. 支持 `ElFormItem` 组件所有的 `Props`
 2. 支持 `ElInputNumber` 组件所有的 `Props`
+3. 可以通过 `debounceTime` 设置抖动时长, 避免频繁触发搜索
 
 ::: info tips: 当 `ElFormItem` 组件与 `ElInputNumber` 组件的 `Props` 冲突时
 

@@ -18,7 +18,7 @@ defineOption({
 
 ## Props
 
-除了 [共享 Props](../shares/share-props.md) 和 [ElInputTag/Tag 等相关组件的 Props](https://element-plus.org/zh-CN/component/input-tag.html#%E5%B1%9E%E6%80%A7) 外, `InputTag` 组件还支持以下特定属性:
+除了 [共享 Props](../shares/share-props.md) 和 [ElInputTag 自带的 Props](https://element-plus.org/zh-CN/component/input-tag.html#%E5%B1%9E%E6%80%A7) 外, `InputTag` 组件还支持以下特定属性:
 
 ### clearable
 

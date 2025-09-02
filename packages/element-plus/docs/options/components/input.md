@@ -20,19 +20,12 @@ defineOption({
 
 除了 [共享 Props](../shares/share-props.md) 和 [ElInput 自带的 Props](https://element-plus.org/zh-CN/component/input.html#attributes) 外, `Input` 组件还支持以下特定属性:
 
-### realtime
-
-- 类型: `boolean`
-- 默认: `true`
-
-是否实时触发搜索事件
-
 ### waitTime
 
 - 类型: `number`
-- 默认: `300`
+- 默认: -
 
-实时触发时防抖动的时间
+延迟触发抖动时长(单位 `ms`)
 
 ### clearable
 
@@ -134,10 +127,9 @@ defineOption({
 
 ## 注意事项
 
-1. 当 `realtime` 为 `true` 时, 输入会实时触发搜索事件
-2. 可以通过 `waitTime` 设置防抖时间, 避免频繁触发搜索
-3. 支持 `ElFormItem` 组件所有的 `Props`
-4. 支持 `ElCheckbox` 组件所有的 `Props`
+1. 支持 `ElFormItem` 组件所有的 `Props`
+2. 支持 `ElInput` 组件所有的 `Props`
+3. 可以通过 `debounceTime` 设置抖动时长, 避免频繁触发搜索
 
 ::: info tips: 当 `ElFormItem` 组件与 `ElInput` 组件的 `Props` 冲突时
 
