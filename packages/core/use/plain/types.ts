@@ -1,6 +1,7 @@
 import type { PropType } from 'vue-demi';
 import { commonProps } from '../share';
 import type { CommonProps, GetOptions } from '../share';
+import type { usePlain } from './index';
 
 /** 扁平条件类 props - 泛型 */
 export function plainPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any> = Record<string, any>>() {
@@ -19,8 +20,12 @@ export function plainPropsGeneric<T, Query extends Record<string, any>, Option, 
         options: { type: Array as PropType<Option[]>, default: () => [] },
         /** 动态获取数据源 */
         getOptions: { type: Function as PropType<GetOptions<T, Query, Option, OptionQuery>> },
+        /**
+         * 组件额外的钩子
+         * 包含
+         */
+        hooks: { type: [Object] as PropType<Partial<Record<'created' | 'dependChange' | 'optionsDependChange', (option: Record<string, any>) => void>>>, default: undefined },
     } as const;
 }
 /** 扁平条件类 props */
 export const plainProps = plainPropsGeneric();
-export type PlainProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any> = Record<string, any>> = ReturnType<typeof plainPropsGeneric<T, Query, Option, OptionQuery>>;

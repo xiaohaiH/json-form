@@ -1,4 +1,4 @@
-import type { ExtractPropTypes, Ref } from 'vue-demi';
+import type { ExtractPropTypes, PropType, Ref } from 'vue-demi';
 import {
     computed,
     inject,
@@ -13,17 +13,24 @@ import { clone, emptyToValue, get, getChained, isArray, isEmptyValue, isEqualExc
 import { useDisableInCurrentCycle, useValue } from '../assist';
 import type { ProvideValue } from '../constant';
 import { defineCommonMethod, provideKey } from '../constant';
-import type { plainProps } from './types';
+import type { plainProps, plainPropsGeneric } from './types';
+
+// 由于 PlainProps 需要用到 usePlain 的返回值声明
+// 因此在此处导出防止循环引用
+export type PlainProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any> = Record<string, any>> = Omit<ReturnType<typeof plainPropsGeneric<T, Query, Option, OptionQuery>>, 'hooks'> & { hooks: { type: PropType<Partial<Record<'created' | 'dependChange' | 'optionsDependChange', (opt: {
+    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
+    props: Record<string, any>;
+}) => void>>>; }; };
 
 /** 外部需传递的 props */
-type PlainProps<T, Query, Option, OptionQuery> = ExtractPropTypes<typeof plainProps>;
+type _PlainProps<T, Query, Option, OptionQuery> = ExtractPropTypes<PlainProps<T, any, Option, any>>;
 
 type ValueType = string | number | boolean | null | undefined | Record<string, any>;
 
 type MaybeRef<T> = T | Ref<T>;
 
 /** 封装扁平组件必备的信息 */
-export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = Record<string, any>>(props: MaybeRef<PlainProps<T, Query, Option, OptionQuery>>) {
+export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = Record<string, any>>(props: MaybeRef<_PlainProps<T, Query, Option, OptionQuery>>) {
     /** 初始 props */
     const initialProps = unref(props);
 
@@ -187,6 +194,8 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                 if (_val && __val && _val.length === __val.length && _val.every((o, i) => o === __val[i])) return;
                 const _props = unref(props);
                 getOption('depend');
+
+                initialProps.hooks?.dependChange?.({ plain: expose, props: initialProps });
                 // 类空值时, 不触发 change 事件
                 // 防止表单类监测值发生改变时触发校验
                 // 或内部不允许重置时直接返回
@@ -217,6 +226,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                 // 导致引用发生变化, 所以需要做值比较
                 if (_val && __val && _val.length === __val.length && _val.every((o, i) => o === __val[i])) return;
                 getOption('depend');
+                initialProps.hooks?.optionsDependChange?.({ plain: expose, props: initialProps });
             },
             // 不需要 immediate, 因为 getOption 初始会执行一次
         ),
@@ -236,7 +246,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                 const _checked = checked.value;
                 // 重置 checked, 防止增加 option 后, select 值没更新的问题
                 checked.value = undefined as any;
-                remoteOption.value = (data as Option[]) || [];
+                remoteOption.value = (data) || [];
                 checked.value = _checked;
                 loading.value = false;
             },
@@ -257,14 +267,14 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                     option?.updateDefaultValue && (coverProps.value.defaultValue = value);
                     option?.updateInitialValue && (coverProps.value.initialValue = value);
                     updateAllowDependChangeValue();
-                    change(value as T);
+                    change(value);
                     return this;
                 },
                 search(value, option) {
                     option?.updateDefaultValue && (coverProps.value.defaultValue = value);
                     option?.updateInitialValue && (coverProps.value.initialValue = value);
                     updateAllowDependChangeValue();
-                    updateCheckedValue(value as T);
+                    updateCheckedValue(value);
                     wrapper?.search();
                     return this;
                 },
@@ -312,7 +322,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
         wrapper?.insetSearch((_props.fields as string[]) || _props.field);
     }
 
-    return {
+    const expose = {
         /** 覆盖 props 的最新的值(defaultValue, initialValue) */
         coverProps,
         /**
@@ -352,6 +362,10 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
         /** 表单级别的禁用 */
         globalDisabled: wrapper?.disabled || ref(false),
     };
+
+    initialProps.hooks?.created?.({ plain: expose, props: initialProps });
+
+    return expose;
 }
 
 function emptyArr2Undef<T>(arr: T[]): T[] | undefined {

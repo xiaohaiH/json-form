@@ -17,7 +17,7 @@
 当前选项提交给后端的字段,优先级比 `field` 高,根据数组成员来匹配字段
 ::: details 点我查看示例
 
-```ts
+```tsx
 // 比如日期区间, 后端需要两个字段
 // 按如下配置后, 提交时的 query 为 { beginDate: '2023-09-13', endDate: '2025-09-13' }
 // 注意: 此时日期不能为必填项
@@ -54,7 +54,7 @@ defineOption({
 
 ::: details 点我查看 `getOptions` 的类型定义和示例(包含远程搜索)以及 `loading` 的逻辑
 
-```ts
+```tsx
 // loading 执行逻辑
 // 调用 getOption 前, 先置为 true
 // 如果 getOption 是异步函数, 等待异步函数执行完成后, 置为 false
@@ -62,29 +62,33 @@ defineOption({
 
 // 示例1: 远程搜索
 defineOption({
-    t: 'select',
-    label: '操作类型',
-    remote: true,
-    async getOption(callback, query, { filterValue }) {
+    operateType: {
+        t: 'select',
+        label: '操作类型',
+        remote: true,
+        async getOption(callback, query, { filterValue }) {
         // 如果不存在搜索值, 直接返回
-        if (!filterValue) return callback([]);
-        // 获取远程数据
-        const res = await getRemoteOptions({ filterValue });
-        // 将远程数据传递进行
-        callback(res.status ? res.data : []);
+            if (!filterValue) return callback([]);
+            // 获取远程数据
+            const res = await getRemoteOptions({ filterValue });
+            // 将远程数据传递进行
+            callback(res.status ? res.data : []);
+        },
     },
 });
 // 示例2: 获取数据源后, 更新当前值并设置默认值
 defineOption({
-    t: 'select',
-    label: '操作类型',
-    async getOption(callback, query, { search }) {
+    operateType: {
+        t: 'select',
+        label: '操作类型',
+        async getOption(callback, query, { search }) {
         // 获取远程数据
-        const res = await getRemoteOptions();
-        // 将远程数据传递进行
-        callback(res.status ? res.data : []);
-        // 默认选中第 0 条数据, 并设置为默认值(无法被删除)
-        search(res.data[0].value, { updateDefaultValue: true });
+            const res = await getRemoteOptions();
+            // 将远程数据传递进行
+            callback(res.status ? res.data : []);
+            // 默认选中第 0 条数据, 并设置为默认值(无法被删除)
+            search(res.data[0].value, { updateDefaultValue: true });
+        },
     },
 });
 
@@ -208,6 +212,77 @@ depend 为真时, 依赖字段发生变化后是否重置本身的值
 - 默认: -
 
 校验函数, 返回值为真且是字符串时会执行 `HForm` 组件的 `toast` 函数
+
+## hooks
+
+- 类型: `Hooks`
+- 默认: -
+
+组件项的钩子函数, 可通过钩子监听组件生命周期等信息
+
+::: details 查看 `Hooks` 类型以及使用方法
+
+```tsx
+import { onMounted } from 'vue';
+
+// 示例:
+defineOption({
+    operateType: {
+        t: 'select',
+        label: '操作类型',
+        options: [
+            { label: '新增', value: 'add', children: [{ label: '新增用户', value: 'add-user' }, { label: '新增菜单', value: 'add-menu' }] },
+            { label: '编辑', value: 'edit', children: [{ label: '编辑角色', value: 'edit-role' }, { label: '编辑部门', value: 'edit-dept' }] }
+        ],
+    },
+    operateSubType: {
+        t: 'select',
+        label: '操作子类型',
+        depend: true,
+        dependFields: 'operateType',
+        optionsDepend: true,
+        hooks: {
+            created() {
+                onMounted(console.log.bind(null, '下拉组件已渲染'));
+            },
+            dependChange({ plain, props }) {
+                const option = plain.wrapper.options.operateType.find((v) => v.value === props.query.operateType);
+                plain.remoteOption.value = option ? JSON.parse(JSON.stringify(option.children)) : [];
+            },
+            // 该方法是防止 operateType 赋值在前 options 异步获取值在后
+            // 导致 operateType 的 options 有值, 子选项的 options 却为空
+            optionsDependChange({ plain, props }) {
+                const option = plain.wrapper.options.operateType.find((v) => v.value === props.query.operateType);
+                plain.remoteOption.value = option ? JSON.parse(JSON.stringify(option.children)) : [];
+            },
+        },
+    },
+});
+
+interface Hooks {
+    /** 组件创建后执行, 可在此函数内监听 vue 组件的生命周期 */
+    created?: (option: {
+        plain: PlainReturnValue;
+        props: Record<string, any>;
+    }) => void;
+    /** 依赖值发生变动后执行 */
+    dependChange?: (option: {
+        plain: PlainReturnValue;
+        props: Record<string, any>;
+    }) => void;
+    /** 依赖数据源发生变化后执行 */
+    optionsDependChange?: (option: {
+        plain: PlainReturnValue;
+        props: Record<string, any>;
+    }) => void;
+}
+```
+
+---
+
+<<< ../declaration.ts#plain
+
+:::
 
 ## emptyValue
 
