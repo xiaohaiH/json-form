@@ -55,6 +55,7 @@ export default async () => {
                 { icon: 'github', link: 'https://github.com/xiaohaiH/json-form/tree/master/packages/element-plus' },
             ],
         },
+        outDir: './dist',
         vite: {
             server: { port: 2012 },
             plugins: [

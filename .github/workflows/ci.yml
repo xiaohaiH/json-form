@@ -56,7 +56,7 @@ jobs:
             - name: copy example-plus-vue3-dist
               uses: JamesIves/github-pages-deploy-action@v4
               with:
-                  folder: ./packages/element-plus/docs/.vitepress/dist/
+                  folder: ./packages/element-plus/docs/dist/
                   target-folder: ./docs-plus
                   clean: true
     # 任务二 - 打包 element-plus 版本文档
