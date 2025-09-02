@@ -2,7 +2,17 @@ import type { VNode } from 'vue-demi';
 import type { Hyphenate } from './base';
 
 /** 空函数 */
-export function loop() {}
+export function noop() {}
+
+/** 获取类型 */
+export function getType(value: any): string {
+    return Object.prototype.toString.call(value).slice(8, -1);
+}
+
+/** 获取类型 */
+export function isArray(value: any): value is any[] {
+    return getType(value) === 'Array';
+}
 
 /**
  * 空值转为提供的默认值

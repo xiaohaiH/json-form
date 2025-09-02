@@ -13,3 +13,9 @@
 - [x] 内部监听 query 变动后, 根据 realtime 状态主动触发 search 事件(比如依赖项触发其它字段的值)
 
 - [x] custom-render 主动监听 checked 变化, 便于外部开发者可直接操作 checked 即可同步到表单
+
+- [x] 如果值为数组, 且默认值也为数组时, 删除后未还原成默认值
+
+- [x] input 类组件的延时搜索不生效
+
+- [x] input 删除 realtime

@@ -44,6 +44,8 @@ export interface SlotProps {
 // #region plain
 /** usePlain 的返回值 */
 export interface PlainReturnValue {
+    /** 覆盖 props 的最新的值(defaultValue, initialValue) */
+    coverProps: Record<'defaultValue' | 'initialValue', any>;
     /** HForm 暴露给组件的选项 */
     wrapper: WrapperProvideValue;
     /** 在特定时机中 HForm 会调用该选项下的方法 */

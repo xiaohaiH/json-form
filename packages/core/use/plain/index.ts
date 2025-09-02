@@ -9,7 +9,7 @@ import {
     unref,
     watch,
 } from 'vue-demi';
-import { clone, emptyToValue, get, getChained, isEmptyValue, isEqualExcludeEmptyValue, loop } from '../../utils/index';
+import { clone, emptyToValue, get, getChained, isArray, isEmptyValue, isEqualExcludeEmptyValue, noop } from '../../utils/index';
 import { useDisableInCurrentCycle, useValue } from '../assist';
 import type { ProvideValue } from '../constant';
 import { defineCommonMethod, provideKey } from '../constant';
@@ -30,19 +30,24 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
     const unwatchs: (() => void)[] = [];
     /** 容器注入值 */
     const wrapper = inject<ProvideValue>(provideKey);
-    /** 初始值 - 初始或重置时设置的值, 优先级高于 defaultValue, 可被清空 */
-    const insetInitialValue = useValue(() => {
-        const _props = unref(props);
-        return { value: _props.initialValue, query: _props.query };
-    });
-    /** 默认值 - 初始或重置时设置的值, 当对应字段的值为空值时, 会用该值替换 */
-    const insetDefaultValue = useValue(() => {
-        const _props = unref(props);
-        return { value: _props.defaultValue, query: _props.query };
-    });
-    const getResetValue = (defValue?: any) => !isEmptyValue(insetInitialValue.value)
-        ? clone(insetInitialValue.value)
-        : !isEmptyValue(insetDefaultValue.value) ? clone(insetDefaultValue.value) : defValue;
+    /** 覆盖 props 的值 */
+    const coverProps = ref({ } as Record<'initialValue' | 'defaultValue', any>);
+    watch(() => unref(props).initialValue, (val) => coverProps.value.initialValue = val, { immediate: true });
+    watch(() => unref(props).defaultValue, (val) => coverProps.value.defaultValue = val, { immediate: true });
+    /** 获取指定属性 */
+    const getAppointProp = (value: keyof typeof coverProps['value']) => {
+        const _value = coverProps.value[value];
+        const { query } = unref(props);
+        return typeof _value === 'function' ? _value({ query }) : _value;
+    };
+    /** 获取重置值 */
+    const getResetValue = (defValue?: any) => {
+        const initialValue = getAppointProp('initialValue');
+        const defaultValue = getAppointProp('defaultValue');
+        return !isEmptyValue(initialValue)
+            ? initialValue
+            : !isEmptyValue(defaultValue) ? defaultValue : defValue;
+    };
     /** 初始是否存在回填值 */
     const initialBackfillValue = initialProps.fields?.length
         // 防止回填值不存在时产生一个空数组(undefined[])
@@ -142,11 +147,11 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                     return;
                 }
                 // 实时值改变先判断值是否为空
-                // 为空且存在初始值, 用初始值替代, 且通知上层组件
-                // 否则直接更新值即可
+                // 为空且存在默认值, 走值变更逻辑, 且通知上层组件
+                // 否则直接更新值, 且通知上层组件判断是否需要触发搜索事件
                 if (checked.value !== _val) {
                     isSyncedQueryValue = true;
-                    isEmptyValue(_val) && !isEmptyValue(insetDefaultValue.value)
+                    (isEmptyValue(_val)) && !isEmptyValue(getAppointProp('defaultValue'))
                         ? change(_val as T)
                         : assignValueAndTrySearch(_val);
                 }
@@ -187,8 +192,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                 // 或内部不允许重置时直接返回
                 const isNeedReset = typeof _props.resetByDependValueChange === 'boolean' ? _props.resetByDependValueChange : _props.resetByDependValueChange(_props.query);
                 if (isSyncedQueryValue || !isNeedReset || isEmptyValue(checked.value) || !allowDependChangeValue.value) return;
-                change(clone(insetDefaultValue.value));
-                // change(isEmptyValue(initialValue.value) ? (_props.multiple ? [] : '') : clone(initialValue.value));
+                change(getAppointProp('defaultValue'));
             },
             { flush: 'sync', ...unref(props).dependWatchOption },
         ),
@@ -242,23 +246,23 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                 ...option,
                 options: toRaw(wrapper?.options) || {},
                 changeInitialValue(value) {
-                    insetInitialValue.value = value;
+                    coverProps.value.initialValue = value;
                     return this;
                 },
                 changeDefaultValue(value) {
-                    insetDefaultValue.value = value;
+                    coverProps.value.defaultValue = value;
                     return this;
                 },
                 change(value, option) {
-                    option?.updateDefaultValue && (insetDefaultValue.value = value);
-                    option?.updateInitialValue && (insetInitialValue.value = value);
+                    option?.updateDefaultValue && (coverProps.value.defaultValue = value);
+                    option?.updateInitialValue && (coverProps.value.initialValue = value);
                     updateAllowDependChangeValue();
                     change(value as T);
                     return this;
                 },
                 search(value, option) {
-                    option?.updateDefaultValue && (insetDefaultValue.value = value);
-                    option?.updateInitialValue && (insetInitialValue.value = value);
+                    option?.updateDefaultValue && (coverProps.value.defaultValue = value);
+                    option?.updateInitialValue && (coverProps.value.initialValue = value);
                     updateAllowDependChangeValue();
                     updateCheckedValue(value as T);
                     wrapper?.search();
@@ -279,9 +283,11 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
         // updateWrapperQuery 必须要执行, 防止在 custom-render 中改变了
         // checked.value 深层次内的值, 由于引用相同导致父级未更新的情况
         if (value !== checked.value) {
-            // 为空时, 存在初始值时, 用初始值替代
-            checked.value = isEmptyValue(value) && !isEmptyValue(insetDefaultValue.value)
-                ? clone(insetDefaultValue.value)
+            // 当结果为空值或者空数组时,
+            // 且默认值不为空, 用默认值替代
+            const defaultValue = getAppointProp('defaultValue');
+            checked.value = (isEmptyValue(value) || (isArray(value) && !value.length)) && !isEmptyValue(defaultValue)
+                ? defaultValue
                 : value;
         }
         option.updateWrapperQuery();
@@ -307,6 +313,8 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
     }
 
     return {
+        /** 覆盖 props 的最新的值(defaultValue, initialValue) */
+        coverProps,
         /**
          * 内部表单实例, 包含了更新表单值, 触发搜索事件等方法
          */
@@ -336,7 +344,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
         /** 触发搜索事件(为实时搜索时, 会触发搜索事件) */
         trigger,
         /** 搜索事件(直接触发搜索事件, 不受实时搜索影响) */
-        search: wrapper?.search || loop,
+        search: wrapper?.search || noop,
         /** 重置表单字段 */
         reset: option.reset,
         /** 表单级别的只读 */

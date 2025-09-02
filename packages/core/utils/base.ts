@@ -37,8 +37,8 @@ export type Emits2Props<T> = UnionToIntersection<
 export function emits2obj<E extends (string[] | Record<string, any> | null | undefined), R = E extends string[] ? { [P in E[number] as CamelCase<string & P>]: () => true } : E extends null | undefined ? {} : E>(emits: E): ExtractEvents<R> {
     if (!Array.isArray(emits)) return (emits || {}) as ExtractEvents<R>;
     const r: Record<string, any> = {};
-    const loop = () => true;
-    emits.forEach((key) => r[camelize(key)] = loop);
+    const noop = () => true;
+    emits.forEach((key) => r[camelize(key)] = noop);
     return r as ExtractEvents<R>;
 }
 
