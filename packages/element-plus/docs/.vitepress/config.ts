@@ -58,6 +58,8 @@ export default async () => {
         vite: {
             server: { port: 2012 },
             plugins: [
+                // eslint-disable-next-line ts/ban-ts-comment
+                // @ts-ignore 忽视 ts 报错
                 UnoCSS({
                     presets: [
                         presetUno(),
