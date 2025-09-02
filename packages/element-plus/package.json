@@ -33,7 +33,10 @@
         "build": "node ./scripts/generate-version.mjs && vite build",
         "build:dts": "tsdown",
         "postinstall": "node -e \"try{require('./scripts/postinstall.cjs')}catch(e){}\"",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "docs:dev": "vitepress dev docs",
+        "docs:build": "vitepress build docs",
+        "docs:preview": "vitepress preview docs"
     },
     "peerDependencies": {
         "element-plus": "^2.0.0",
@@ -50,9 +53,11 @@
         "@vitejs/plugin-vue-jsx": "^4.1.1",
         "element-plus": "^2.10.6",
         "tsdown": "^0.14.0",
+        "unocss": "^66.5.0",
         "unplugin-vue": "^7.0.1",
         "vite": "^6.1.0",
         "vite-plugin-dts": "^4.5.3",
+        "vitepress": "2.0.0-alpha.12",
         "vue": "^3.5.13",
         "vue-component-type-helpers": "^2.1.10",
         "vue-tsc": "^3.0.5"
