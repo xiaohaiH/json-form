@@ -1,7 +1,7 @@
 {
     "name": "@xiaohaih/json-form-plus",
     "type": "module",
-    "version": "0.1.10",
+    "version": "0.1.11",
     "description": "基于element-plus实现, 通过JSON配置表单组件(表单项间可相互依赖)",
     "author": "xiaohai",
     "license": "MIT",

@@ -1,5 +1,12 @@
 # @xiaohaih/json-form-core
 
+## 0.1.11
+
+### Patch Changes
+
+- 1. 增加生命周期以及事件回调
+- 2. 修复打包后的 umd 还存在环境变量
+
 ## 0.1.10
 
 ### Patch Changes

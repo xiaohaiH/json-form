@@ -1,5 +1,16 @@
 # @xiaohaih/json-form-plus
 
+## 0.1.11
+
+### Patch Changes
+
+- 1. 增加生命周期以及事件回调
+- 2. 增加 vitepress 文档
+- 3. 修复打包后的 umd 还存在环境变量
+- 4. 修复 input类组件的 bug (延时未生效, 按下回车后的用户体验)
+- Updated dependencies
+  - @xiaohaih/json-form-core@0.1.11
+
 ## 0.1.10
 
 ### Patch Changes
