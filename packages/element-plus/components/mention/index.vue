@@ -20,7 +20,9 @@
                 v-bind="contentActualProps"
                 :readonly="globalReadonly || contentActualProps.readonly"
                 :disabled="globalDisabled || contentActualProps.disabled"
-                @update:model-value="debounceChange"
+                :loading="loading"
+                @update:model-value="change"
+                @select="select"
                 @keydown.enter="enterHandle"
             >
                 <template v-for="(item, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">
@@ -41,7 +43,7 @@
 import { getNode, hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { ElFormItem, ElMention } from 'element-plus';
 import type { SlotsType } from 'vue';
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, nextTick, ref } from 'vue';
 import { pick } from '../../src/utils';
 import { formItemPropKeys } from '../share';
 import type { MentionSlots } from './types';
@@ -82,35 +84,29 @@ export default defineComponent({
             extraOptions: {
                 modelValue: plain.checked.value,
                 options: plain.finalOption.value,
-                onChange: debounceChange,
+                onChange: plain.change,
                 onEnter: enterHandle,
             },
             plain,
         }));
 
-        /**
-         * 节流
-         * @param {string} value: 输入值
-         */
-        let timer = 0;
-        function debounceChange(value: string) {
-            const { realtime, waitTime } = props;
-            timer && clearTimeout(timer);
-            if (realtime) {
-                plain.change(value);
-            }
-            else {
-                plain.updateCheckedValue(value);
-                if (!plain.wrapper) return;
-                timer = setTimeout(plain.wrapper.insetSearch, waitTime) as unknown as number;
-            }
-        }
+        let enterFlag = ref(false);
         /** 回车事件 */
         function enterHandle(ev: Event | KeyboardEvent) {
-            timer && clearTimeout(timer);
-            (plain.checked as any).value = (ev.target as HTMLInputElement).value;
-            plain.option.updateWrapperQuery();
-            plain.wrapper?.search();
+            // 1. 先触发 enter 事件
+            // 2. 再触发 select 事件
+            // 防止在选中时触发回车事件, 加上 enterFlag 标志做判断
+            nextTick(() => {
+                if (enterFlag.value) return;
+                plain.wrapper?.search();
+            });
+        }
+        /** 选中某项后触发的事件 */
+        function select() {
+            enterFlag.value = true;
+            nextTick(() => {
+                enterFlag.value = false;
+            });
         }
 
         return {
@@ -119,8 +115,8 @@ export default defineComponent({
             ...plain,
             formItemActualProps,
             contentActualProps,
-            debounceChange,
             enterHandle,
+            select,
             slotProps,
         };
     },

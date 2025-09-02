@@ -19,12 +19,12 @@
         <slot v-else v-bind="slotProps">
             <ElInput
                 :clearable="clearable"
-                :value="checked"
+                :value="tempChecked"
                 class="json-form-item__content"
                 v-bind="contentActualProps"
-                v-on="$listeners"
                 :readonly="globalReadonly || contentActualProps.readonly"
                 :disabled="globalDisabled || contentActualProps.disabled"
+                v-on="$listeners"
                 @input="debounceChange"
                 @keydown.native.enter="enterHandle"
             >
@@ -63,7 +63,7 @@
 <script lang="ts">
 import { hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { FormItem as ElFormItem, Input as ElInput } from 'element-ui';
-import { computed, defineComponent, markRaw, ref } from 'vue-demi';
+import { computed, defineComponent, markRaw, ref, watch } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
 import { formItemPropKeys } from '../share';
 import type { InputSlots } from './types';
@@ -121,6 +121,8 @@ export default defineComponent({
 
         // 使用核心库的usePlain钩子初始化数据和方法
         const plain = usePlain(props);
+        const tempChecked = ref(plain.checked.value);
+        watch(plain.checked, (value) => tempChecked.value = value);
 
         /**
          * 输入防抖处理
@@ -130,18 +132,14 @@ export default defineComponent({
          */
         let timer = 0;
         function debounceChange(value: string) {
-            const { realtime, waitTime } = props;
+            if (value === tempChecked.value) return;
+            const { debounceTime } = props;
             timer && clearTimeout(timer);
-            if (realtime) {
-                // 实时模式：直接触发change事件
-                plain.change(value);
-            }
-            else {
-                // 非实时模式：更新本地值，设置定时器延迟搜索
-                plain.updateCheckedValue(value);
-                if (!plain.wrapper) return;
-                timer = setTimeout(plain.wrapper.insetSearch, waitTime) as unknown as number;
-            }
+            tempChecked.value = value;
+
+            debounceTime
+                ? timer = setTimeout(() => plain.change(tempChecked.value), debounceTime) as unknown as number
+                : plain.change(value);
         }
 
         /**
@@ -152,8 +150,7 @@ export default defineComponent({
          */
         function enterHandle(ev: Event | KeyboardEvent) {
             timer && clearTimeout(timer);
-            (plain.checked as any).value = (ev.target as HTMLInputElement).value;
-            plain.option.updateWrapperQuery();
+            plain.checked.value !== tempChecked.value && plain.updateCheckedValue(tempChecked.value);
             plain.wrapper?.search();
         }
 
@@ -166,7 +163,7 @@ export default defineComponent({
             getItemProps: () => contentActualProps.value,
             getProps: () => props,
             extraOptions: {
-                value: plain.checked.value,
+                value: tempChecked.value,
                 options: plain.finalOption.value,
                 onChange: debounceChange,
                 onEnter: enterHandle,
@@ -178,6 +175,7 @@ export default defineComponent({
             hyphenate,
             getNode,
             ...plain,
+            tempChecked,
             formItemActualProps,
             contentActualProps,
             slotProps,

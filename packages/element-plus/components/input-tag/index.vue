@@ -20,6 +20,8 @@
                 :readonly="globalReadonly || contentActualProps.readonly"
                 :disabled="globalDisabled || contentActualProps.disabled"
                 @update:model-value="change"
+                @add-tag="tagAdd"
+                @keydown.enter="enterHandle"
             >
                 <template v-for="(item, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">
                     <component :is="getNode(item)" v-bind="slotProps" v-bind.prop="row" />
@@ -39,7 +41,7 @@
 import { getNode, hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { ElFormItem, ElInputTag } from 'element-plus';
 import type { SlotsType } from 'vue';
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, nextTick, ref } from 'vue';
 import { pick } from '../../src/utils';
 import { formItemPropKeys } from '../share';
 import type { InputTagSlots } from './types';
@@ -81,9 +83,29 @@ export default defineComponent({
                 modelValue: plain.checked.value,
                 options: plain.finalOption.value,
                 onChange: plain.change,
+                onEnter: enterHandle,
             },
             plain,
         }));
+
+        let enterFlag = ref(false);
+        /** 回车事件 */
+        function enterHandle(ev: Event | KeyboardEvent) {
+            // 1. 先触发 enter 事件
+            // 2. 再触发 tagAdd 事件
+            // 防止在添加标签时触发回车事件, 加上 enterFlag 标志做判断
+            nextTick(() => {
+                if (enterFlag.value) return;
+                plain.wrapper?.search();
+            });
+        }
+        /** 新增标签某项后触发的事件 */
+        function tagAdd() {
+            enterFlag.value = true;
+            nextTick(() => {
+                enterFlag.value = false;
+            });
+        }
 
         return {
             hyphenate,
@@ -91,6 +113,8 @@ export default defineComponent({
             ...plain,
             formItemActualProps,
             contentActualProps,
+            enterHandle,
+            tagAdd,
             slotProps,
         };
     },

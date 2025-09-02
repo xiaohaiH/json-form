@@ -54,20 +54,8 @@ export function inputNumberPropsGeneric<T, Query extends Record<string, any>, Op
         staticProps: { type: Object as PropType<StaticProps<_Prop>> },
         /** 组件动态属性，根据查询条件动态计算属性值 */
         dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
-        /**
-         * 是否实时触发搜索事件
-         * 当wrapper.realtime为true时，可将该值设为false并设置抖动时间
-         * 当设置为true时，输入值变化会立即触发change事件
-         * 当设置为false时，输入值变化会触发内部值更新，但只有在等待时间后才会触发搜索
-         * @default true
-         */
-        realtime: { type: Boolean as PropType<boolean>, default: true },
-        /**
-         * 实时触发时防抖动的时间（毫秒）
-         * 当realtime为false时生效，指定延迟多少毫秒后触发搜索
-         * @default 300
-         */
-        waitTime: { type: Number as PropType<number>, default: 300 },
+        /** 延迟触发抖动时长(单位 ms) */
+        debounceTime: { type: Number as PropType<number>, default: undefined },
         // 以下为已注释的插槽配置，当前组件未启用
         // /** 传递给组件的插槽 */
         // itemSlots: { type: Object as PropType<Partial<{

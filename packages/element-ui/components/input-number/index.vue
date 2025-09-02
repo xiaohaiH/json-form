@@ -17,15 +17,14 @@
         </template>
         <!-- 默认数字输入框渲染 -->
         <slot v-else v-bind="slotProps">
-            <!-- 不监听回车事件, 防止实际值与组件内部的值(会根据提供的精度等配置项而主动改变)不匹配 -->
-            <!-- @keydown.enter="enterHandle" -->
             <ElInputNumber
-                :value="checked === 0 ? 0 : checked || undefined"
+                :value="tempChecked === 0 ? 0 : tempChecked || undefined"
                 class="json-form-item__content"
                 v-bind="contentActualProps"
                 :disabled="globalReadonly || globalDisabled || contentActualProps.disabled"
                 v-on="$listeners"
                 @input="debounceChange"
+                @keydown.enter="enterHandle"
             >
                 <!-- 动态插槽支持 - 目前被注释 -->
                 <!-- <template v-for="(item, slotName) of itemSlots" #[hyphenate(slotName)]="row">
@@ -47,7 +46,7 @@
 <script lang="ts">
 import { hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { FormItem as ElFormItem, InputNumber as ElInputNumber } from 'element-ui';
-import { computed, defineComponent, ref } from 'vue-demi';
+import { computed, defineComponent, ref, watch } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
 import { formItemPropKeys } from '../share';
 import type { InputNumberSlots } from './types';
@@ -93,6 +92,8 @@ export default defineComponent({
         });
 
         const plain = usePlain(props);
+        const tempChecked = ref(plain.checked.value);
+        watch(plain.checked, (value) => tempChecked.value = value);
 
         /**
          * 输入防抖处理函数
@@ -102,21 +103,14 @@ export default defineComponent({
          */
         let timer = 0;
         function debounceChange(value: number | null | undefined) {
-            const { realtime, waitTime } = props;
-            // 清除现有计时器
+            if (value === tempChecked.value) return;
+            const { debounceTime } = props;
             timer && clearTimeout(timer);
+            tempChecked.value = value;
 
-            if (realtime) {
-                // 实时模式：立即触发值变更
-                plain.change(value);
-            }
-            else {
-                // 非实时模式：更新值但延迟触发搜索
-                plain.updateCheckedValue(value);
-                if (!plain.wrapper) return;
-                // 设置延时搜索
-                timer = setTimeout(plain.wrapper.insetSearch, waitTime) as unknown as number;
-            }
+            debounceTime
+                ? timer = setTimeout(() => plain.change(tempChecked.value), debounceTime) as unknown as number
+                : plain.change(value);
         }
 
         /**
@@ -127,12 +121,8 @@ export default defineComponent({
          * @param {Event|KeyboardEvent} ev - 键盘事件对象
          */
         function enterHandle(ev: Event | KeyboardEvent) {
-            // 清除现有计时器
             timer && clearTimeout(timer);
-            // 直接从事件目标获取值并更新
-            (plain.checked as any).value = (ev.target as HTMLInputElement).value;
-            // 更新查询参数并触发搜索
-            plain.option.updateWrapperQuery();
+            plain.checked.value !== tempChecked.value && plain.updateCheckedValue(tempChecked.value);
             plain.wrapper?.search();
         }
 
@@ -142,7 +132,7 @@ export default defineComponent({
             getItemProps: () => contentActualProps.value,
             getProps: () => props,
             extraOptions: {
-                value: plain.checked.value === 0 ? 0 : (plain.checked.value as number) || undefined,
+                value: tempChecked.value === 0 ? 0 : (tempChecked.value as number) || undefined,
                 options: plain.finalOption.value,
                 onChange: debounceChange,
             },
@@ -153,6 +143,7 @@ export default defineComponent({
             hyphenate,
             getNode,
             ...plain,
+            tempChecked,
             formItemActualProps,
             contentActualProps,
             slotProps,

@@ -12,16 +12,15 @@
             <component :is="getNode(slots.default)" v-bind="slotProps" />
         </template>
         <slot v-else v-bind="slotProps">
-            <!-- 不监听回车事件, 防止实际值与组件内部的值(会根据提供的精度等配置项而主动改变)不匹配 -->
-            <!-- @keydown.enter="enterHandle" -->
-            <!-- :model-value="((checked ? Number(checked) : null) as number)" -->
+            <!-- :model-value="((tempChecked ? Number(tempChecked) : null) as number)" -->
             <ElInputNumber
-                :model-value="checked === 0 ? 0 : (checked as number) || undefined"
+                :model-value="tempChecked === 0 ? 0 : (tempChecked as number) || undefined"
                 class="json-form-item__content"
                 v-bind="contentActualProps"
                 :readonly="globalReadonly || contentActualProps.readonly"
                 :disabled="globalDisabled || contentActualProps.disabled"
                 @update:model-value="debounceChange"
+                @keydown.enter="enterHandle"
             >
                 <template v-for="(item, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">
                     <component :is="getNode(item)" v-bind="slotProps" v-bind.prop="row" />
@@ -41,7 +40,7 @@
 import { getNode, hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { ElFormItem, ElInputNumber } from 'element-plus';
 import type { SlotsType } from 'vue';
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 import { pick } from '../../src/utils';
 import { formItemPropKeys } from '../share';
 import type { InputNumberSlots } from './types';
@@ -75,28 +74,28 @@ export default defineComponent({
             return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
         });
         const plain = usePlain(props);
+        const tempChecked = ref(plain.checked.value);
+        watch(plain.checked, (value) => tempChecked.value = value);
+
         /**
          * 节流
          * @param {number} value: 输入值
          */
         let timer = 0;
         function debounceChange(value: number | null | undefined) {
-            const { realtime, waitTime } = props;
+            if (value === tempChecked.value) return;
+            const { debounceTime } = props;
             timer && clearTimeout(timer);
-            if (realtime) {
-                plain.change(value);
-            }
-            else {
-                plain.updateCheckedValue(value);
-                if (!plain.wrapper) return;
-                timer = setTimeout(plain.wrapper.insetSearch, waitTime) as unknown as number;
-            }
+            tempChecked.value = value;
+
+            debounceTime
+                ? timer = setTimeout(() => plain.change(tempChecked.value), debounceTime) as unknown as number
+                : plain.change(value);
         }
         /** 回车事件 */
         function enterHandle(ev: Event | KeyboardEvent) {
             timer && clearTimeout(timer);
-            (plain.checked as any).value = (ev.target as HTMLInputElement).value;
-            plain.option.updateWrapperQuery();
+            plain.checked.value !== tempChecked.value && plain.updateCheckedValue(tempChecked.value);
             plain.wrapper?.search();
         }
         const slotProps = computed(() => ({
@@ -104,7 +103,7 @@ export default defineComponent({
             getItemProps: () => contentActualProps.value,
             getProps: () => props,
             extraOptions: {
-                modelValue: plain.checked.value === 0 ? 0 : (plain.checked.value as number) || undefined,
+                modelValue: tempChecked.value === 0 ? 0 : (tempChecked.value as number) || undefined,
                 options: plain.finalOption.value,
                 onChange: debounceChange,
             },
@@ -115,6 +114,7 @@ export default defineComponent({
             hyphenate,
             getNode,
             ...plain,
+            tempChecked,
             formItemActualProps,
             contentActualProps,
             debounceChange,
