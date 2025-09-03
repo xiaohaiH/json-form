@@ -39,6 +39,14 @@ export default async () => {
             sidebar: {
                 '/options': [
                     {
+                        text: '开始',
+                        items: [
+                            { text: '简介', link: '/options/guide/introduction' },
+                            { text: '快速上手', link: '/options/guide/quick-start' },
+                            { text: 'HForm', link: '/options/guide/form' },
+                        ],
+                    },
+                    {
                         text: '共享属性',
                         items: [
                             { text: '共享 props', link: '/options/shares/share-props' },

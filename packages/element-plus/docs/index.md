@@ -8,12 +8,12 @@ hero:
   tagline:
   actions:
     - theme: brand
-      text: 查看配置项
-      link: /options/shares/share-props
+      text: 快速上手
+      link: /options/guide/introduction
 
     - theme: alt
-      text: 友情链接
-      link: /friendly-links
+      text: 查看配置项
+      link: /options/shares/share-props
 
 # features:
 #   - title: Feature A

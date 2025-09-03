@@ -24,14 +24,14 @@ defineOption({
 ### httpRequest
 
 - 类型: `(option: UploadRequestOptions) => Promise<unknown> | XMLHttpRequest | void`
-- 默认: -
+- 默认: `-`
 
 重声明该字段并做优化, 内部处理 success 和 promise 结果只执行一次
 
 ### beforeUpload
 
 - 类型: `UploadHooks['beforeUpload']`
-- 默认: -
+- 默认: `-`
 
 上传前的钩子函数(做了大小限制以及重复文件处理)
 
@@ -45,14 +45,14 @@ defineOption({
 ### buttonAttrs
 
 - 类型: 请参考 [`https://element-plus.org/zh-CN/component/button.html#button-attributes`](https://element-plus.org/zh-CN/component/button.html#button-attributes)
-- 默认: -
+- 默认: `-`
 
 上传按钮的属性
 
 ### fileMaxSize
 
 - 类型: `number`
-- 默认: -
+- 默认: `-`
 
 上传文件的最大大小
 
@@ -73,7 +73,7 @@ defineOption({
 ### override
 
 - 类型: `boolean`
-- 默认: -
+- 默认: `-`
 
 是否开启覆盖上传 - 当 limit 为 1 时生效
 
@@ -182,9 +182,9 @@ defineOption({
 });
 ```
 
-::: details [点我查看在线示例](https://code.juejin.cn/pen/7543920008175288366)
+::: details [点我查看在线示例](https://code.juejin.cn/pen/7545059268018815014)
 
-<Iframe src="https://code.juejin.cn/pen/7543920008175288366" />
+<Iframe src="https://code.juejin.cn/pen/7545059268018815014" />
 :::
 
 ## 注意事项

@@ -7,7 +7,7 @@
 ### default
 
 - 类型: `(props: T) => any`
-- 默认: -
+- 默认: `-`
 
 ::: details 点我查看类型 `T` 的声明
 
@@ -24,21 +24,21 @@
 ### before
 
 - 类型: `(props: T) => any`
-- 默认: -
+- 默认: `-`
 
 在组件前渲染
 
 ### after
 
 - 类型: `(props: T) => any`
-- 默认: -
+- 默认: `-`
 
 在组件后渲染
 
 ### postfix
 
 - 类型: `() => any`
-- 默认: -
+- 默认: `-`
 
 在最后渲染, 与 `after` 的区别在于, `postfix` 是渲染到指定 `div.json-form-item__postfix` 中的
 可用于多个 `input` 的之间用 `-` 相连的场景

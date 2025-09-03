@@ -5,14 +5,14 @@
 ## field
 
 - 类型: `string`
-- 默认: -
+- 默认: `-`
 
 当前选项提交给后端的字段(由于是对象形式配置的, 因此自动取对象的键, 不需要传递)
 
 ## fields
 
 - 类型: `string[]`
-- 默认: -
+- 默认: `-`
 
 当前选项提交给后端的字段,优先级比 `field` 高,根据数组成员来匹配字段
 ::: details 点我查看示例
@@ -36,14 +36,14 @@ defineOption({
 ## options
 
 - 类型: `any[]`
-- 默认: -
+- 默认: `-`
 
 给类似下拉框的组件传递的数据源, 如果是远程数据, 该选项不需要定义
 
 ## getOptions
 
 - 类型: `(callback, query, option) => void`
-- 默认: -
+- 默认: `-`
 
 获取远程数据源提供给类似下拉框的组件
 
@@ -146,14 +146,14 @@ interface Option {
 ## initialValue
 
 - 类型: `string` | `number` | `boolean` | `any[]` | `Record<string, any>` | `() => any`
-- 默认: -
+- 默认: `-`
 
 初始或重置时设置的值, 优先级高于 `defaultValue`, 可以被清空
 
 ## defaultValue
 
 - 类型: `string` | `number` | `boolean` | `any[]` | `Record<string, any>` | `() => any`
-- 默认: -
+- 默认: `-`
 
 默认值, 当对应字段的值为空值时, 会用该值替换
 
@@ -174,7 +174,7 @@ interface Option {
 ## dependFields
 
 - 类型: `string` | `string[]`
-- 默认: -
+- 默认: `-`
 
 depend 为真时, 依赖的字段
 
@@ -188,14 +188,14 @@ depend 为真时, 依赖字段发生变化后是否重置本身的值
 ## dependWatchOption
 
 - 类型: `Record<string, any>`
-- 默认: -
+- 默认: `-`
 
 依赖字段监听的配置项(`vue` 的 `WatchOptions`)
 
 ## optionsDepend
 
 - 类型: `boolean`
-- 默认: -
+- 默认: `-`
 
 是否依赖其它字段的数据源 - 依赖字段的数据源发生变动时触发自身的 `getOptions`
 
@@ -209,14 +209,14 @@ depend 为真时, 依赖字段发生变化后是否重置本身的值
 ## validator
 
 - 类型: `(query: Record<string, any>) => any | Promise<any>`
-- 默认: -
+- 默认: `-`
 
-校验函数, 返回值为真且是字符串时会执行 `HForm` 组件的 `toast` 函数
+搜索事件触发时调用的校验函数, 返回值为真且是字符串时会执行 `HForm` 组件的 `toast` 函数
 
 ## hooks
 
 - 类型: `Hooks`
-- 默认: -
+- 默认: `-`
 
 组件项的钩子函数, 可通过钩子监听组件生命周期等信息
 
@@ -287,13 +287,13 @@ interface Hooks {
 ## emptyValue
 
 - 类型: `string` | `number` | `boolean` | `null` | `undefined`
-- 默认: -
+- 默认: `-`
 
 空值时提交的值
 
 ## customGetQuery
 
 - 类型: `(checkedValue: any, emptyToValue: (val: any, defaultValue: any) => any, props: Record<string, any>) => Record<string, any>`
-- 默认: -
+- 默认: `-`
 
 自定义返回该配置项的 `query` 信息, 默认会根据传递的 `field` 或者 `fields` 生成, 一般情况下用不到该函数

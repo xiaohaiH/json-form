@@ -30,7 +30,7 @@ defineOption({
 ### render
 
 - 类型: `(option: CustomRenderSlotOption<T, Query, Option, OptionQuery>) => () => any`
-- 默认: -
+- 默认: `-`
 - 必填: `true`
 
 自定义渲染逻辑

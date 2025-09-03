@@ -140,3 +140,83 @@ export interface WrapperProvideValue {
     options: Record<string, any[]>;
 }
 // #endregion plain
+
+// #region wrapper
+export interface SlotProps {
+    /** 获取传递给当前组件 props */
+    getProps: () => Record<string, any>;
+    /** 封装给 HForm 的通用选项 */
+    wrapper: WrapperReturnValue;
+}
+
+/** useWrapper 的返回值 */
+export interface WrapperReturnValue {
+    /** 所有表单项集合 */
+    child: CommonMethod[];
+    /** 暴露给 usePlain 的信息 */
+    wrapperInstance: ProvideValue;
+    /** 表单的值集合, 类似 ElForm 的 model */
+    query: Record<string, any>;
+    /** 获取 query 的值 */
+    getQuery: () => Record<string, any>;
+    /** 触发搜索事件 */
+    search: () => void;
+    /** 重置所有条件的值 */
+    reset: () => void;
+    /** 自定义校验条件的值并弹出提示 */
+    validateToast: () => void;
+};
+
+/** 组件提供给 HForm 的选项 */
+export interface CommonMethod {
+    /** 重置 */
+    reset: () => void;
+    /** 更新 HForm 中 query 的值 */
+    updateWrapperQuery: () => void;
+    /** 校验方法 */
+    validator?: (query: Record<string, string>) => Promise<any> | any;
+    /** 获取该组件拼接的参数 */
+    getQuery: () => Record<string, any>;
+    /** 在 watch 中 backfill 改变后, 需要执行回调 */
+    onChangeByBackfill?: () => void;
+}
+
+/** 容器注入值的类型 */
+export interface ProvideValue {
+    /** 表单是否只读 */
+    readonly?: Ref<boolean | undefined>;
+    /** 表单是否禁用 */
+    disabled?: Ref<boolean | undefined>;
+    /**
+     * 是否实时触发
+     */
+    realtime: Ref<boolean | undefined>;
+    /**
+     * 子组件需主动注册组件, 否则不会生效
+     * @param {CommonMethod} config 提供父组件校验, 重置等方法
+     *
+     * @returns {() => void} 取消注册 - 默认会自动取消, 如果是异步任务内注册, 需自己手动取消
+     */
+    register: (config: CommonMethod) => () => void;
+    /**
+     * 子组件通知父级更新 query 中的值 - 静默修改, 不触发搜索事件
+     * @param {string} field 更新的字段
+     * @param {*} value 更新的值
+     * @param {string} nativeField 原始提供的字段(不受 as, fields 等属性的影响)
+     */
+    updateQueryValue: (field: string, value: any, nativeField: string) => void;
+    /**
+     * 子组件内部值发生了变动, 由父级决定是否触发搜索事件(实时搜索时需要区分这两种方式)
+     * @param {string | string[]} [tryFields] 比较 query[tryFields] 与 backfill[tryFields]是否一致, 不一致时才触发搜索
+     */
+    insetSearch: (tryFields?: string | string[]) => void;
+    /**
+     * 提供给组件内部的直接触发到外部的搜索事件
+     */
+    search: () => Promise<string | void>;
+    /** 删除内部无引用的字段 */
+    removeUnreferencedField: (field: string) => void;
+    /** 所有条件的 options 数据 */
+    options: Record<string, any[]>;
+}
+// #endregion wrapper

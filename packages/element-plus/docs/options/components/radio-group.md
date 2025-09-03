@@ -47,7 +47,7 @@ defineOption({
 ### cancelable
 
 - 类型: `boolean`
-- 默认: -
+- 默认: `-`
 
 选中状态是否可以被取消
 
@@ -61,7 +61,7 @@ defineOption({
 ### itemProps
 
 - 类型: `object`
-- 默认: -
+- 默认: `-`
 
 暴露给 Radio 或 RadioButton 的属性, 可参考[https://element-plus.org/zh-CN/component/radio.html#radio-attributes](https://element-plus.org/zh-CN/component/radio.html#radio-attributes)
 

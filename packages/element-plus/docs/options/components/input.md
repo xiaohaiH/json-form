@@ -23,7 +23,7 @@ defineOption({
 ### waitTime
 
 - 类型: `number`
-- 默认: -
+- 默认: `-`
 
 延迟触发抖动时长(单位 `ms`)
 

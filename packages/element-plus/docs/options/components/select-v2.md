@@ -40,7 +40,7 @@ defineOption({
 ### filterMethod
 
 - 类型: `(val: string, option: T) => boolean`
-- 默认: -
+- 默认: `-`
 
 过滤方法(第一项是搜索值, 第二项是筛选数据, 过滤掉返回 `false` 的数据)
 

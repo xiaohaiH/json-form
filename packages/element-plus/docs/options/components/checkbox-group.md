@@ -41,7 +41,7 @@ defineOption({
 ### type
 
 - 类型: `'checkbox' | 'button'`
-- 默认: -
+- 默认: `-`
 
 按钮类型(checkbox|button), 默认 checkbox
 
@@ -55,7 +55,7 @@ defineOption({
 ### itemProps
 
 - 类型: `Partial<ExtractPublicPropTypes<ReturnType<typeof emits2props<typeof elCheckboxProps, [NonNullable<typeof elCheckboxEmits>]>>>>`
-- 默认: -
+- 默认: `-`
 
 暴露给 `Checkbox` 或 `CheckboxButton` 的属性
 

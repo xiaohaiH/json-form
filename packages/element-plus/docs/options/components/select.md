@@ -26,7 +26,7 @@ defineOption({
 ### group
 
 - 类型: `boolean`
-- 默认: -
+- 默认: `-`
 
 是否将选项进行分组
 
@@ -54,7 +54,7 @@ defineOption({
 ### valueIsWhole
 
 - 类型: `boolean`
-- 默认: -
+- 默认: `-`
 
 是否将整个选项都作为值传递给 `ElOption`(相当于忽略 `valueKey`)
 
@@ -75,7 +75,7 @@ defineOption({
 ### filterMethod
 
 - 类型: `(val: string, option: T) => boolean`
-- 默认: -
+- 默认: `-`
 
 过滤方法(第一项是搜索值, 第二项是筛选数据, 过滤掉返回 `false` 的数据)
 
@@ -122,6 +122,10 @@ defineOption({
 :::
 
 ## 示例
+
+<script setup>
+import Iframe from '../../vue-components/iframe.vue';
+</script>
 
 ### 基础下拉框 + 分组下拉框
 
