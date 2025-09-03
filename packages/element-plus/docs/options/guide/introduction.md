@@ -1,6 +1,6 @@
 # 简介
 
-通过 `json` 配置表单, 基于 `ElementPlus`
+通过 `json` 对象配置表单, 基于 `ElementPlus`
 
 ## 安装
 

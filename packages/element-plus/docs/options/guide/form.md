@@ -34,7 +34,7 @@ const log = console.log.bind(null, '表单值: ');
 - 类型: `Function | object`
 - 默认: `-`
 
-给表单提供的 `json` 数据, 通过 `@xiaohaih/json-form-plus` 暴露出的 `defineOption` 生成
+给表单提供的 `json` 对象数据, 通过 `@xiaohaih/json-form-plus` 暴露出的 `defineOption` 生成
 
 ::: details 示例
 
@@ -186,7 +186,7 @@ function formOption() {
 
 ### prepend
 
-- 在 `json` 数据前渲染
+- 在 `json` 对象数据前渲染
 
 ::: details `slotProps`
 
@@ -196,7 +196,7 @@ function formOption() {
 
 ### default
 
-- 在 `json` 数据后渲染
+- 在 `json` 对象数据后渲染
 
 ::: details `slotProps`
 
