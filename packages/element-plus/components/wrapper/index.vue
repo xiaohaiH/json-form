@@ -64,6 +64,14 @@ export default defineComponent({
         function clearValidate(...args: Parameters<InstanceType<typeof ElForm>['clearValidate']>) {
             return formRef.value!.clearValidate(...args);
         }
+        /** 滚动到指定的字段 */
+        function scrollToField(...args: Parameters<InstanceType<typeof ElForm>['scrollToField']>) {
+            return formRef.value!.scrollToField(...args);
+        }
+        /** 获取字段的 context */
+        function getField(...args: Parameters<InstanceType<typeof ElForm>['getField']>) {
+            return formRef.value!.getField(...args);
+        }
         const emitSearch = (emit as any).bind(null, 'search') as unknown as (typeof emits)['search'];
         const emitReset = (emit as any).bind(null, 'reset') as unknown as (typeof emits)['reset'];
         const emitFieldChange = (emit as any).bind(null, 'fieldChange') as unknown as (typeof emits)['fieldChange'];
@@ -93,6 +101,8 @@ export default defineComponent({
             validate,
             validateField,
             clearValidate,
+            scrollToField,
+            getField,
             reset,
             getComponent,
             resetAndSearch,

@@ -32,7 +32,7 @@
                 </template> -->
             </ElInputNumber>
         </slot>
-        <!-- a表单项后置内容插槽 -->
+        <!-- 表单项后置内容插槽 -->
         <template v-if="slots.after || $slots.after">
             <component :is="getNode(slots.after || $slots.after, slotProps)" />
         </template>
