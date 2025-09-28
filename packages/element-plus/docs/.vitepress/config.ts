@@ -27,7 +27,17 @@ export default async () => {
         description: '基于 json 驱动的表单',
         lang: 'zh-CN',
         base: '/json-form/docs-plus/',
+        head: [['meta', { name: 'algolia-site-verification', content: '61B7703469FD262F' }]],
         themeConfig: {
+            search: {
+                provider: 'local',
+                // provider: 'algolia',
+                // options: {
+                //     appId: '7I5QJDRVQQ',
+                //     apiKey: '22b659ca38c3f820e963499fc03547b4',
+                //     indexName: 'json-form-plus',
+                // },
+            },
             // https://vitepress.dev/reference/default-theme-config
             nav: [
                 { text: '首页', link: '/' },

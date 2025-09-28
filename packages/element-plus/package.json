@@ -46,6 +46,7 @@
         "@xiaohaih/json-form-core": "workspace:*"
     },
     "devDependencies": {
+        "@docsearch/js": "4",
         "@popperjs/core": "^2.11.8",
         "@rollup/plugin-terser": "^0.4.4",
         "@tsconfig/node22": "^22.0.0",
