@@ -62,6 +62,7 @@ export default defineComponent({
     components: {
         ElFormItem,
         ElUpload,
+        ElButton,
     },
     inheritAttrs: false,
     props,
