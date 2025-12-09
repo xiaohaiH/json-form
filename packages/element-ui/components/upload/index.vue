@@ -75,7 +75,7 @@
 
 <script lang="ts">
 import { hyphenate, usePlain } from '@xiaohaih/json-form-core';
-import { FormItem as ElFormItem, Upload as ElUpload } from 'element-ui';
+import { Button as ElButton, FormItem as ElFormItem, Upload as ElUpload } from 'element-ui';
 import type { ElUploadInternalFileDetail as UploadFile, ElUploadInternalRawFile as UploadRawFile, HttpRequestOptions as UploadRequestOptions } from 'element-ui/types/upload.d';
 import { computed, defineComponent, onMounted, ref } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
@@ -98,6 +98,7 @@ export default defineComponent({
     components: {
         ElFormItem,
         ElUpload,
+        ElButton,
     },
     inheritAttrs: false,
     props,
@@ -120,7 +121,7 @@ export default defineComponent({
         });
 
         // 计算内容静态属性
-        const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
+        const contentStaticProps = computed(() => ({ autoUpload: props.autoUpload, ...ctx.attrs, ...props.staticProps }));
 
         // 计算内容实际属性（合并静态和动态属性）
         const contentActualProps = computed(() => {

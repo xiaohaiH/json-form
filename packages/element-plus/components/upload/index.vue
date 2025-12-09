@@ -79,7 +79,7 @@ export default defineComponent({
             const { query, formItemDynamicProps } = props;
             return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
         });
-        const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
+        const contentStaticProps = computed(() => ({ autoUpload: props.autoUpload, ...ctx.attrs, ...props.staticProps }));
         const contentActualProps = computed(() => {
             const { query, dynamicProps } = props;
             return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;

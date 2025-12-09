@@ -10,6 +10,7 @@ import { commonProps, formItemProps } from '../share';
 const elUploadProps = ElUpload.props as Obj2Props<ComponentProps<typeof ElUpload>>;
 const elUploadEmits = emits2obj(ElUpload.emits);
 
+
 let fileId = 1000;
 export const genFileId = () => Date.now() + ++fileId;
 /** 组件传参 - 私有 */
@@ -47,6 +48,8 @@ export function uploadPropsGeneric<T, Query extends Record<string, any>, Option,
             type: Function as PropType<(file: File) => void>,
             default: (file: File) => ElMessage.error(`不能重复上传文件(${file.name})`),
         },
+        /** 自动上传文件 - 需要与 element-plus 保持一致 */
+        autoUpload: elUploadProps.autoUpload,
         /** 是否开启覆盖上传 - 当 limit 为 1 时生效 */
         override: { type: Boolean as PropType<boolean> },
         /** 传递给组件的插槽 */

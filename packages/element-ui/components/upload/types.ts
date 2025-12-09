@@ -101,6 +101,8 @@ export function uploadPropsGeneric<T, Query extends Record<string, any>, Option,
             type: Function as PropType<(files: File[], override: boolean | undefined) => void>,
             default: (files: File[], override?: boolean) => ElMessage.error(override ? `文件数量超过限制, 已替换现有文件` : '文件数量超过限制, 已采用最新的文件'),
         },
+        /** 自动上传文件 - 需要与 element-plus 保持一致 */
+        autoUpload: elUploadProps.autoUpload,
         /** 是否开启覆盖上传 */
         override: { type: Boolean as PropType<boolean> },
         /** 传递给组件的插槽 */
