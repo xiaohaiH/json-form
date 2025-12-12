@@ -1,5 +1,11 @@
 # @xiaohaih/json-form-plus
 
+## 0.1.12
+
+### Patch Changes
+
+- 修复上传组件覆盖上传时未自动上传
+
 ## 0.1.11
 
 ### Patch Changes
