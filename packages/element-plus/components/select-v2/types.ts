@@ -31,6 +31,7 @@ export function selectV2PropsGeneric<T, Query extends Record<string, any>, Optio
         filterMethod: { type: Function as unknown as PropType<(val: string, option: T) => boolean> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
+            default: ((props: SelectV2SlotOption<T, Query, Option, OptionQuery>) => any);
             header: ((props: SelectV2SlotOption<T, Query, Option, OptionQuery>) => any);
             footer: ((props: SelectV2SlotOption<T, Query, Option, OptionQuery>) => any);
             prefix: ((props: SelectV2SlotOption<T, Query, Option, OptionQuery>) => any);
