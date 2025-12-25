@@ -19,3 +19,5 @@
 - [x] input 类组件的延时搜索不生效
 
 - [x] input 删除 realtime
+
+- [ ] 设置 backfill 后的回调(比如设置 backfill 后, 要更改多选框中数据源中的选中状态) - 增加生命周期事件
