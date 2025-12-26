@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { useWrapper } from '@xiaohaih/json-form-core';
+import { execOnCallback, useWrapper } from '@xiaohaih/json-form-core';
 import { Button as ElButton, Form as ElForm } from 'element-ui';
 import { computed, defineComponent, markRaw, nextTick, onMounted, ref, watch } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
@@ -49,7 +49,7 @@ export default defineComponent({
     props,
     emits,
     // slots: Object as SlotsType<FormSlots<any, any, any, any>>,
-    setup(props, { emit }) {
+    setup(props, { emit, listeners }) {
         // 表单引用
         const formRef = ref<InstanceType<typeof ElForm>>();
         /** 格式化表单配置项(防止 template 中报错, 直接设置为 any) */
@@ -74,13 +74,8 @@ export default defineComponent({
             return formRef.value!.clearValidate(...args);
         }
 
-        // 绑定事件处理函数
-        const emitSearch = (emit as any).bind(null, 'search') as unknown as (typeof emits)['search'];
-        const emitReset = (emit as any).bind(null, 'reset') as unknown as (typeof emits)['reset'];
-        const emitFieldChange = (emit as any).bind(null, 'fieldChange') as unknown as (typeof emits)['fieldChange'];
-
         // 使用核心库提供的wrapper钩子
-        const wrapper = useWrapper(props, { search: emitSearch, reset: emitReset, fieldChange: emitFieldChange });
+        const wrapper = useWrapper(props, listeners);
 
         /**
          * 重置并搜索
@@ -100,8 +95,10 @@ export default defineComponent({
 
         // 组件挂载后触发ready事件，并根据配置执行立即搜索
         onMounted(() => {
-            emit('ready', wrapper.getQuery());
-            props.immediateSearch && emitSearch(wrapper.getQuery());
+            props.onReady && execOnCallback(props.onReady, wrapper.getQuery());
+            // @ts-expect-error 忽视声明报错
+            listeners.ready?.(wrapper.getQuery());
+            props.immediateSearch && props.onSearch && execOnCallback(props.onSearch, wrapper.getQuery());
         });
 
         return {

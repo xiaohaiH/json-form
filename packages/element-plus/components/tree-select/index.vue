@@ -15,7 +15,7 @@
             <ElTreeSelect
                 :filterable="filterable"
                 :clearable="clearable"
-                :data="finalOption"
+                :data="(finalOption as any[])"
                 :model-value="(checked as string[])"
                 :loading="loading"
                 class="json-form-item__content"

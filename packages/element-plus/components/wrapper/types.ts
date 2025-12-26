@@ -7,7 +7,7 @@
  * - 表单插槽类型
  * - 表单相关的接口类型
  */
-import type { CamelCase, WrapperProps as CoreWrapperProps, Obj2Props, useWrapper } from '@xiaohaih/json-form-core';
+import type { CamelCase, WrapperProps as CoreWrapperProps, Obj2Props, useWrapper, WrapperArrayable } from '@xiaohaih/json-form-core';
 import { wrapperProps as coreWrapperProps, emits2obj, emits2props } from '@xiaohaih/json-form-core';
 import { ElForm, ElMessage } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
@@ -46,6 +46,8 @@ function formAssist() {
         searchText: { type: String as PropType<string>, default: '搜索' },
         /** 重置按钮文字 */
         resetText: { type: String as PropType<string>, default: '重置' },
+        /** query 已初始化 - 组件就绪时触发 */
+        onReady: { type: [Function, Array] as PropType<WrapperArrayable<(query: Record<string, any>) => void>> },
     } as const;
 }
 
@@ -107,21 +109,21 @@ export const formProps = emits2props({
 export function formEmitsGeneric<T>() {
     return {
         ...{} as typeof elFormEmits,
-        /** query 已初始化 - 组件就绪时触发 */
-        ready: (query: Record<string, any>) => true,
-        /** 搜索事件 - 触发内部 query 对象更新 */
-        search: (query: Record<string, any>) => true,
-        /** 重置事件 - 重置表单数据时触发 */
-        reset: (query: Record<string, any>) => true,
-        /**
-         * 字段值发生改变时触发
-         * @param {object} option 提供的
-         * @param {string} option.field 实际改变的键
-         * @param {*} option.value
-         * @param {object} option.query
-         * @param {string} option.nativeField 原始健(不受 as, fields 等属性影响)
-         */
-        fieldChange: (option: { field: string; value: any; query: Record<string, any>; nativeField: string }) => true,
+        // /** query 已初始化 - 组件就绪时触发 */
+        // ready: (query: Record<string, any>) => true,
+        // /** 搜索事件 - 触发内部 query 对象更新 */
+        // search: (query: Record<string, any>) => true,
+        // /** 重置事件 - 重置表单数据时触发 */
+        // reset: (query: Record<string, any>) => true,
+        // /**
+        //  * 字段值发生改变时触发
+        //  * @param {object} option 提供的
+        //  * @param {string} option.field 实际改变的键
+        //  * @param {*} option.value
+        //  * @param {object} option.query
+        //  * @param {string} option.nativeField 原始健(不受 as, fields 等属性影响)
+        //  */
+        // fieldChange: (option: { field: string; value: any; query: Record<string, any>; nativeField: string }) => true,
     };
 }
 

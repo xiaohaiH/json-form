@@ -19,25 +19,9 @@ import type { wrapperProps } from './types';
 
 /** 外部需传递的 props */
 type WrapperProps = ExtractPropTypes<typeof wrapperProps>;
-/** 外部传递的方法 */
-export interface WrapperOption {
-    /** 触发搜索事件 */
-    search?: (params: Record<string, any>) => void;
-    /** 触发重置事件 */
-    reset?: (params: Record<string, any>) => void;
-    /**
-     * 字段值发生改变时触发
-     * @param {object} option 提供的
-     * @param {string} option.field 实际改变的键
-     * @param {*} option.value
-     * @param {object} option.query
-     * @param {string} option.nativeField 原始健(不受 as, fields 等属性影响)
-     */
-    fieldChange?: (option: { field: string; value: any; query: Record<string, any>; nativeField: string }) => void;
-}
 
-/** 封装 wrapper 组件必备的信息 */
-export function useWrapper(props: WrapperProps, option?: WrapperOption) {
+/** 封装 wrapper 组件必备的信息(events 用来兼容 v2版本的事件) */
+export function useWrapper(props: WrapperProps, listeners?: Record<string, any>) {
     const child: CommonMethod[] = [];
     onBeforeUnmount(() => child.splice(0));
     const emptyValue = computed(() => props.emptyValue?.());
@@ -94,7 +78,8 @@ export function useWrapper(props: WrapperProps, option?: WrapperOption) {
             if (isLogField) logFields.push(field);
             set(query.value, field, value);
             changedQueryObj[field] = value;
-            option?.fieldChange?.({ field, value, query: query.value, nativeField });
+            props.onFieldChange && execOnCallback(props.onFieldChange, { field, value, query: query.value, nativeField });
+            listeners?.fieldChange?.({ field, value, query: query.value, nativeField });
         },
         insetSearch(tryFields?: string | string[]) {
             if (!props.realtime) return;
@@ -151,17 +136,22 @@ export function useWrapper(props: WrapperProps, option?: WrapperOption) {
             Object.keys(query.value).forEach((k) => {
                 (val && hasOwn(val, k)) || delete query.value[k];
             });
-            // #fix 只合并有变化的字段, 防止子级 watch 监听时误触发
+            // #fix 只合并有变化, 且与 query.value[field] 不同的字段, 防止子级 watch 监听时误触发
+            // 如果与 query.value 相同, 说明是内部触发的事件
             const newQuery = {} as Record<string, any>;
             let isChanged = false;
             Object.keys(val).forEach((k) => {
-                if (val[k] !== oldVal[k]) {
+                if (val[k] !== oldVal[k] && val[k] !== query.value[k]) {
                     newQuery[k] = val[k];
                     isChanged = true;
                 }
             });
             isChanged && Object.assign(query.value, newQuery);
-            child.forEach((o) => o.onChangeByBackfill?.());
+            child.forEach((o) => o.onChangeByBackfill?.(val, oldVal, isChanged));
+            if (isChanged) {
+                props.onBackfillChange && execOnCallback(props.onBackfillChange, val, oldVal, expose);
+                listeners?.backfillChange?.(val, oldVal, expose);
+            }
         },
         // 取消深度监听, 只监听直属属性
         // 因为第二层的值是直接赋值的
@@ -170,7 +160,13 @@ export function useWrapper(props: WrapperProps, option?: WrapperOption) {
 
     async function search() {
         const msg = await validateToast();
-        msg ? props.toast?.(msg) : option?.search?.(getQuery());
+        if (msg) {
+            props.toast?.(msg);
+        }
+        else {
+            props.onSearch && execOnCallback(props.onSearch, getQuery());
+            listeners?.search?.(getQuery());
+        }
     }
     /** 重置所有条件的值 */
     function reset() {
@@ -178,7 +174,8 @@ export function useWrapper(props: WrapperProps, option?: WrapperOption) {
             v.reset();
             v.updateWrapperQuery();
         });
-        option?.reset?.(getQuery());
+        props.onReset && execOnCallback(props.onReset, getQuery());
+        listeners?.reset?.(getQuery());
     }
     /** 自定义校验条件的值并弹出提示 */
     async function validateToast() {
@@ -186,7 +183,7 @@ export function useWrapper(props: WrapperProps, option?: WrapperOption) {
         return (r.find((v) => v && typeof v === 'string') as string) || props.validator?.(query.value);
     }
 
-    return {
+    const expose = {
         child,
         wrapperInstance,
         query,
@@ -195,4 +192,15 @@ export function useWrapper(props: WrapperProps, option?: WrapperOption) {
         reset,
         validateToast,
     };
+    return expose;
+}
+
+/**
+ * 执行 on 相关的回调事件
+ * @param {Function} events 待执行的回调
+ * @param {any[]} args 传递的参数
+ */
+export function execOnCallback<T extends (...args: any[]) => any>(events: undefined | T | T[], ...args: Parameters<T>) {
+    if (!events) return;
+    return typeof events === 'function' ? events(...args) : events.forEach((cb) => cb(...args));
 }

@@ -14,6 +14,7 @@
             :render-btn="false"
             :realtime="true"
             :immediate-search="true"
+            @ready="querySearch"
             @search="querySearch"
             @reset="querySearch"
         />

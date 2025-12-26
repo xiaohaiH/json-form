@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { useWrapper } from '@xiaohaih/json-form-core';
+import { execOnCallback, useWrapper } from '@xiaohaih/json-form-core';
 import { ElButton, ElForm } from 'element-plus';
 import type { Ref, SlotsType } from 'vue';
 import { computed, defineComponent, markRaw, nextTick, onMounted, ref, watch } from 'vue';
@@ -72,10 +72,7 @@ export default defineComponent({
         function getField(...args: Parameters<InstanceType<typeof ElForm>['getField']>) {
             return formRef.value!.getField(...args);
         }
-        const emitSearch = (emit as any).bind(null, 'search') as unknown as (typeof emits)['search'];
-        const emitReset = (emit as any).bind(null, 'reset') as unknown as (typeof emits)['reset'];
-        const emitFieldChange = (emit as any).bind(null, 'fieldChange') as unknown as (typeof emits)['fieldChange'];
-        const wrapper = useWrapper(props, { search: emitSearch, reset: emitReset, fieldChange: emitFieldChange });
+        const wrapper = useWrapper(props);
         /** 重置并搜索 */
         function resetAndSearch() {
             reset();
@@ -89,8 +86,8 @@ export default defineComponent({
         const slotProps = { getProps: () => props, wrapper };
 
         onMounted(() => {
-            emit('ready', wrapper.getQuery());
-            props.immediateSearch && emitSearch(wrapper.getQuery());
+            props.onReady && execOnCallback(props.onReady, wrapper.getQuery());
+            props.immediateSearch && props.onSearch && execOnCallback(props.onSearch, wrapper.getQuery());
         });
 
         return {
