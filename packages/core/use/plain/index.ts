@@ -13,14 +13,7 @@ import { clone, emptyToValue, get, getChained, isArray, isEmptyValue, isEqualExc
 import { useDisableInCurrentCycle, useValue } from '../assist';
 import type { ProvideValue } from '../constant';
 import { defineCommonMethod, provideKey } from '../constant';
-import type { plainProps, plainPropsGeneric } from './types';
-
-// 由于 PlainProps 需要用到 usePlain 的返回值声明
-// 因此在此处导出防止循环引用
-export type PlainProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any> = Record<string, any>> = Omit<ReturnType<typeof plainPropsGeneric<T, Query, Option, OptionQuery>>, 'hooks'> & { hooks: { type: PropType<Partial<Record<'created' | 'dependChange' | 'optionsDependChange', (opt: {
-    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
-    props: Record<string, any>;
-}) => void>>>; }; };
+import type { HookOption, plainProps, PlainProps } from './types';
 
 /** 外部需传递的 props */
 type _PlainProps<T, Query, Option, OptionQuery> = ExtractPropTypes<PlainProps<T, any, Option, any>>;
@@ -103,7 +96,10 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
             return _props.validator;
         },
         getQuery,
-        onChangeByBackfill: () => isSyncedQueryValue = false,
+        onChangeByBackfill: (backfill, oldBackfill, isChange) => {
+            isChange && unref(props).hooks?.backfillChange?.(backfill, oldBackfill, { plain: expose, props: unref(props) });
+            isSyncedQueryValue = false;
+        },
     });
 
     wrapper?.register(option);
@@ -197,7 +193,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                 // 否则会导致数据源来回切换时, 其选中状态未被消除
                 nextTick(getOption.bind(null, 'depend'));
 
-                initialProps.hooks?.dependChange?.({ plain: expose, props: initialProps });
+                initialProps.hooks?.dependChange?.({ plain: expose, props: unref(props) });
                 // 类空值时, 不触发 change 事件
                 // 防止表单类监测值发生改变时触发校验
                 // 或内部不允许重置时直接返回
@@ -230,7 +226,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                 // 异步触发回调, 某些场景得先清空值, 再清空数据源
                 // 否则会导致数据源来回切换时, 其选中状态未被消除
                 nextTick(getOption.bind(null, 'depend'));
-                initialProps.hooks?.optionsDependChange?.({ plain: expose, props: initialProps });
+                initialProps.hooks?.optionsDependChange?.({ plain: expose, props: unref(props) });
             },
             // 不需要 immediate, 因为 getOption 初始会执行一次
         ),
@@ -367,7 +363,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
         globalDisabled: wrapper?.disabled || ref(false),
     };
 
-    initialProps.hooks?.created?.({ plain: expose, props: initialProps });
+    initialProps.hooks?.created?.({ plain: expose, props: unref(props) });
 
     return expose;
 }

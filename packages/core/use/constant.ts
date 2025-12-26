@@ -65,7 +65,7 @@ export interface CommonMethod {
     /** 获取该组件拼接的参数 */
     getQuery: () => Record<string, any>;
     /** 在 watch 中 backfill 改变后, 需要执行回调 */
-    onChangeByBackfill?: () => void;
+    onChangeByBackfill?: (backfill: Record<string, any>, oldBackfill: Record<string, any>, isChange: boolean) => void;
 }
 export function defineCommonMethod<T extends CommonMethod>(option: T): T {
     return option;
