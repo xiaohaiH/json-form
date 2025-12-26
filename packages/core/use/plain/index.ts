@@ -193,7 +193,9 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                 // 导致引用发生变化, 所以需要做值比较
                 if (_val && __val && _val.length === __val.length && _val.every((o, i) => o === __val[i])) return;
                 const _props = unref(props);
-                getOption('depend');
+                // 异步触发回调, 某些场景得先清空值, 再清空数据源
+                // 否则会导致数据源来回切换时, 其选中状态未被消除
+                nextTick(getOption.bind(null, 'depend'));
 
                 initialProps.hooks?.dependChange?.({ plain: expose, props: initialProps });
                 // 类空值时, 不触发 change 事件
@@ -225,7 +227,9 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                 // 但遍历 optionsDependFields 获取 query 的会返回一个新数组
                 // 导致引用发生变化, 所以需要做值比较
                 if (_val && __val && _val.length === __val.length && _val.every((o, i) => o === __val[i])) return;
-                getOption('depend');
+                // 异步触发回调, 某些场景得先清空值, 再清空数据源
+                // 否则会导致数据源来回切换时, 其选中状态未被消除
+                nextTick(getOption.bind(null, 'depend'));
                 initialProps.hooks?.optionsDependChange?.({ plain: expose, props: initialProps });
             },
             // 不需要 immediate, 因为 getOption 初始会执行一次
