@@ -98,7 +98,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
         getQuery,
         onChangeByBackfill: (backfill, oldBackfill, isChange) => {
             isChange && unref(props).hooks?.backfillChange?.(backfill, oldBackfill, { plain: expose, props: unref(props) });
-            isSyncedQueryValue = false;
+            // isSyncedQueryValue = false;
         },
     });
 
@@ -127,7 +127,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
      * checked.value 是否同步了 query 的值
      * 在 wrapper.backfill 中批量更新值时, 禁止依赖做处理
      */
-    let isSyncedQueryValue = false;
+    // let isSyncedQueryValue = false;
     // 实时值发生变化时触发更新 - 共享同一个字段
     unwatchs.push(
         watch(
@@ -153,13 +153,16 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                 // 为空且存在默认值, 走值变更逻辑, 且通知上层组件
                 // 否则直接更新值, 且通知上层组件判断是否需要触发搜索事件
                 if (checked.value !== _val) {
-                    isSyncedQueryValue = true;
-                    (isEmptyValue(_val)) && !isEmptyValue(getAppointProp('defaultValue'))
-                        ? change(_val as T)
+                    // isSyncedQueryValue = true;
+                    let defaultValue;
+                    // eslint-disable-next-line no-cond-assign
+                    (isEmptyValue(_val)) && !isEmptyValue(defaultValue = getAppointProp('defaultValue'))
+                        ? change(defaultValue)
                         : assignValueAndTrySearch(_val);
                 }
             },
-            { flush: 'sync' },
+            // 禁用 flush 之类新增的属性, 兼容低版本
+            // { },
         ),
     );
 
@@ -198,10 +201,12 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                 // 防止表单类监测值发生改变时触发校验
                 // 或内部不允许重置时直接返回
                 const isNeedReset = typeof _props.resetByDependValueChange === 'boolean' ? _props.resetByDependValueChange : _props.resetByDependValueChange(_props.query);
-                if (isSyncedQueryValue || !isNeedReset || isEmptyValue(checked.value) || !allowDependChangeValue.value) return;
+                // if (isSyncedQueryValue || !isNeedReset || isEmptyValue(checked.value) || !allowDependChangeValue.value) return;
+                if (!isNeedReset || isEmptyValue(checked.value) || !allowDependChangeValue.value) return;
                 change(getAppointProp('defaultValue'));
             },
-            { flush: 'sync', ...unref(props).dependWatchOption },
+            // 禁用 flush 之类新增的属性, 兼容低版本
+            unref(props).dependWatchOption,
         ),
     );
 
@@ -295,8 +300,9 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
         if (value !== checked.value) {
             // 当结果为空值或者空数组时,
             // 且默认值不为空, 用默认值替代
-            const defaultValue = getAppointProp('defaultValue');
-            checked.value = (isEmptyValue(value) || (isArray(value) && !value.length)) && !isEmptyValue(defaultValue)
+            let defaultValue;
+            // eslint-disable-next-line no-cond-assign
+            checked.value = (isEmptyValue(value) || (isArray(value) && !value.length)) && !isEmptyValue(defaultValue = getAppointProp('defaultValue'))
                 ? defaultValue
                 : value;
         }

@@ -26,16 +26,18 @@ export function useWrapper(props: WrapperProps, listeners?: Record<string, any>)
     onBeforeUnmount(() => child.splice(0));
     const emptyValue = computed(() => props.emptyValue?.());
 
-    /**
-     * #fix 修复初始 backfill 存在值时
-     * query 未保持一致的问题
-     * 解决方案:
-     * query 本身逻辑和作用不变
-     * 新增一个对象用来缓存更改的值
-     * 并在获取 query 时, 将该对象作为
-     * 最后一个合并项
-     */
-    const changedQueryObj = {} as Record<string, any>;
+    // backfill 改变时, 逐字段比对赋值
+    // 该变量不再需要
+    // /**
+    //  * #fix 修复初始 backfill 存在值时
+    //  * query 未保持一致的问题
+    //  * 解决方案:
+    //  * query 本身逻辑和作用不变
+    //  * 新增一个对象用来缓存更改的值
+    //  * 并在获取 query 时, 将该对象作为
+    //  * 最后一个合并项
+    //  */
+    // const changedQueryObj = {} as Record<string, any>;
     /** 是否标记更新的字段, 防止卸载后的空字段占位 */
     let isLogField = false;
     let logFields: string[] = [];
@@ -60,7 +62,7 @@ export function useWrapper(props: WrapperProps, listeners?: Record<string, any>)
                 isLogField = false;
                 logFields.forEach((k) => {
                     del(query.value, k);
-                    delete changedQueryObj[k];
+                    // delete changedQueryObj[k];
                 });
                 logFields = [];
             };
@@ -77,7 +79,7 @@ export function useWrapper(props: WrapperProps, listeners?: Record<string, any>)
             props.emptyValues.includes(value) && value !== emptyValue.value && (value = emptyValue.value);
             if (isLogField) logFields.push(field);
             set(query.value, field, value);
-            changedQueryObj[field] = value;
+            // changedQueryObj[field] = value;
             props.onFieldChange && execOnCallback(props.onFieldChange, { field, value, query: query.value, nativeField });
             listeners?.fieldChange?.({ field, value, query: query.value, nativeField });
         },
@@ -105,7 +107,7 @@ export function useWrapper(props: WrapperProps, listeners?: Record<string, any>)
             });
             if (!sameFieldCount) {
                 del(query.value, field);
-                delete changedQueryObj[field];
+                // delete changedQueryObj[field];
             }
         },
         options: optionsObj,
