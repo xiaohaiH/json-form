@@ -138,8 +138,15 @@ export default defineComponent({
             tempChecked.value = value;
 
             debounceTime
-                ? timer = setTimeout(() => plain.change(tempChecked.value), debounceTime) as unknown as number
-                : plain.change(value);
+                ? timer = setTimeout(() => changeCallback(tempChecked.value), debounceTime) as unknown as number
+                : changeCallback(value);
+        }
+        /** 防止值改变失败时, 输入框与实际值不一致 */
+        function changeCallback(value: string) {
+            const _value = plain.checked.value;
+            plain.change(value);
+            // /** 当更新后的值与现有的相等时, 说明内部逻辑做特殊处理了(比如重置为默认值等操作) */
+            plain.checked.value === _value && (tempChecked.value = _value);
         }
 
         /**
