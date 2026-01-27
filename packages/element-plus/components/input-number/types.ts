@@ -3,7 +3,7 @@ import { emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { inputNumberEmits as elInputNumberEmits, inputNumberProps as elInputNumberProps } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /** 组件传参 - 私有 */
@@ -23,10 +23,10 @@ export function inputNumberPropsGeneric<T, Query extends Record<string, any>, Op
         debounceTime: { type: Number as PropType<number>, default: undefined },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            prefix: ((props: InputNumberSlotOption<T, Query, Option, OptionQuery>) => any);
-            suffix: ((props: InputNumberSlotOption<T, Query, Option, OptionQuery>) => any);
-            decreaseIcon: ((props: InputNumberSlotOption<T, Query, Option, OptionQuery>) => any);
-            increaseIcon: ((props: InputNumberSlotOption<T, Query, Option, OptionQuery>) => any);
+            prefix: ComponentType<InputNumberSlotOption<T, Query, Option, OptionQuery>>;
+            suffix: ComponentType<InputNumberSlotOption<T, Query, Option, OptionQuery>>;
+            decreaseIcon: ComponentType<InputNumberSlotOption<T, Query, Option, OptionQuery>>;
+            increaseIcon: ComponentType<InputNumberSlotOption<T, Query, Option, OptionQuery>>;
         }>> },
     } as const;
 }

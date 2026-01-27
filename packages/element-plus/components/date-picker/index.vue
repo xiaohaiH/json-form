@@ -19,7 +19,7 @@
                 v-bind="contentActualProps"
                 :readonly="globalReadonly || contentActualProps.readonly"
                 :disabled="globalDisabled || contentActualProps.disabled"
-                @update:model-value="change"
+                @[changeName]="change"
             >
                 <template v-for="(item, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">
                     <component :is="getNode(item)" v-bind="slotProps" v-bind.prop="row" />

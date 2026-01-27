@@ -3,7 +3,7 @@ import { emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { inputTagEmits as elInputTagEmits, inputTagProps as elInputTagProps } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /** 组件传参 - 私有 */
@@ -23,9 +23,9 @@ export function inputTagPropsGeneric<T, Query extends Record<string, any>, Optio
         clearable: { type: Boolean as PropType<boolean>, default: true },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            prefix: ((props: InputTagSlotOption<T, Query, Option, OptionQuery>) => any);
-            suffix: ((props: InputTagSlotOption<T, Query, Option, OptionQuery>) => any);
-            tag: ((props: InputTagSlotOption<T, Query, Option, OptionQuery> & { value: string, index: number }) => any);
+            prefix: ComponentType<InputTagSlotOption<T, Query, Option, OptionQuery>>;
+            suffix: ComponentType<InputTagSlotOption<T, Query, Option, OptionQuery>>;
+            tag: ComponentType<InputTagSlotOption<T, Query, Option, OptionQuery> & { value: string; index: number }>;
         }>> },
     } as const;
 }

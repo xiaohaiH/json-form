@@ -56,7 +56,8 @@ export default defineComponent({
     name: 'HMention',
     components: {
         ElFormItem,
-        ElMention,
+        // fix: 修复ts7056类型报错
+        ElMention: ElMention as unknown as typeof ElMention,
     },
     inheritAttrs: false,
     props,

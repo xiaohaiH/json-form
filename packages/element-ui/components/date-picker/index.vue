@@ -25,7 +25,7 @@
                 :readonly="globalReadonly || contentActualProps.readonly"
                 :disabled="globalDisabled || contentActualProps.disabled"
                 v-on="$listeners"
-                @input="change"
+                @[changeName]="change"
             />
         </slot>
         <!-- 后置内容插槽 -->

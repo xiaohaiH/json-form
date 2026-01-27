@@ -3,7 +3,7 @@ import { emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { mentionEmits as elMentionEmits, mentionProps as elMentionProps } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /** 组件传参 - 私有 */
@@ -26,14 +26,14 @@ export function mentionPropsGeneric<T, Query extends Record<string, any>, Option
         clearable: { type: Boolean as PropType<boolean>, default: true },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            label: ((props: MentionSlotOption<T, Query, Option, OptionQuery> & { item: Option; index: number }) => any);
-            loading: ((props: MentionSlotOption<T, Query, Option, OptionQuery>) => any);
-            header: ((props: MentionSlotOption<T, Query, Option, OptionQuery>) => any);
-            footer: ((props: MentionSlotOption<T, Query, Option, OptionQuery>) => any);
-            prefix: ((props: MentionSlotOption<T, Query, Option, OptionQuery>) => any);
-            suffix: ((props: MentionSlotOption<T, Query, Option, OptionQuery>) => any);
-            prepend: ((props: MentionSlotOption<T, Query, Option, OptionQuery>) => any);
-            append: ((props: MentionSlotOption<T, Query, Option, OptionQuery>) => any);
+            label: ComponentType<MentionSlotOption<T, Query, Option, OptionQuery> & { item: Option; index: number }>;
+            loading: ComponentType<MentionSlotOption<T, Query, Option, OptionQuery>>;
+            header: ComponentType<MentionSlotOption<T, Query, Option, OptionQuery>>;
+            footer: ComponentType<MentionSlotOption<T, Query, Option, OptionQuery>>;
+            prefix: ComponentType<MentionSlotOption<T, Query, Option, OptionQuery>>;
+            suffix: ComponentType<MentionSlotOption<T, Query, Option, OptionQuery>>;
+            prepend: ComponentType<MentionSlotOption<T, Query, Option, OptionQuery>>;
+            append: ComponentType<MentionSlotOption<T, Query, Option, OptionQuery>>;
         }>> },
     } as const;
 }

@@ -10,7 +10,7 @@ import { emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { Radio as ElRadio, RadioGroup as ElRadioGroup } from 'element-ui';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
-import type { CommonProps, CommonSlots, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /** 获取Element UI单选框组属性定义 */
@@ -69,7 +69,7 @@ export function radioGroupPropsGeneric<T, Query extends Record<string, any>, Opt
         itemProps: { type: Object as PropType<Partial<ExtractPropTypes<ReturnType<typeof emits2props<typeof elRadioProps, [NonNullable<typeof elRadioEmits>]>>>>> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ((props: RadioGroupSlotOption<T, Query, Option, OptionQuery> & { option: Option; labelKey: string; valueKey: string; disabledKey: string }) => any);
+            default: ComponentType<RadioGroupSlotOption<T, Query, Option, OptionQuery> & { option: Option; labelKey: string; valueKey: string; disabledKey: string }>;
         }>>, default: () => ({}) },
     } as const;
 }

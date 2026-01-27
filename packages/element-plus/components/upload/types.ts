@@ -4,7 +4,7 @@ import type { buttonProps, UploadFile, UploadHooks, UploadRequestOptions, Upload
 import { ElMessage, ElUpload } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 const elUploadProps = ElUpload.props as Obj2Props<ComponentProps<typeof ElUpload>>;
@@ -54,10 +54,10 @@ export function uploadPropsGeneric<T, Query extends Record<string, any>, Option,
         override: { type: Boolean as PropType<boolean> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            trigger: ((props: UploadSlotOption<T, Query, Option, OptionQuery>) => any);
-            default: ((props: UploadSlotOption<T, Query, Option, OptionQuery>) => any);
-            tip: ((props: UploadSlotOption<T, Query, Option, OptionQuery>) => any);
-            file: ((props: UploadSlotOption<T, Query, Option, OptionQuery> & { file: UploadFile; index: number }) => any);
+            trigger: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery>>;
+            default: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery>>;
+            tip: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery>>;
+            file: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery> & { file: UploadFile; index: number }>;
         }>> },
     } as const;
 }

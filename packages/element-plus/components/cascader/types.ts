@@ -4,7 +4,7 @@ import type { CascaderNode } from 'element-plus';
 import { ElCascader } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 const elCascaderProps = ElCascader.props as Obj2Props<ComponentProps<typeof ElCascader>>;
@@ -28,10 +28,10 @@ export function cascaderPropsGeneric<T, Query extends Record<string, any>, Optio
         clearable: { type: Boolean as PropType<boolean>, default: true },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ((props: CascaderSlotOption<T, Query, Option, OptionQuery> & { node: any; data: T }) => any);
-            empty: ((props: CascaderSlotOption<T, Query, Option, OptionQuery>) => any);
-            prefix: ((props: CascaderSlotOption<T, Query, Option, OptionQuery>) => any);
-            suggestionItem: ((props: CascaderSlotOption<T, Query, Option, OptionQuery> & { item: CascaderNode }) => any);
+            default: ComponentType<CascaderSlotOption<T, Query, Option, OptionQuery> & { node: any; data: T }>;
+            empty: ComponentType<CascaderSlotOption<T, Query, Option, OptionQuery>>;
+            prefix: ComponentType<CascaderSlotOption<T, Query, Option, OptionQuery>>;
+            suggestionItem: ComponentType<CascaderSlotOption<T, Query, Option, OptionQuery> & { item: CascaderNode }>;
         }>> },
     } as const;
 }

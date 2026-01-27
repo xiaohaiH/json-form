@@ -10,7 +10,7 @@ import { emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { TimePicker as ElTimePicker } from 'element-ui';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
-import type { CommonProps, CommonSlots, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /** 获取Element UI时间选择器组件属性定义 */

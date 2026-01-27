@@ -5,7 +5,7 @@ import { ElTree, ElTreeSelect } from 'element-plus';
 // import { SelectProps as elSelectProps } from 'element-plus/es/components/select/src/select';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 // 主动提取 props, 不从内部导入, 防止 2.9.5版本与高版本导出名称不一致
@@ -30,13 +30,13 @@ export function treeSelectPropsGeneric<T, Query extends Record<string, any>, Opt
         clearable: { type: Boolean as PropType<boolean>, default: true },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            header: ((props: TreeSelectSlotOption<T, Query, Option, OptionQuery>) => any);
-            footer: ((props: TreeSelectSlotOption<T, Query, Option, OptionQuery>) => any);
-            prefix: ((props: TreeSelectSlotOption<T, Query, Option, OptionQuery>) => any);
-            empty: ((props: TreeSelectSlotOption<T, Query, Option, OptionQuery>) => any);
-            tag: ((props: TreeSelectSlotOption<T, Query, Option, OptionQuery>) => any);
-            loading: ((props: TreeSelectSlotOption<T, Query, Option, OptionQuery>) => any);
-            label: ((props: TreeSelectSlotOption<T, Query, Option, OptionQuery>) => any);
+            header: ComponentType<TreeSelectSlotOption<T, Query, Option, OptionQuery>>;
+            footer: ComponentType<TreeSelectSlotOption<T, Query, Option, OptionQuery>>;
+            prefix: ComponentType<TreeSelectSlotOption<T, Query, Option, OptionQuery>>;
+            empty: ComponentType<TreeSelectSlotOption<T, Query, Option, OptionQuery>>;
+            tag: ComponentType<TreeSelectSlotOption<T, Query, Option, OptionQuery>>;
+            loading: ComponentType<TreeSelectSlotOption<T, Query, Option, OptionQuery>>;
+            label: ComponentType<TreeSelectSlotOption<T, Query, Option, OptionQuery>>;
         }>> },
     } as const;
 }

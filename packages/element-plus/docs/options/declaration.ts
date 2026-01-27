@@ -59,24 +59,18 @@ export interface PlainReturnValue {
     }) => Promise<void>;
     /** 当前组件的值 */
     checked: Ref<any>;
-    /** 获取当前组件提交给后端的值 */
-    getQuery: () => Record<string, any>;
     /** 远程数据(getOptions 返回的数据) */
     remoteOption: Ref<Record<string, any>[]>;
     /** 优先返回 remoteOption, 其次返回外部传递的 options */
     finalOption: ComputedRef<Record<string, any>[]>;
     /** 是否隐藏组件 */
     insetHide: ComputedRef<boolean>;
-    /** 更新值但不触发外部的搜索事件 */
-    updateCheckedValue: (value: any) => void;
     /**
      * 更新值并根据 HForm realtime 状态判断
      * - realtime: true 则触发搜索事件
-     * - realtime: false 则仅更新值(等同于 updateCheckedValue 函数)
+     * - realtime: false 则仅更新值
      */
     change: (value: any) => void;
-    /** 等同于 updateCheckedValue, 只是可以选择不传值(用来兼容低版本) */
-    trigger: (value?: any) => void;
     /** 触发搜索事件 */
     search: () => void;
     /** 重置 */
@@ -95,10 +89,8 @@ export interface CommonMethod {
     updateWrapperQuery: () => void;
     /** 校验方法 */
     validator?: (query: Record<string, string>) => Promise<any> | any;
-    /** 获取该组件拼接的参数 */
-    getQuery: () => Record<string, any>;
     /** 在 watch 中 backfill 改变后, 需要执行回调 */
-    onChangeByBackfill?: () => void;
+    onBackfillChange?: () => void;
 }
 
 /** HForm 暴露给组件的选项 */
@@ -175,10 +167,8 @@ export interface CommonMethod {
     updateWrapperQuery: () => void;
     /** 校验方法 */
     validator?: (query: Record<string, string>) => Promise<any> | any;
-    /** 获取该组件拼接的参数 */
-    getQuery: () => Record<string, any>;
     /** 在 watch 中 backfill 改变后, 需要执行回调 */
-    onChangeByBackfill?: () => void;
+    onBackfillChange?: () => void;
 }
 
 /** 容器注入值的类型 */

@@ -3,7 +3,7 @@ import { emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { switchEmits as elSwitchEmits, switchProps as elSwitchProps } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /** 组件传参 - 私有 */
@@ -21,8 +21,8 @@ export function switchPropsGeneric<T, Query extends Record<string, any>, Option,
         dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            activeAction: ((props: SwitchSlotOption<T, Query, Option, OptionQuery>) => any);
-            inactiveAction: ((props: SwitchSlotOption<T, Query, Option, OptionQuery>) => any);
+            activeAction: ComponentType<SwitchSlotOption<T, Query, Option, OptionQuery>>;
+            inactiveAction: ComponentType<SwitchSlotOption<T, Query, Option, OptionQuery>>;
         }>> },
     } as const;
 }

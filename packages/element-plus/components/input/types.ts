@@ -3,7 +3,7 @@ import { emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { inputEmits as elInputEmits, inputProps as elInputProps } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /** 组件传参 - 私有 */
@@ -25,10 +25,10 @@ export function inputPropsGeneric<T, Query extends Record<string, any>, Option, 
         clearable: { type: Boolean as PropType<boolean>, default: true },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            prefix: ((props: InputSlotOption<T, Query, Option, OptionQuery>) => any);
-            suffix: ((props: InputSlotOption<T, Query, Option, OptionQuery>) => any);
-            prepend: ((props: InputSlotOption<T, Query, Option, OptionQuery>) => any);
-            append: ((props: InputSlotOption<T, Query, Option, OptionQuery>) => any);
+            prefix: ComponentType<InputSlotOption<T, Query, Option, OptionQuery>>;
+            suffix: ComponentType<InputSlotOption<T, Query, Option, OptionQuery>>;
+            prepend: ComponentType<InputSlotOption<T, Query, Option, OptionQuery>>;
+            append: ComponentType<InputSlotOption<T, Query, Option, OptionQuery>>;
         }>> },
     } as const;
 }

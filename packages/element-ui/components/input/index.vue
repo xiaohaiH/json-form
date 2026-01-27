@@ -157,7 +157,7 @@ export default defineComponent({
          */
         function enterHandle(ev: Event | KeyboardEvent) {
             timer && clearTimeout(timer);
-            plain.checked.value !== tempChecked.value && plain.updateCheckedValue(tempChecked.value);
+            plain.checked.value !== tempChecked.value && (plain.checked.value = tempChecked.value);
             plain.wrapper?.search();
         }
 

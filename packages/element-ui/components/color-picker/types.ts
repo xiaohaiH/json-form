@@ -10,7 +10,7 @@ import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { ColorPicker as ElColorPicker } from 'element-ui';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
-import type { CommonProps, CommonSlots, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /** 获取Element UI颜色选择器属性定义 */
@@ -46,6 +46,8 @@ export function colorPickerPropsGeneric<T, Query extends Record<string, any>, Op
         ...commonProps as CommonProps<T, ColorPickerSlotOption<T, Query, Option, OptionQuery>, Query, Option>,
         /** 继承表单项属性 */
         ...formItemProps as FormItemProps<Query, Option>,
+        /** 监听触发值改变的事件 @default change */
+        changeName: { type: String, default: 'change'},
         /** 组件静态属性(与 formItem 或内置的属性冲突时, a通过该属性传递) */
         staticProps: { type: Object as PropType<StaticProps<_Prop>> },
         /** 组件动态属性，根据查询条件动态计算属性值 */

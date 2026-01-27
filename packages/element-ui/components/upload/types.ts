@@ -11,7 +11,7 @@ import { Message as ElMessage, Upload as ElUpload } from 'element-ui';
 import type { ElUploadInternalFileDetail as UploadFile, ElUploadInternalRawFile as UploadRawFile, HttpRequestOptions as UploadRequestOptions } from 'element-ui/types/upload.d';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
-import type { CommonProps, CommonSlots, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /**
@@ -108,11 +108,11 @@ export function uploadPropsGeneric<T, Query extends Record<string, any>, Option,
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
             /** 自定义触发按钮 */
-            trigger: ((props: UploadSlotOption<T, Query, Option, OptionQuery>) => any);
-            // default: ((props: UploadSlotOption<T, Query, Option, OptionQuery>) => any);
+            trigger: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery>>;
+            // default: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery>>;
             /** 自定义提示说明 */
-            tip: ((props: UploadSlotOption<T, Query, Option, OptionQuery>) => any);
-            // file: ((props: UploadSlotOption<T, Query, Option, OptionQuery> & { file: UploadFile; index: number }) => any);
+            tip: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery>>;
+            // file: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery> & { file: UploadFile; index: number }>;
         }>>, default: () => ({}) },
     } as const;
 }

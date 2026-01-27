@@ -3,7 +3,7 @@ import { emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { segmentedEmits as elSegmentedEmits, segmentedProps as elSegmentedProps } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /** 组件传参 - 私有 */
@@ -21,7 +21,7 @@ export function segmentedPropsGeneric<T, Query extends Record<string, any>, Opti
         dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ((props: SegmentedSlotOption<T, Query, Option, OptionQuery> & { item: Option}) => any);
+            default: ComponentType<SegmentedSlotOption<T, Query, Option, OptionQuery> & { item: Option}>;
         }>> },
     } as const;
 }

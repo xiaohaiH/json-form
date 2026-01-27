@@ -9,7 +9,7 @@ import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { DatePicker as ElDatePicker } from 'element-ui';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
-import type { CommonProps, CommonSlots, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /**
@@ -46,6 +46,8 @@ export function datePickerPropsGeneric<T, Query extends Record<string, any>, Opt
         ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
         ...commonProps as CommonProps<T, DatePickerSlotOption<T, Query, Option, OptionQuery>, Query, Option>,
         ...formItemProps as FormItemProps<Query, Option>,
+        /** 监听触发值改变的事件 @default input */
+        changeName: { type: String, default: 'input' },
         /** 组件静态属性(与 formItem 或内置的属性冲突时, 可通过该属性传递) */
         staticProps: { type: Object as PropType<StaticProps<_Prop>> },
         /** 组件动态属性 */
@@ -54,12 +56,12 @@ export function datePickerPropsGeneric<T, Query extends Record<string, any>, Opt
         valueFormat: { type: String as PropType<string>, default: 'yyyy-MM-dd' },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            // default: ((props: DatePickerSlotOption<T, Query, Option, OptionQuery>) => any);
-            // rangeSeparator: ((props: DatePickerSlotOption<T, Query, Option, OptionQuery>) => any);
-            // prevMonth: ((props: DatePickerSlotOption<T, Query, Option, OptionQuery>) => any);
-            // nextMonth: ((props: DatePickerSlotOption<T, Query, Option, OptionQuery>) => any);
-            // prevYear: ((props: DatePickerSlotOption<T, Query, Option, OptionQuery>) => any);
-            // nextYear: ((props: DatePickerSlotOption<T, Query, Option, OptionQuery>) => any);
+            // default: ComponentType<DatePickerSlotOption<T, Query, Option, OptionQuery>>;
+            // rangeSeparator: ComponentType<DatePickerSlotOption<T, Query, Option, OptionQuery>>;
+            // prevMonth: ComponentType<DatePickerSlotOption<T, Query, Option, OptionQuery>>;
+            // nextMonth: ComponentType<DatePickerSlotOption<T, Query, Option, OptionQuery>>;
+            // prevYear: ComponentType<DatePickerSlotOption<T, Query, Option, OptionQuery>>;
+            // nextYear: ComponentType<DatePickerSlotOption<T, Query, Option, OptionQuery>>;
         }>> },
     } as const;
 }

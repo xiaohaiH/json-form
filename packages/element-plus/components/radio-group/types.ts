@@ -4,7 +4,7 @@ import type { radioEmits as elRadioEmits, radioProps as elRadioProps } from 'ele
 import { radioGroupEmits as elRadioGroupEmits, radioGroupProps as elRadioGroupProps } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /** 组件传参 - 私有 */
@@ -34,7 +34,7 @@ export function radioGroupPropsGeneric<T, Query extends Record<string, any>, Opt
         itemProps: { type: Object as PropType<Partial<ExtractPublicPropTypes<ReturnType<typeof emits2props<typeof elRadioProps, [NonNullable<typeof elRadioEmits>]>>>>> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ((props: RadioGroupSlotOption<T, Query, Option, OptionQuery> & { option: Option; labelKey: string; valueKey: string; disabledKey: string }) => any);
+            default: ComponentType<RadioGroupSlotOption<T, Query, Option, OptionQuery> & { option: Option; labelKey: string; valueKey: string; disabledKey: string }>;
         }>> },
     } as const;
 }

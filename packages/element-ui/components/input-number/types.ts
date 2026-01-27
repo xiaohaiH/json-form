@@ -10,7 +10,7 @@ import { emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { InputNumber as ElInputNumber } from 'element-ui';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
-import type { CommonProps, CommonSlots, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /** 获取Element UI数字输入框属性定义，并添加label和placeholder属性 */
@@ -59,10 +59,10 @@ export function inputNumberPropsGeneric<T, Query extends Record<string, any>, Op
         // 以下为已注释的插槽配置，当前组件未启用
         // /** 传递给组件的插槽 */
         // itemSlots: { type: Object as PropType<Partial<{
-        //     prefix: ((props: InputNumberSlotOption<T, Query, Option, OptionQuery>) => any);
-        //     suffix: ((props: InputNumberSlotOption<T, Query, Option, OptionQuery>) => any);
-        //     decreaseIcon: ((props: InputNumberSlotOption<T, Query, Option, OptionQuery>) => any);
-        //     increaseIcon: ((props: InputNumberSlotOption<T, Query, Option, OptionQuery>) => any);
+        //     prefix: ComponentType<InputNumberSlotOption<T, Query, Option, OptionQuery>>;
+        //     suffix: ComponentType<InputNumberSlotOption<T, Query, Option, OptionQuery>>;
+        //     decreaseIcon: ComponentType<InputNumberSlotOption<T, Query, Option, OptionQuery>>;
+        //     increaseIcon: ComponentType<InputNumberSlotOption<T, Query, Option, OptionQuery>>;
         // }>>, default: () => ({}) },
     } as const;
 }

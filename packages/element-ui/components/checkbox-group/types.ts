@@ -10,7 +10,7 @@ import { Checkbox as ElCheckbox, CheckboxGroup as ElCheckboxGroup } from 'elemen
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
 import type { CheckboxSlotOption } from '../checkbox/types';
-import type { CommonProps, CommonSlots, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /** 获取Element UI复选框组属性定义 */
@@ -63,7 +63,7 @@ export function checkboxGroupPropsGeneric<T, Query extends Record<string, any>, 
         itemProps: { type: Object as PropType<Partial<ExtractPropTypes<ReturnType<typeof emits2props<typeof elCheckboxProps, [NonNullable<typeof elCheckboxEmits>]>>>>> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ((props: CheckboxGroupSlotOption<T, Query, Option, OptionQuery> & { option: Option; labelKey: string; valueKey: string; disabledKey: string }) => any);
+            default: ComponentType<CheckboxGroupSlotOption<T, Query, Option, OptionQuery> & { option: Option; labelKey: string; valueKey: string; disabledKey: string }>;
         }>>, default: () => ({}) },
     } as const;
 }

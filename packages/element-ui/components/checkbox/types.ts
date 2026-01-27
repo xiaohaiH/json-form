@@ -9,7 +9,7 @@ import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { Checkbox as ElCheckbox } from 'element-ui';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
-import type { CommonProps, CommonSlots, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /**
@@ -52,7 +52,7 @@ export function checkboxPropsGeneric<T, Query extends Record<string, any>, Optio
         type: { type: String as PropType<'checkbox' | 'button'> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ((props: CheckboxSlotOption<T, Query, Option, OptionQuery>) => any);
+            default: ComponentType<CheckboxSlotOption<T, Query, Option, OptionQuery>>;
         }>>, default: () => ({}) },
     } as const;
 }

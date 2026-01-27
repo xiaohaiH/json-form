@@ -3,7 +3,7 @@ import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { ElSelect } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 const elSelectProps = ElSelect.props as Obj2Props<ComponentProps<typeof ElSelect>>;
@@ -42,14 +42,14 @@ export function selectPropsGeneric<T, Query extends Record<string, any>, Option,
         disabledKey: { type: String as PropType<string>, default: 'disabled' },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            header: ((props: SelectSlotOption<T, Query, Option, OptionQuery>) => any);
-            footer: ((props: SelectSlotOption<T, Query, Option, OptionQuery>) => any);
-            prefix: ((props: SelectSlotOption<T, Query, Option, OptionQuery>) => any);
-            empty: ((props: SelectSlotOption<T, Query, Option, OptionQuery>) => any);
-            tag: ((props: SelectSlotOption<T, Query, Option, OptionQuery>) => any);
-            loading: ((props: SelectSlotOption<T, Query, Option, OptionQuery>) => any);
-            label: ((props: SelectSlotOption<T, Query, Option, OptionQuery>) => any);
-            option: ((props: { item: Option; disabled?: boolean; parent?: Option }) => any);
+            header: ComponentType<SelectSlotOption<T, Query, Option, OptionQuery>>;
+            footer: ComponentType<SelectSlotOption<T, Query, Option, OptionQuery>>;
+            prefix: ComponentType<SelectSlotOption<T, Query, Option, OptionQuery>>;
+            empty: ComponentType<SelectSlotOption<T, Query, Option, OptionQuery>>;
+            tag: ComponentType<SelectSlotOption<T, Query, Option, OptionQuery>>;
+            loading: ComponentType<SelectSlotOption<T, Query, Option, OptionQuery>>;
+            label: ComponentType<SelectSlotOption<T, Query, Option, OptionQuery>>;
+            option: ComponentType<{ item: Option; disabled?: boolean; parent?: Option }>;
         }>> },
     } as const;
 }
@@ -101,5 +101,5 @@ export type SelectEmits<T> = ReturnType<typeof selectEmitsGeneric<T>>;
 
 export interface SelectSlots extends CommonSlots<Record<string, any>> {
     /** 下拉项插槽 */
-    option?: ((props: { item: any; disabled?: boolean; parent?: any }) => any);
+    option?: ComponentType<{ item: any; disabled?: boolean; parent?: any }>;
 }

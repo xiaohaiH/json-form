@@ -23,7 +23,7 @@
                 v-bind="contentActualProps"
                 :disabled="globalReadonly || globalDisabled || contentActualProps.disabled"
                 v-on="$listeners"
-                @change="change"
+                @[changeName]="change"
             />
         </slot>
         <!-- 表单项后置内容插槽 -->

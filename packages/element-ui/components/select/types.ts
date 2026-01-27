@@ -9,7 +9,7 @@ import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { Select as ElSelect } from 'element-ui';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
-import type { CommonProps, CommonSlots, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /**
@@ -73,11 +73,11 @@ export function selectPropsGeneric<T, Query extends Record<string, any>, Option,
         disabledKey: { type: String as PropType<string>, default: 'disabled' },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            // default: ((props: SelectSlotOption<T, Query, Option, OptionQuery>) => any);
+            // default: ComponentType<SelectSlotOption<T, Query, Option, OptionQuery>>;
             /** 选择器头部内容 */
-            prefix: ((props: SelectSlotOption<T, Query, Option, OptionQuery>) => any);
+            prefix: ComponentType<SelectSlotOption<T, Query, Option, OptionQuery>>;
             /** 无选项时的内容 */
-            empty: ((props: SelectSlotOption<T, Query, Option, OptionQuery>) => any);
+            empty: ComponentType<SelectSlotOption<T, Query, Option, OptionQuery>>;
         }>>, default: () => ({}) },
     } as const;
 }
@@ -173,5 +173,5 @@ export type SelectEmits<T> = ReturnType<typeof selectEmitsGeneric<T>>;
  */
 export interface SelectSlots extends CommonSlots<Record<string, any>> {
     /** 下拉项插槽 */
-    // option?: ((props: { item: any; disabled?: boolean; parent?: any }) => any);
+    // option?: ComponentType<{ item: any; disabled?: boolean; parent?: any }) => any);
 }

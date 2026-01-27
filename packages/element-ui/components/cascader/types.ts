@@ -12,7 +12,7 @@ import type { CascaderNode } from 'element-ui/types/cascader.d';
 import type { ElementUIComponent } from 'element-ui/types/component.d';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
-import type { CommonProps, CommonSlots, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /**
@@ -71,13 +71,13 @@ export function cascaderPropsGeneric<T, Query extends Record<string, any>, Optio
         itemSlots: {
             type: Object as PropType<Partial<{
                 /** 自定义备选项的内容，参数为 { node, data } */
-                default: ((props: CascaderSlotOption<T, Query, Option, OptionQuery> & { node: any; data: T }) => any);
+                default: ComponentType<CascaderSlotOption<T, Query, Option, OptionQuery> & { node: any; data: T }>;
                 /** 无匹配选项时的内容 */
-                empty: ((props: CascaderSlotOption<T, Query, Option, OptionQuery>) => any);
+                empty: ComponentType<CascaderSlotOption<T, Query, Option, OptionQuery>>;
                 /** 自定义前缀图标 */
-                prefix: ((props: CascaderSlotOption<T, Query, Option, OptionQuery>) => any);
+                prefix: ComponentType<CascaderSlotOption<T, Query, Option, OptionQuery>>;
                 /** 自定义建议项，参数为 { item } */
-                suggestionItem: ((props: CascaderSlotOption<T, Query, Option, OptionQuery> & { item: CascaderNode<any, Option> }) => any);
+                suggestionItem: ComponentType<CascaderSlotOption<T, Query, Option, OptionQuery> & { item: CascaderNode<any, Option> }>;
             }>>,
             default: () => ({}),
         },

@@ -4,7 +4,7 @@ import { ElSelectV2 } from 'element-plus';
 import type ElSelectV2Type from 'element-plus/es/components/select-v2/src/select.vue';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 const elSelectV2Props = ElSelectV2.props as Obj2Props<ComponentProps<typeof ElSelectV2Type>>;
@@ -31,14 +31,14 @@ export function selectV2PropsGeneric<T, Query extends Record<string, any>, Optio
         filterMethod: { type: Function as unknown as PropType<(val: string, option: T) => boolean> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ((props: SelectV2SlotOption<T, Query, Option, OptionQuery>) => any);
-            header: ((props: SelectV2SlotOption<T, Query, Option, OptionQuery>) => any);
-            footer: ((props: SelectV2SlotOption<T, Query, Option, OptionQuery>) => any);
-            prefix: ((props: SelectV2SlotOption<T, Query, Option, OptionQuery>) => any);
-            empty: ((props: SelectV2SlotOption<T, Query, Option, OptionQuery>) => any);
-            tag: ((props: SelectV2SlotOption<T, Query, Option, OptionQuery>) => any);
-            loading: ((props: SelectV2SlotOption<T, Query, Option, OptionQuery>) => any);
-            label: ((props: SelectV2SlotOption<T, Query, Option, OptionQuery>) => any);
+            default: ComponentType<SelectV2SlotOption<T, Query, Option, OptionQuery>>;
+            header: ComponentType<SelectV2SlotOption<T, Query, Option, OptionQuery>>;
+            footer: ComponentType<SelectV2SlotOption<T, Query, Option, OptionQuery>>;
+            prefix: ComponentType<SelectV2SlotOption<T, Query, Option, OptionQuery>>;
+            empty: ComponentType<SelectV2SlotOption<T, Query, Option, OptionQuery>>;
+            tag: ComponentType<SelectV2SlotOption<T, Query, Option, OptionQuery>>;
+            loading: ComponentType<SelectV2SlotOption<T, Query, Option, OptionQuery>>;
+            label: ComponentType<SelectV2SlotOption<T, Query, Option, OptionQuery>>;
         }>> },
     } as const;
 }

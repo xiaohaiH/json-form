@@ -56,7 +56,6 @@ export default defineConfig({
                 {
                     entryFileNames: retainMinSuffix(pkg.module, true),
                     format: 'es',
-                    // @ts-expect-error 兼容 rollup 插件
                     plugins: [terser({ format: { comments: false } })],
                 },
                 { entryFileNames: retainMinSuffix(pkg.main, false), format: 'cjs', exports: 'named' },
@@ -64,7 +63,6 @@ export default defineConfig({
                     entryFileNames: retainMinSuffix(pkg.main, true),
                     format: 'cjs',
                     exports: 'named',
-                    // @ts-expect-error 兼容 rollup 插件
                     plugins: [terser({ format: { comments: false } })],
                 },
                 { entryFileNames: retainMinSuffix(pkg.unpkg, false), format: 'umd', name: 'JSONForm', globals },
@@ -73,7 +71,6 @@ export default defineConfig({
                     format: 'umd',
                     name: 'JSONForm',
                     globals,
-                    // @ts-expect-error 兼容 rollup 插件
                     plugins: [terser({ format: { comments: false } })],
                 },
             ],

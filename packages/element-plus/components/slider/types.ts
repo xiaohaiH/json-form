@@ -3,7 +3,7 @@ import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { ElSlider } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 const elSliderProps = ElSlider.props as Obj2Props<ComponentProps<typeof ElSlider>>;

@@ -30,7 +30,7 @@
             >
                 <!-- 级联选择器内部默认插槽 -->
                 <template v-if="itemSlots.default" #default>
-                    <component :is="getNode(itemSlots.default, slotProps)" />
+                    <component :is="getNode(itemSlots.default, slotProps)" v-bind="slotProps" />
                 </template>
                 <!-- 动态插槽支持 - 目前被注释 -->
                 <!-- <template v-for="(item, slotName) of itemSlots" #[hyphenate(slotName)]="row">

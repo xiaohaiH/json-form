@@ -9,7 +9,7 @@ import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { Radio as ElRadio } from 'element-ui';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
-import type { CommonProps, CommonSlots, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /**
@@ -54,7 +54,7 @@ export function radioPropsGeneric<T, Query extends Record<string, any>, Option, 
         cancelable: { type: Boolean as PropType<boolean>, default: undefined },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ((props: RadioSlotOption<T, Query, Option, OptionQuery>) => any);
+            default: ComponentType<RadioSlotOption<T, Query, Option, OptionQuery>>;
         }>>, default: () => ({}) },
     } as const;
 }

@@ -4,7 +4,7 @@ import type { checkboxEmits as elCheckboxEmits, checkboxProps as elCheckboxProps
 import { ElCheckboxGroup } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 const elCheckboxGroupProps = ElCheckboxGroup.props as Obj2Props<ComponentProps<typeof ElCheckboxGroup>>;
@@ -35,7 +35,7 @@ export function checkboxGroupPropsGeneric<T, Query extends Record<string, any>, 
         itemProps: { type: Object as PropType<Partial<ExtractPublicPropTypes<ReturnType<typeof emits2props<typeof elCheckboxProps, [NonNullable<typeof elCheckboxEmits>]>>>>> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ((props: CheckboxGroupSlotOption<T, Query, Option, OptionQuery> & { option: Option; labelKey: string; valueKey: string; disabledKey: string }) => any);
+            default: ComponentType<CheckboxGroupSlotOption<T, Query, Option, OptionQuery> & { option: Option; labelKey: string; valueKey: string; disabledKey: string }>;
         }>> },
     } as const;
 }

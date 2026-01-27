@@ -223,7 +223,7 @@ depend 为真时, 依赖字段发生变化后是否重置本身的值
 ::: details 查看 `Hooks` 类型以及使用方法
 
 ```tsx
-import { onMounted } from 'vue';
+import { getCurrentInstance, onMounted } from 'vue';
 
 // 示例:
 defineOption({
@@ -242,18 +242,36 @@ defineOption({
         dependFields: 'operateType',
         optionsDepend: true,
         hooks: {
-            created() {
+            /** 组件创建前触发的钩子, 可在内部监听生命周期, 获取实例, 以及操作该组件内的各种属性 */
+            created({ plain, props }) {
+                const currentInstance = getCurrentInstance();
+                // 获取实例上的属性, 比如 props, attrs, 以及暴露的属性(需要在 nextTick 后才能获取)
+                // currentInstance.proxy
+                // 获取所有下拉框的数据源
+                // plain.wrapper.options
+                // 主动改变某个对象的值
+                // props.query.operateType = 'add-menu';
+                // 以及改变值并触发触发等等
+                // plain.change('value')
                 onMounted(console.log.bind(null, '下拉组件已渲染'));
             },
+            /** 依赖项发生变化时触发 - 语法糖钩子, 可通过 create 钩子监听指定数据源(watch(() => option.props.query[field], callback))  */
             dependChange({ plain, props }) {
                 const option = plain.wrapper.options.operateType.find((v) => v.value === props.query.operateType);
                 plain.remoteOption.value = option ? JSON.parse(JSON.stringify(option.children)) : [];
             },
+            /** 依赖项数据源发生变动时触发 - 语法糖钩子, 可通过 create 钩子监听指定数据源(watch(() => option.plain.wrapper.options[field], callback)) */
             // 该方法是防止 operateType 赋值在前 options 异步获取值在后
             // 导致 operateType 的 options 有值, 子选项的 options 却为空
             optionsDependChange({ plain, props }) {
                 const option = plain.wrapper.options.operateType.find((v) => v.value === props.query.operateType);
                 plain.remoteOption.value = option ? JSON.parse(JSON.stringify(option.children)) : [];
+            },
+            /** 回填对象发生改变时触发(由外部主动改变 backfill 值才会触发该事件, 内部 query 值改变触发 backfill 更新时, 不触发该事件) */
+            backfillChange(backfill, oldBackfill, { plain, props }) {
+                console.log({ backfill, oldBackfill, plain, props });
+                // 比如改变数据源等之类的操作
+                plain.wrapper.options.operateSubType = [];
             },
         },
     },
