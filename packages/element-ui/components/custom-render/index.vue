@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { hyphenate, usePlain } from '@xiaohaih/json-form-core';
+import { hyphenate, noop, usePlain } from '@xiaohaih/json-form-core';
 import { FormItem as ElFormItem } from 'element-ui';
 import { computed, defineComponent, markRaw, reactive, ref, watch } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
@@ -67,12 +67,13 @@ export default defineComponent({
         // 不需要监听深层, 因为深层是引用类型
         watch(plain.checked, plain.change);
         // 调用自定义渲染函数获取渲染内容
-        const customRender = getNode(props.render(slotProps));
+        const customRender = getNode(props.render, slotProps);
 
         return {
             hyphenate,
             getNode,
             ...plain,
+            trigger: noop,
             formItemStaticProps,
             formItemActualProps,
             slotProps,

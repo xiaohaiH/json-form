@@ -11,7 +11,7 @@ import { emits2props, plainProps } from '@xiaohaih/json-form-core';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
 // 导入共享类型和属性
-import type { CommonProps, CommonSlots, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /**
@@ -45,7 +45,7 @@ export function customRenderPropsGeneric<T, Query extends Record<string, any>, O
          * 该函数负责生成要渲染的内容
          */
         render: {
-            type: Function as PropType<(option: CustomRenderSlotOption<T, Query, Option, OptionQuery>) => () => any>,
+            type: [Function, Object] as PropType<((option: CustomRenderSlotOption<T, Query, Option, OptionQuery>) => () => any) | Record<string, any>>,
             required: true,
         },
     } as const;

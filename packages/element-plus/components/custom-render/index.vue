@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { getNode, hyphenate, usePlain } from '@xiaohaih/json-form-core';
+import { getNode, hyphenate, noop, usePlain } from '@xiaohaih/json-form-core';
 import { ElFormItem } from 'element-plus';
 import { computed, defineComponent, markRaw, ref, watch } from 'vue';
 import { pick } from '../../src/utils';
@@ -48,15 +48,14 @@ export default defineComponent({
             getProps: () => props,
             plain,
         };
-        // 主动监听 checked 变量, 在发生改变后自动触发搜索事件(如果是实时搜索时), 便于外部开发
-        // 不需要监听深层, 因为深层是引用类型
-        watch(plain.checked, plain.change);
-        const customRender = getNode(props.render(slotProps));
+        const customRender = typeof props.render === 'function' ? getNode(props.render(slotProps)) : props.render;
 
         return {
             hyphenate,
             getNode,
             ...plain,
+            /** 兼容低版本暴露给外部的函数 */
+            trigger: noop,
             formItemActualProps,
             slotProps,
             customRender,

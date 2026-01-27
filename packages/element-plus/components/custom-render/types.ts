@@ -2,7 +2,7 @@ import type { CamelCase, Obj2Props, PlainProps, usePlain } from '@xiaohaih/json-
 import { emits2props, plainProps } from '@xiaohaih/json-form-core';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /** 组件传参 - 私有 */
@@ -15,7 +15,7 @@ export function customRenderPropsGeneric<T, Query extends Record<string, any>, O
         renderFormItem: { type: Boolean as PropType<boolean>, default: true },
         /** 渲染节点 */
         render: {
-            type: Function as PropType<(option: CustomRenderSlotOption<T, Query, Option, OptionQuery>) => () => any>,
+            type: [Function, Object] as PropType<((option: CustomRenderSlotOption<T, Query, Option, OptionQuery>) => () => any) | Record<string, any>>,
             required: true,
         },
     } as const;
