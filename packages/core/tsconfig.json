@@ -8,6 +8,8 @@
         "lib": ["ESNext", "DOM", "DOM.Iterable"],
         "baseUrl": ".",
         "rootDir": ".",
+        "paths": {
+        },
         // "module": "ESNext",
         "resolveJsonModule": true,
         /* 包含类型定义的文件夹. */
@@ -34,6 +36,7 @@
         "utils/**/*.tsx",
         "index.ts",
         "interface.ts",
+        "*.config.ts",
         "tests/**/*.ts",
         "tests/**/*.tsx"
     ]
