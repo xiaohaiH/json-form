@@ -43,7 +43,7 @@ export function conditionFactory() {
             },
             ra1: {
                 t: 'radio',
-                label: '单选(可取消)',
+                label: 'ra1(可取消)',
                 value: '哈哈哈',
                 // type: 'button',
                 staticProps: { label: '单选框' },
@@ -52,7 +52,7 @@ export function conditionFactory() {
             },
             ra2: {
                 t: 'radio',
-                label: '单选',
+                label: 'ra2',
                 value: 'buxuan',
                 staticProps: { label: '单选框2' },
                 // type: 'button',
@@ -60,7 +60,7 @@ export function conditionFactory() {
             },
             checkGroup: {
                 t: 'checkbox-group',
-                label: '多选组',
+                label: 'checkGroup',
                 type: 'button',
                 valueKey: 'dictValue',
                 labelKey: 'dictLabel',
@@ -72,7 +72,7 @@ export function conditionFactory() {
             },
             check: {
                 t: 'checkbox',
-                label: '多选',
+                label: 'check',
                 trueValue: '1',
                 falseValue: '2',
                 staticProps: { label: '是否提交' },
@@ -81,8 +81,8 @@ export function conditionFactory() {
             },
             sel1: {
                 t: 'select',
-                label: '依赖单选',
-                placeholder: '请先选择单选',
+                label: 'sel1依赖单选',
+                placeholder: '请先选择(ra1)',
                 dynamicProps: ({ query }) => ({ disabled: !query.ra1?.length }),
                 valueKey: 'dictValue',
                 labelKey: 'dictLabel',
@@ -101,7 +101,7 @@ export function conditionFactory() {
             },
             sel2: {
                 t: 'select',
-                label: '分组下拉框',
+                label: 'sel2',
                 placeholder: '请选择...',
                 valueKey: 'dictValue',
                 labelKey: 'dictLabel',
@@ -131,7 +131,7 @@ export function conditionFactory() {
             },
             cas1: {
                 t: 'cascader',
-                label: '级联(可选任意一级)',
+                label: 'cas1(可选任意一级)',
                 placeholder: '请选择...',
                 // fields: ['cascader-a', 'cascader-b'],
                 props: { checkStrictly: true, emitPath: false },
@@ -165,7 +165,7 @@ export function conditionFactory() {
             },
             cas2: {
                 t: 'cascader',
-                label: '级联(最后一级)',
+                label: 'cas2(最后一级)',
                 placeholder: '级联选择',
                 fields: ['level1', 'level2', 'level3'],
                 // props: { emitPath: false },

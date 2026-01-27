@@ -19,24 +19,32 @@
                 </ElButton>
             </div>
             <HForm
+                ref="hFormRef"
                 v-bind="conditions.formOption"
                 :key="conditions.formOption.key"
                 class="flex flex-wrap items-start"
                 :backfill="conditions.query"
                 :datum="conditions.condition"
-                :immediate-search="true"
-                @ready="querySearch($event, 'ready')"
-                @search="querySearch($event, 'search')"
-            />
-            <!-- @reset="reset($event)" -->
+                :toast="ElMessage.info"
+                @submit.prevent
+                @search="querySearch"
+            >
+                <ElButton type="primary" @click="search">
+                    搜索
+                </ElButton>
+                <ElButton @click="reset">
+                    重置
+                </ElButton>
+            </HForm>
         </div>
     </ElCard>
 </template>
 
 <script lang="ts" setup>
+import type { HFormInstance } from '@xiaohaih/json-form-plus';
 import { HForm } from '@xiaohaih/json-form-plus';
 import { conditionFactory } from '~share/condition';
-import { ElMessage as toast } from 'element-plus';
+import { ElMessage } from 'element-plus';
 import { nextTick, onMounted, ref } from 'vue';
 
 /** @file 作为条件显示 */
@@ -44,27 +52,34 @@ defineOptions({
     name: 'Condition',
 });
 
+const hFormRef = ref<HFormInstance>();
 const conditions = ref(conditionFactory());
 /** 搜索 */
-function querySearch(query: Record<string, string>, source?: string) {
+function querySearch(query: Record<string, string>) {
     conditions.value.query = query;
-    console.log(`${source}-搜索事件: `, { ...query }, '\n句柄: ', conditions.value);
+    console.log({ ...query }, '\n句柄: ', conditions.value);
 }
 /** 重置 */
-function reset(query: Record<string, any>) {
-    // query.a = '999';
-    // console.log('reset', `a 重置后设置为\`${999}\`了`, query);
-    // return;
-    conditions.value.query.a = '';
+async function reset() {
+    if (!hFormRef.value) return;
+    hFormRef.value.reset();
+    await search();
     nextTick(() => {
-        conditions.value.query.a = '999';
-        console.log('reset', `a 重置后设置为\`${999}\`了`, conditions.value.query);
+        conditions.value.query.a = '';
+        nextTick(() => {
+            conditions.value.query.a = '999';
+            console.log('reset', `a 重置后设置为\`${999}\`了`, conditions.value.query);
+        });
     });
 }
 
+onMounted(search);
+async function search() {
+    if (!hFormRef.value) return;
+    return hFormRef.value.search();
+}
 function clear() {
     conditions.value.query = {};
-    // @ts-expect-error 允许重置为空对象
     conditions.value.condition = {};
 }
 </script>

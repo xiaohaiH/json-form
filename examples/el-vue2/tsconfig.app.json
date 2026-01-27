@@ -8,9 +8,9 @@
         "paths": {
             "~share/*": ["./src/share/*"],
             // 强行设置 vue 的版本的声明
-            "vue": ["./node_modules/vue/types/index.d.ts"],
+            "vue": ["./node_modules/vue2/types/index.d.ts"],
             // 强行设置 vue-demi 的版本的声明
-            "vue-demi": ["./node_modules/@xiaohaih/json-form-el/node_modules/vue-demi/types/index.d.ts"]
+            "vue-demi": ["./node_modules/vue-demi/types/index.d.ts"]
         },
         "typeRoots": ["node_modules/@types", "src/types"]
     },

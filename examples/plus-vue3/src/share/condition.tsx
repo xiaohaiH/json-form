@@ -57,6 +57,18 @@ export function conditionFactory() {
                 // type: 'button',
                 // initialValue: 'buxuan',
             },
+            rdGroup: {
+                t: 'radio-group',
+                label: '单选组',
+                valueKey: 'dictValue',
+                labelKey: 'dictLabel',
+                cancelable: true,
+                options: [
+                    { dictValue: '1', dictLabel: '单选1' },
+                    { dictValue: '2', dictLabel: '单选2' },
+                ],
+                defaultValue: '1',
+            },
             checkGroup: {
                 t: 'checkbox-group',
                 label: '多选组',

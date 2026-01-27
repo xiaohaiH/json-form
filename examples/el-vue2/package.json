@@ -16,7 +16,7 @@
         "element-ui": "^2.15.14",
         "monaco-editor": "^0.44.0",
         "split.js": "^1.6.5",
-        "vue": "^2.7.16"
+        "vue2": "npm:vue@^2.7.16"
     },
     "devDependencies": {
         "@babel/generator": "^7.24.10",
@@ -37,8 +37,6 @@
         "@unocss/preset-web-fonts": "^66.5.0",
         "@unocss/preset-wind": "^66.5.0",
         "@unocss/reset": "^66.5.0",
-        "@vitejs/plugin-vue": "^5.2.1",
-        "@vitejs/plugin-vue-jsx": "^4.0.1",
         "@vue/tsconfig": "^0.7.0",
         "eslint": "^9.14.0",
         "eslint-plugin-format": "^1.0.1",
@@ -56,6 +54,7 @@
         "vite-plugin-vue2": "^2.0.3",
         "vite-tsconfig-paths": "^5.1.0",
         "vue-component-type-helpers": "^2.1.10",
+        "vue-demi": "^0.14.10",
         "vue-template-compiler": "2.7.16",
         "vue-tsc": "^2.2.0"
     }

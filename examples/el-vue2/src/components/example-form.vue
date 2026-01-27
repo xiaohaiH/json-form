@@ -10,13 +10,7 @@
             size="small"
             :datum="formCondition"
             :rules="rules"
-            :backfill="query"
-            :render-btn="false"
-            :realtime="true"
-            :immediate-search="true"
-            @ready="querySearch"
-            @search="querySearch"
-            @reset="querySearch"
+            :value="query"
         />
         <div class="flex">
             <ElButton @click="validate">
@@ -36,18 +30,27 @@
 </template>
 
 <script lang="tsx">
-import type { HFormInstance } from '@xiaohaih/json-form-el';
+// import type { HFormInstance } from '@xiaohaih/json-form-el';
 import { defineOption, HForm } from '@xiaohaih/json-form-el';
 import { conditionFactory } from '~share/form';
 import { defineComponent, markRaw, nextTick, onMounted, ref, set } from 'vue';
 
+type HFormInstance = Record<string, any>;
+
 /** @file 作为表单显示 */
 export default defineComponent({
     name: 'ExampleForm',
-    components: { HForm },
+    components: {
+        HForm,
+    },
     setup() {
         const hFormRef = ref<HFormInstance>();
         const query = ref<Record<string, any>>({
+            布局组件: [
+                {},
+                {},
+            ],
+            时间: '11:11:11',
             // input1: '1',
             // input2: '2',
             // select1: '1',
@@ -96,6 +99,7 @@ export default defineComponent({
         }
         function querySearch(_query: Record<string, any>) {
             // console.log(_query)
+            // eslint-disable-next-line vue/no-deprecated-delete-set
             set(query, 'value', _query);
         }
 

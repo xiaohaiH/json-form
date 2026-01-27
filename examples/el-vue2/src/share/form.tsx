@@ -5,24 +5,128 @@ import { h, set } from 'vue';
 export function conditionFactory() {
     return {
         condition: defineOption({
-            自定义: {
+            '布局组件': {
+                t: 'dynamic-group',
+                tag: 'div',
+                class: 'w-full',
+                // config: {
+                //     '对象布局组件_输入框': {
+                //         t: 'input',
+                //         label: '对象布局组件_输入框',
+                //         placeholder: '哈哈哈',
+                //     },
+                //     '对象布局组件_下拉框': {
+                //         t: 'select',
+                //         label: '对象布局组件_下拉框',
+                //         placeholder: '哈哈哈',
+                //         options: [
+                //             { label: '第一', value: '1' },
+                //             { label: '第二', value: '2' },
+                //             { label: '第三', value: '3' },
+                //         ],
+                //     },
+                // },
+                itemProps: { class: 'flex' },
+                config: ({ item, index }) => ({
+                    对象布局组件_输入框: {
+                        t: 'input',
+                        label: '对象布局组件_输入框',
+                        placeholder: '哈哈哈',
+                        depend: true,
+                        initialValue: '999',
+                        dependFields: [`布局组件.${index}.对象布局组件_下拉框`],
+                    },
+                    对象布局组件_下拉框: {
+                        t: 'select',
+                        label: '对象布局组件_下拉框',
+                        placeholder: '哈哈哈',
+                        defaultValue: '1',
+                        options: [
+                            { label: '第一', value: '1' },
+                            { label: '第二', value: '2' },
+                            { label: '第三', value: '3' },
+                        ],
+                    },
+                }),
+                slots: {
+                    prepend: {
+                        render(h: any) {
+                            return <div>444</div>;
+                        },
+                    },
+                    append: {
+                        props: { query: { type: Object, required: true } },
+                        render(this: any) {
+                            const { query } = this;
+                            return <div><span class="cursor-pointer" tabindex="0" onClick={() => (query.布局组件 ||= []) && query.布局组件.push({ 对象布局组件_输入框: '555' })}>添加</span></div>;
+                        },
+                    },
+                },
+                itemSlots: {
+                    prepend: { render: (h: any) => <div>啦啦啦~</div> },
+                    append: {
+                        props: { checked: { type: Array }, index: { type: Number } },
+                        render(this: any) {
+                            const { checked, index } = this;
+                            return (
+                                <div class="flex items-center">
+                                    <div class="cursor-pointer" tabindex="0" onClick={() => checked.splice(index + 1, 0, { 对象布局组件_输入框: '啦啦啦啦啦', 对象布局组件_下拉框: '3' })}>添加</div>
+                                    <div class="cursor-pointer ml-10px" tabindex="0" onClick={() => checked.splice(index, 1)}>删除</div>
+                                </div>
+                            );
+                        },
+                    },
+                },
+                // config: [
+                //     { t: 'input', field: '数组布局组件_输入框', label: '数组布局组件_输入框', placeholder: '哈哈哈', },
+                //     {
+                //         t: 'select',
+                //         field: '数组布局组件_下拉框',
+                //         label: '数组布局组件_下拉框',
+                //         placeholder: '哈哈哈',
+                //         options: [
+                //             { label: '第一', value: '1' },
+                //             { label: '第二', value: '2' },
+                //             { label: '第三', value: '3' },
+                //         ],
+                //     },
+                // ],
+            },
+            '自定义': {
                 t: 'custom-render',
                 label: '自定义',
-                render({ plain }) {
-                    const checked = plain.checked as { value?: number };
-
-                    function onClick() {
-                        plain.change(checked.value ? checked.value + 1 : 1);
-                    }
-                    return ({ render: (h) => (
-                        <div onClick={onClick}>
-                            自定义渲染
-                            {checked.value || 0}
-                        </div>
-                    ) });
+                render: {
+                    props: { plain: { type: Object } },
+                    methods: {
+                        onClick() {
+                            const val = this.plain.checked.value;
+                            this.plain.change((val + 1) || 1);
+                        },
+                    },
+                    render(this: any) {
+                        return (
+                            <div onClick={this.onClick}>
+                                自定义渲染
+                                {this.plain.checked.value || 0}
+                            </div>
+                        );
+                    },
                 },
+                // render({ plain }) {
+                //     const checked = plain.checked as { value?: number };
+
+                //     function onClick() {
+                //         plain.change(checked.value ? checked.value + 1 : 1);
+                //     }
+                //     return ({ render: (h) => (
+                //         <div onClick={onClick}>
+                //             自定义渲染
+                //             {checked.value || 0}
+                //         </div>
+                //     ) });
+                // },
             },
-            上传: {
+            '上传': {
                 t: 'upload',
                 label: '上传',
                 // staticProps: { class: 'flex' },
@@ -35,7 +139,25 @@ export function conditionFactory() {
                 // },
                 autoUpload: false,
             },
-            颜色: {
+            '自动完成': {
+                t: 'autocomplete',
+                label: '自动完成',
+                placeholder: '请输入',
+                // fetchSuggestions: [{ value: 'aa' }, { value: 'bb' }],
+                itemSlots: {
+                    default: { props: { item: Object }, render(this: any, h: any) { return h('div', this.item.id); } },
+                },
+                remoteFilter: true,
+                filterMethod: (value, item) => item.value.includes(value) || item.id.includes(value),
+                async getOptions(cb, query, { filterValue }) {
+                    if (filterValue) return cb([{ value: `${filterValue}123`, id: `${filterValue}123` }, { value: `${filterValue}222`, id: `${filterValue}222` }]);
+                    cb([{ value: 'a1', id: 'aa1' }, { value: 'b1', id: 'bb1' }, { value: 'cc2', id: 'bb2' }]);
+                },
+                // onSelect: (item: any, { props, plain }) => {
+                //     props.query.input1 = item.id;
+                // },
+            },
+            '颜色': {
                 t: 'color-picker',
                 label: '颜色',
                 showAlpha: true,
@@ -55,7 +177,7 @@ export function conditionFactory() {
                 // decreaseIcon: <div>123</div>,
                 // increaseIcon: <div>456</div>,
             },
-            rate: {
+            'rate': {
                 t: 'rate',
                 label: 'rate',
                 colors: ['#99A9BF', '#F7BA2A', '#FF9900'],
@@ -63,26 +185,26 @@ export function conditionFactory() {
                 showScore: true,
                 scoreTemplate: '{value} 分',
             },
-            slider: {
+            'slider': {
                 t: 'slider',
                 // style: { width: '400px' },
                 label: 'slider',
                 showInput: true,
                 // range: true,
             },
-            切换器: {
+            '切换器': {
                 t: 'switch',
                 label: '切换器',
                 activeValue: '1',
                 inactiveValue: '0',
                 defaultValue: '0',
             },
-            时间: {
+            '时间': {
                 t: 'time-picker',
                 label: '时间',
                 placeholder: '快选择时间',
             },
-            input1: {
+            'input1': {
                 t: 'input',
                 label: 'input1',
                 placeholder: '哈哈哈',
@@ -96,13 +218,13 @@ export function conditionFactory() {
                 //     },
                 // },
             },
-            input2: {
+            'input2': {
                 t: 'input',
                 label: 'input2',
                 placeholder: '666',
                 rules: [{ required: true, message: '必填项' }],
             },
-            sel1: {
+            'sel1': {
                 t: 'select',
                 label: 'sel1',
                 placeholder: '哈哈哈',
@@ -112,13 +234,14 @@ export function conditionFactory() {
                     { label: '第三', value: '3' },
                 ],
             },
-            sel2: {
+            'sel2': {
                 t: 'select',
                 label: 'sel2',
                 placeholder: 'test',
                 labelKey: 'dictLabel',
                 valueKey: 'dictValue',
                 multiple: true,
+                defaultValue: () => [],
                 options: [] as Record<'dictLabel' | 'dictValue', string>[],
                 getOptions(cb) {
                     setTimeout(() => {
@@ -131,14 +254,14 @@ export function conditionFactory() {
                 },
                 rules: [{ required: true, message: '必填项' }],
             },
-            date1: {
+            'date1': {
                 t: 'date-picker',
                 label: 'date1',
                 placeholder: 'fff',
                 // format: 'MM-DD',
                 // valueFormat: 'YYYY-MM-DD',
             },
-            date2: {
+            'date2': {
                 t: 'date-picker',
                 type: 'daterange',
                 label: 'date2',
@@ -148,7 +271,7 @@ export function conditionFactory() {
                 endPlaceholder: '止',
                 rules: [{ required: true, message: '必填项' }],
             },
-            cas1: {
+            'cas1': {
                 t: 'cascader',
                 label: 'cas1',
                 placeholder: 'fff',
@@ -178,7 +301,7 @@ export function conditionFactory() {
                 //     console.log(query, 111, query.date11, query.date22);
                 // },
             },
-            cas2: {
+            'cas2': {
                 t: 'cascader',
                 label: 'cas2',
                 placeholder: '999',
@@ -235,7 +358,7 @@ export function conditionFactory() {
                     }, 1000);
                 },
             },
-            多选框: {
+            '多选框': {
                 t: 'checkbox',
                 label: '多选框',
                 staticProps: { label: '男生' },
@@ -280,7 +403,7 @@ export function conditionFactory() {
                     }, 1000);
                 },
             },
-            radio1: {
+            'radio1': {
                 t: 'radio',
                 label: 'radio1',
                 value: '1',

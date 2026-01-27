@@ -9,12 +9,7 @@
             label-width="110px"
             :datum="formCondition"
             :rules="rules"
-            :backfill="query"
-            :render-btn="false"
-            :realtime="true"
-            :immediate-search="true"
-            @search="query = $event"
-            @reset="query = $event"
+            :model-value="query"
         />
         <div class="flex">
             <ElButton @click="validate">
@@ -46,6 +41,11 @@ defineOption({
 
 const hFormRef = ref<HFormInstance>();
 const query = ref<Record<string, any>>({
+    布局组件: [
+        {},
+        {},
+    ],
+    时间: '11:11:11',
     // input1: '1',
     // input2: '2',
     // select1: '1',

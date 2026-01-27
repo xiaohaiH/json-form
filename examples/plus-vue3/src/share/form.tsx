@@ -1,9 +1,81 @@
 import { defineOption } from '@xiaohaih/json-form-plus';
 import { ElFormItem } from 'element-plus';
+import { defineComponent, markRaw } from 'vue';
 
 export function conditionFactory() {
     return {
         condition: defineOption({
+            '布局组件': {
+                t: 'dynamic-group',
+                tag: 'div',
+                class: 'w-full',
+                // config: {
+                //     '对象布局组件_输入框': {
+                //         t: 'input',
+                //         label: '对象布局组件_输入框',
+                //         placeholder: '哈哈哈',
+                //     },
+                //     '对象布局组件_下拉框': {
+                //         t: 'select',
+                //         label: '对象布局组件_下拉框',
+                //         placeholder: '哈哈哈',
+                //         options: [
+                //             { label: '第一', value: '1' },
+                //             { label: '第二', value: '2' },
+                //             { label: '第三', value: '3' },
+                //         ],
+                //     },
+                // },
+                itemProps: { class: 'flex' },
+                config: ({ item, index }) => ({
+                    对象布局组件_输入框: {
+                        t: 'input',
+                        label: '对象布局组件_输入框',
+                        placeholder: '哈哈哈',
+                        depend: true,
+                        initialValue: '999',
+                        dependFields: [`布局组件.${index}.对象布局组件_下拉框`],
+                    },
+                    对象布局组件_下拉框: {
+                        t: 'select',
+                        label: '对象布局组件_下拉框',
+                        placeholder: '哈哈哈',
+                        defaultValue: '1',
+                        options: [
+                            { label: '第一', value: '1' },
+                            { label: '第二', value: '2' },
+                            { label: '第三', value: '3' },
+                        ],
+                    },
+                }),
+                slots: {
+                    prepend: () => <div>444</div>,
+                    append: ({ query }) => <div><span class="cursor-pointer" tabindex="0" onClick={() => (query.布局组件 ||= []) && query.布局组件.push({ 对象布局组件_输入框: '555' })}>添加</span></div>,
+                },
+                itemSlots: {
+                    prepend: () => <div>啦啦啦~</div>,
+                    append: ({ checked, index }) => (
+                        <div class="flex items-center">
+                            <div class="cursor-pointer" tabindex="0" onClick={() => checked.splice(index + 1, 0, { 对象布局组件_输入框: '啦啦啦啦啦', 对象布局组件_下拉框: '3' })}>添加</div>
+                            <div class="cursor-pointer ml-10px" tabindex="0" onClick={() => checked.splice(index, 1)}>删除</div>
+                        </div>
+                    ),
+                },
+                // config: [
+                //     { t: 'input', field: '数组布局组件_输入框', label: '数组布局组件_输入框', placeholder: '哈哈哈', },
+                //     {
+                //         t: 'select',
+                //         field: '数组布局组件_下拉框',
+                //         label: '数组布局组件_下拉框',
+                //         placeholder: '哈哈哈',
+                //         options: [
+                //             { label: '第一', value: '1' },
+                //             { label: '第二', value: '2' },
+                //             { label: '第三', value: '3' },
+                //         ],
+                //     },
+                // ],
+            },
             '上传': {
                 t: 'upload',
                 label: '上传',
@@ -13,6 +85,26 @@ export function conditionFactory() {
                     trigger: () => <div>点我</div>,
                 },
                 autoUpload: false,
+            },
+            '自动完成': {
+                t: 'autocomplete',
+                label: '自动完成',
+                placeholder: '请输入',
+                // fetchSuggestions: [{ value: 'aa' }, { value: 'bb' }],
+                itemSlots: {
+                    header: '666',
+                    footer: '444',
+                    suffix: markRaw(defineComponent({ setup: () => () => <div>22</div> })),
+                },
+                remoteFilter: true,
+                filterMethod: (value, item) => item.value.includes(value) || item.id.includes(value),
+                async getOptions(cb, query, { filterValue }) {
+                    if (filterValue) return cb([{ value: `${filterValue}123`, id: `${filterValue}123` }, { value: `${filterValue}222`, id: `${filterValue}222` }]);
+                    cb([{ value: 'a1', id: 'aa1' }, { value: 'b1', id: 'bb1' }, { value: 'cc2', id: 'bb2' }]);
+                },
+                onSelect: (item: any, { props, plain }) => {
+                    props.query.input1 = item.id;
+                },
             },
             '虚下拉框': {
                 t: 'select-v2',
@@ -81,11 +173,15 @@ export function conditionFactory() {
                 t: 'time-picker',
                 label: '时间',
                 placeholder: '快选择时间',
+                depend: true,
+                dependFields: '时2',
+                initialValue: '08:00:00',
             },
             '时2': {
                 t: 'time-select',
                 label: '时2',
                 placeholder: '时间二',
+                defaultValue: '09:00',
                 // style: { width: '160px' },
             },
             'input1': {
