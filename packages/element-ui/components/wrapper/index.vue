@@ -1,38 +1,35 @@
 <template>
     <!-- eslint-disable vue/no-deprecated-dollar-listeners-api vue/no-v-for-template-key-on-child -->
     <!-- 表单容器组件，绑定属性和事件监听 -->
-    <ElForm v-bind="$attrs" ref="formRef" :model="query" v-on="$listeners">
-        <!-- 前置插槽 -->
-        <slot name="prepend" v-bind="slotProps" />
-        <!-- 循环渲染表单项组件 -->
-        <template v-for="(item, key) of options">
-            <component :is="getComponent(item.t)" v-if="item" :key="key" v-bind="item" :field="item.as || key" :query="query" />
+    <HGroup v-bind="$attrs" ref="groupRef" :disabled="disabled" :config="datum" :model="query" :query="query" :tag="ElForm" v-on="$listeners">
+        <template v-if="$slots.prepend" #prepend>
+            <slot name="prepend" v-bind="slotProps" />
         </template>
-        <!-- 默认插槽 -->
-        <slot v-bind="slotProps" />
-        <!-- 按钮插槽，提供搜索、重置等方法 -->
-        <slot name="btn" :search="search" :reset="reset" :resetAndSearch="resetAndSearch">
-            <template v-if="renderBtn">
-                <ElButton :size="$attrs.size" @click="search">
-                    {{ searchText }}
-                </ElButton>
-                <ElButton :size="$attrs.size" @click="triggerSearchAtReset ? resetAndSearch() : reset()">
-                    {{ resetText }}
-                </ElButton>
-            </template>
-        </slot>
-    </ElForm>
+        <template #append>
+            <slot v-bind="slotProps" />
+            <!-- <slot name="btn" :search="search" :reset="reset" :resetAndSearch="resetAndSearch">
+                <template v-if="renderBtn">
+                    <ElButton :size="$attrs.size" @click="search">
+                        {{ searchText }}
+                    </ElButton>
+                    <ElButton :size="$attrs.size" @click="triggerSearchAtReset ? resetAndSearch() : reset()">
+                        {{ resetText }}
+                    </ElButton>
+                </template>
+            </slot> -->
+        </template>
+    </HGroup>
 </template>
 
 <script lang="ts">
 import { execOnCallback, useWrapper } from '@xiaohaih/json-form-core';
 import { Button as ElButton, Form as ElForm } from 'element-ui';
+import type { ComponentExposed } from 'vue-component-type-helpers';
 import { computed, defineComponent, markRaw, nextTick, onMounted, ref, watch } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
-import { getComponent } from './component-assist';
+import { HGroup } from '../components';
 import type { FormSlots } from './types';
 import { formEmitsPrivate as emits, formPropsPrivate as props } from './types';
-// import { SortComponent } from './sortable';
 
 /**
  * 表单容器组件
@@ -41,23 +38,16 @@ import { formEmitsPrivate as emits, formPropsPrivate as props } from './types';
 export default defineComponent({
     name: 'HForm',
     components: {
-        // SortComponent,
-        ElForm,
-        ElButton,
+        HGroup,
     },
     inheritAttrs: false,
     props,
     emits,
     // slots: Object as SlotsType<FormSlots<any, any, any, any>>,
     setup(props, { emit, listeners }) {
+        const groupRef = ref<ComponentExposed<typeof HGroup>>();
         // 表单引用
-        const formRef = ref<InstanceType<typeof ElForm>>();
-        /** 格式化表单配置项(防止 template 中报错, 直接设置为 any) */
-        const options = ref<any>();
-        function setOption() {
-            options.value = typeof props.datum === 'function' ? props.datum() : props.datum;
-        }
-        watch(() => props.datum, setOption, { immediate: true });
+        const formRef = computed(() => groupRef.value?.tagRef as ComponentExposed<typeof ElForm> | undefined);
 
         /** 验证 element-plus 的表单 */
         function validate(...args: Parameters<InstanceType<typeof ElForm>['validate']>) {
@@ -75,16 +65,19 @@ export default defineComponent({
         }
 
         // 使用核心库提供的wrapper钩子
-        const wrapper = useWrapper(props, listeners);
+        const wrapper = useWrapper(props, {
+            modelValueField: 'value',
+            onBackfillChange(...args) {
+                listeners.backfillChange && execOnCallback(listeners.backfillChange as any, ...args);
+                props.onBackfillChange && execOnCallback(props.onBackfillChange, ...args);
+            },
+            onSearch(...args) {
+                listeners.search && execOnCallback(listeners.search as any, ...args);
+                props.onSearch && execOnCallback(props.onSearch, ...args);
+            },
+        });
 
-        /**
-         * 重置并搜索
-         * 先重置表单，然后执行搜索操作
-         */
-        function resetAndSearch() {
-            reset();
-            wrapper.search();
-        }
+        /** 重置 */
         function reset() {
             wrapper.reset();
             setTimeout(clearValidate);
@@ -93,24 +86,15 @@ export default defineComponent({
         // 插槽属性，提供给子组件访问props和wrapper实例
         const slotProps = { getProps: () => props, wrapper };
 
-        // 组件挂载后触发ready事件，并根据配置执行立即搜索
-        onMounted(() => {
-            props.onReady && execOnCallback(props.onReady, wrapper.getQuery());
-            // @ts-expect-error 忽视声明报错
-            listeners.ready?.(wrapper.getQuery());
-            props.immediateSearch && props.onSearch && execOnCallback(props.onSearch, wrapper.getQuery());
-        });
-
         return {
-            ...wrapper,
+            groupRef,
+            ElForm: markRaw(ElForm) as any,
             formRef,
-            options,
+            ...wrapper,
             validate,
             validateField,
             clearValidate,
             reset,
-            getComponent,
-            resetAndSearch,
             slotProps,
         };
     },

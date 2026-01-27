@@ -1,4 +1,5 @@
 /** 导出所有的组件, 根据不同的 element-plus 版本对 ./components 重导出 */
+export * from './autocomplete/index';
 export * from './cascader/index';
 export * from './checkbox-group/index';
 export * from './checkbox/index';

@@ -1,8 +1,8 @@
 import type { Obj2Props } from '@xiaohaih/json-form-core';
 import { Checkbox, FormItem as ElFormItem } from 'element-ui';
 import type { ElementUIComponent } from 'element-ui/types/component.d';
-import type { ExtractPropTypes, PropType, VNode } from 'vue';
 import type { ComponentProps } from 'vue-component-type-helpers';
+import type { Component, ComponentOptions, ComponentPublicInstance, defineComponent, ExtractPropTypes, markRaw, PropType, VNode } from 'vue-demi';
 
 /**
  * 插槽查询接口
@@ -40,13 +40,13 @@ export function commonPropsGeneric<T, SlotProps, Query extends Record<string, an
         // conditionSortIndex: { type: Number as PropType<number> },
         slots: { type: Object as PropType<Partial<{
             /** 取代默认组件 */
-            default: Record<string, any> | ((props: SlotProps) => any);
+            default: ComponentType<SlotProps>;
             /** 组件前渲染 */
-            before: Record<string, any> | ((props: SlotProps) => any);
+            before: ComponentType<SlotProps>;
             /** 组件后渲染 */
-            after: Record<string, any> | ((props: SlotProps) => any);
+            after: ComponentType<SlotProps>;
             /** 尾缀 */
-            postfix: Record<string, any> | (() => any);
+            postfix: ComponentType<{}>;
         }>>, default: () => ({}) },
     } as const;
 }
@@ -105,13 +105,13 @@ export const formItemPropKeys = Object.keys(formItemProps).filter((k) => k !== '
  */
 export interface CommonSlots<T> {
     /** 取代默认组件 */
-    default?: ((props: T) => any);
+    default?: ComponentType<T>;
     /** 在组件前渲染 */
-    before?: ((props: T) => any);
+    before?: ComponentType<T>;
     /** 在组件后渲染 */
-    after?: ((props: T) => any);
+    after?: ComponentType<T>;
     /** 在最后渲染 */
-    postfix?: (() => any);
+    postfix?: ComponentType<{}>;
 }
 
 /**
@@ -124,3 +124,14 @@ export type ExtractElementUIProps<T> = Omit<T, keyof ElementUIComponent | '$slot
  * 转换为标准的Vue属性配置对象
  */
 export type ElObj2Props<T> = Obj2Props<ExtractElementUIProps<T>>;
+
+/** 支持的组件格式 */
+export type ComponentType<Props = Record<string, any>, Context = any>
+    = | ReturnType<typeof defineComponent> | ReturnType<typeof markRaw<ReturnType<typeof defineComponent>>> // defineComponent 定义的组件
+        // | Component // 基本组件类型(隐藏该项, 防止函数式组件类型推断出现错误)
+        | ((props: Props, ctx?: Context) => any) // 函数式组件或函数返回组件类型
+        | ComponentOptions<any> // 组件选项对象
+        | ComponentPublicInstance // 组件实例
+        | (() => Promise<Component | { default: Component }>) // 异步组件加载函数
+        | string | number // 直接渲染
+        | { [key: string]: any }; // 普通对象

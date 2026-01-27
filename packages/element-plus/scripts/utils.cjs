@@ -28,7 +28,9 @@ const whiteList = ['custom-render'];
 function reexport(content, Ui) {
     const arr = content.split('\n');
     const newContent = {
-        imp: [],
+        // group/dynamic-group 组件比较特殊, 不能存在于 components-whole 中
+        // 避免循环引用, 因此单独提出来
+        imp: [`export * from './group/index';`, `export * from './dynamic-group/index';`],
         exp: [],
     };
     arr.forEach((item) => {

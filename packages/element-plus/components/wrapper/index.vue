@@ -1,33 +1,34 @@
 <template>
-    <ElForm v-bind="$attrs" ref="formRef" :disabled="disabled" :model="query">
-        <slot name="prepend" v-bind="slotProps" />
-        <template v-for="(item, key) of options" :key="key">
-            <component :is="getComponent(item.t)!" v-if="item" v-bind="item" :field="item.as || key" :query="query" />
+    <HGroup v-bind="$attrs" ref="groupRef" :disabled="disabled" :config="datum" :model="query" :query="query" :tag="ElForm">
+        <template v-if="$slots.prepend" #prepend>
+            <slot name="prepend" v-bind="slotProps" />
         </template>
-        <slot v-bind="slotProps" />
-        <slot name="btn" :search="search" :reset="reset" :resetAndSearch="resetAndSearch">
-            <template v-if="renderBtn">
-                <ElButton @click="search">
-                    {{ searchText }}
-                </ElButton>
-                <ElButton @click="triggerSearchAtReset ? resetAndSearch() : reset()">
-                    {{ resetText }}
-                </ElButton>
-            </template>
-        </slot>
-    </ElForm>
+        <template #append>
+            <slot v-bind="slotProps" />
+            <!-- <slot name="btn" :search="search" :reset="reset" :resetAndSearch="resetAndSearch">
+                <template v-if="renderBtn">
+                    <ElButton @click="search">
+                        {{ searchText }}
+                    </ElButton>
+                    <ElButton @click="triggerSearchAtReset ? resetAndSearch() : reset()">
+                        {{ resetText }}
+                    </ElButton>
+                </template>
+            </slot> -->
+        </template>
+    </HGroup>
 </template>
 
 <script lang="ts">
 import { execOnCallback, useWrapper } from '@xiaohaih/json-form-core';
 import { ElButton, ElForm } from 'element-plus';
 import type { Ref, SlotsType } from 'vue';
-import { computed, defineComponent, markRaw, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, defineComponent, Fragment, markRaw, nextTick, onMounted, ref, watch } from 'vue';
+import type { ComponentExposed } from 'vue-component-type-helpers';
 import { pick } from '../../src/utils';
-import { getComponent } from './component-assist';
+import { HGroup } from '../components';
 import type { FormSlots } from './types';
 import { formEmitsPrivate as emits, formPropsPrivate as props } from './types';
-// import { SortComponent } from './sortable';
 
 /**
  * @file 容器
@@ -35,22 +36,17 @@ import { formEmitsPrivate as emits, formPropsPrivate as props } from './types';
 export default defineComponent({
     name: 'HForm',
     components: {
-        // SortComponent,
         // fix: 修复打包时ts7056类型报错(The inferred type of this node exceeds the maximum length the compiler will serialize. An explicit type annotation is needed)
-        ElForm: ElForm as typeof ElForm,
-        ElButton,
+        // ElForm: ElForm as typeof ElForm,
+        HGroup,
     },
     inheritAttrs: false,
     props,
     emits,
     slots: Object as SlotsType<FormSlots<any>>,
     setup(props, { emit }) {
-        const formRef = ref<InstanceType<typeof ElForm>>();
-        const options = ref<any>();
-        function setOption() {
-            options.value = typeof props.datum === 'function' ? props.datum() : props.datum;
-        }
-        watch(() => props.datum, setOption, { immediate: true });
+        const groupRef = ref<ComponentExposed<typeof HGroup>>();
+        const formRef = computed(() => groupRef.value?.tagRef as ComponentExposed<typeof ElForm> | undefined);
 
         /** 验证 element-plus 的表单 */
         function validate(...args: Parameters<InstanceType<typeof ElForm>['validate']>) {
@@ -73,11 +69,7 @@ export default defineComponent({
             return formRef.value!.getField(...args);
         }
         const wrapper = useWrapper(props);
-        /** 重置并搜索 */
-        function resetAndSearch() {
-            reset();
-            wrapper.search();
-        }
+        /** 重置 */
         function reset() {
             wrapper.reset();
             setTimeout(clearValidate);
@@ -85,24 +77,18 @@ export default defineComponent({
 
         const slotProps = { getProps: () => props, wrapper };
 
-        onMounted(() => {
-            props.onReady && execOnCallback(props.onReady, wrapper.getQuery());
-            props.immediateSearch && props.onSearch && execOnCallback(props.onSearch, wrapper.getQuery());
-        });
-
         return {
-            ...wrapper,
+            groupRef,
+            ElForm: markRaw(ElForm),
             // fix: 修复打包时ts7056类型报错
-            formRef: formRef as Ref<InstanceType<typeof ElForm>>,
-            options,
+            formRef: formRef as Ref<ComponentExposed<typeof ElForm>>,
+            ...wrapper,
             validate,
             validateField,
             clearValidate,
             scrollToField,
             getField,
             reset,
-            getComponent,
-            resetAndSearch,
             slotProps,
         };
     },

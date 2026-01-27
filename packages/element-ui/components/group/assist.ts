@@ -1,5 +1,6 @@
-import { markRaw } from 'vue';
+import { markRaw } from 'vue-demi';
 import {
+    HAutocomplete,
     HCascader,
     HCheckbox,
     HCheckboxGroup,
@@ -8,48 +9,37 @@ import {
     HDatePicker,
     HInput,
     HInputNumber,
-    HInputTag,
-    HMention,
     HRadio,
     HRadioGroup,
     HRate,
-    HSegmented,
     HSelect,
-    HSelectV2,
     HSlider,
     HSwitch,
     HTimePicker,
-    HTimeSelect,
-    HTreeSelect,
     HUpload,
-} from '../components';
+} from '../components-whole';
 
 /* eslint-disable ts/no-unnecessary-type-assertion */
 // 不重新 as 一下会发生👇下方的错误
 // https://stackoverflow.com/questions/43900035/ts4023-exported-variable-x-has-or-is-using-name-y-from-external-module-but
 const compMap = {
-    'select': markRaw(HSelect) as typeof HSelect,
-    'tree-select': markRaw(HTreeSelect) as typeof HTreeSelect,
-    'input': markRaw(HInput) as typeof HInput,
-    'date-picker': markRaw(HDatePicker) as typeof HDatePicker,
+    'autocomplete': markRaw(HAutocomplete) as typeof HAutocomplete,
     'cascader': markRaw(HCascader) as typeof HCascader,
-    'radio': markRaw(HRadio) as typeof HRadio,
-    'radio-group': markRaw(HRadioGroup) as typeof HRadioGroup,
     'checkbox': markRaw(HCheckbox) as typeof HCheckbox,
     'checkbox-group': markRaw(HCheckboxGroup) as typeof HCheckboxGroup,
     'color-picker': markRaw(HColorPicker) as typeof HColorPicker,
+    'custom-render': markRaw(HCustomRender) as typeof HCustomRender,
+    'date-picker': markRaw(HDatePicker) as typeof HDatePicker,
+    'input': markRaw(HInput) as typeof HInput,
     'input-number': markRaw(HInputNumber) as typeof HInputNumber,
+    'radio': markRaw(HRadio) as typeof HRadio,
+    'radio-group': markRaw(HRadioGroup) as typeof HRadioGroup,
     'rate': markRaw(HRate) as typeof HRate,
+    'select': markRaw(HSelect) as typeof HSelect,
     'slider': markRaw(HSlider) as typeof HSlider,
     'switch': markRaw(HSwitch) as typeof HSwitch,
     'time-picker': markRaw(HTimePicker) as typeof HTimePicker,
-    'time-select': markRaw(HTimeSelect) as typeof HTimeSelect,
     'upload': markRaw(HUpload) as typeof HUpload,
-    'select-v2': markRaw(HSelectV2) as typeof HSelectV2,
-    'mention': markRaw(HMention) as typeof HMention,
-    'custom-render': markRaw(HCustomRender) as typeof HCustomRender,
-    'input-tag': markRaw(HInputTag) as typeof HInputTag,
-    'segmented': markRaw(HSegmented) as typeof HSegmented,
 };
 /* eslint-enable ts/no-unnecessary-type-assertion */
 const userCompMap: Record<string, any> = {};
@@ -76,10 +66,23 @@ export function unregisterComponent(name: string) {
 
 /**
  * 获取指定组件
- * @param {string} [name] 组件类型
+ * 根据组件类型名称获取对应的组件实例，优先从用户自定义组件中查找
+ *
+ * @param {string} name - 组件类型名称
+ * @returns {ComponentType | null} - 返回指定的组件
  */
-export function getComponent(name: string): ComponentType | undefined;
-export function getComponent(): Record<string, ComponentType>;
-export function getComponent(name?: string) {
-    return name ? userCompMap[name] || compMap[name as keyof typeof compMap] : { ...compMap, ...userCompMap };
+export function getComponent(name: string): ComponentType | null {
+    return userCompMap[name] || compMap[name as keyof typeof compMap] || (console.warn('未找到该组件类型: ', name), null);
+}
+
+/**
+ * 获取指定类型/所有组件
+ *
+ * @param {string} [type] 内置组件(builtIn)
+ *
+ * @returns {Record<string, ComponentType>} - 返回指定的组件或所有组件的映射表
+ */
+export function getAllComponent(type?: 'builtIn' | 'user'): Record<string, ComponentType> {
+    if (!type) return { ...compMap, ...userCompMap };
+    else return type === 'user' ? { ...userCompMap } : { ...compMap };
 }

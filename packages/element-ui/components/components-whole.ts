@@ -1,7 +1,5 @@
-/**
- * 组件集合文件
- * 统一导出所有Element UI基础组件的封装版本
- */
+/** 导出所有的组件, 根据不同的 element-ui 版本对 ./components 重导出 */
+export * from './autocomplete/index';
 export * from './cascader/index';
 export * from './checkbox-group/index';
 export * from './checkbox/index';

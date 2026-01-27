@@ -13,6 +13,7 @@ import { ElForm, ElMessage } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { defineOption } from '../../src/assist';
+import type { ComponentType } from '../share'
 
 /**
  * Element UI表单属性对象
@@ -34,20 +35,10 @@ function formAssist() {
     return {
         ...{} as Omit<_Prop, 'model'>,
         ...coreWrapperProps,
+        /** 兼容 v-model, 该值传递后 backfill 不再生效 */
+        modelValue: { type: Object as PropType<Record<string, any>> },
         // /** 是否启用排序 */
         // sortable: { type: Boolean as PropType<boolean> },
-        /** 初始是否触发一次事件来返回当前的 query */
-        immediateSearch: { type: Boolean as PropType<boolean> },
-        /** 是否渲染搜索重置按钮 */
-        renderBtn: { type: Boolean as PropType<boolean>, default: true },
-        /** 重置时触发搜索事件 */
-        triggerSearchAtReset: { type: Boolean as PropType<boolean> },
-        /** 搜索按钮文字 */
-        searchText: { type: String as PropType<string>, default: '搜索' },
-        /** 重置按钮文字 */
-        resetText: { type: String as PropType<string>, default: '重置' },
-        /** query 已初始化 - 组件就绪时触发 */
-        onReady: { type: [Function, Array] as PropType<WrapperArrayable<(query: Record<string, any>) => void>> },
     } as const;
 }
 
@@ -151,12 +142,10 @@ export type FormEmits<T> = ReturnType<typeof formEmitsGeneric<T>>;
  * 定义表单组件支持的所有插槽
  */
 export interface FormSlots<T> {
-    /** 默认插槽 - 在表单项之后，按钮之前 */
-    default?: ((props: FormSlotProps<T>) => any);
     /** 前置插槽 - 在表单项之前 */
-    prepend?: ((props: FormSlotProps<T>) => any);
-    /** 按钮插槽 - 可自定义表单按钮区域 */
-    btn?: ((props: Record<'search' | 'reset', (query: Record<string, any>) => void> & Record<'resetAndSearch', () => void>) => any);
+    prepend?: ComponentType<FormSlotProps<T>>;
+    /** 默认插槽 - 在表单项之后 */
+    default?: ComponentType<FormSlotProps<T>>;
 }
 
 /**
