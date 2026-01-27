@@ -57,7 +57,7 @@ const compMap = {
 const userCompMap: Record<string, any> = {};
 
 /** 默认定义组件的类型 */
-export type ComponentType = (typeof compMap)[keyof typeof compMap];
+export type ComponentTypeDef = (typeof compMap)[keyof typeof compMap];
 
 /**
  * 注册自定义组件
@@ -81,9 +81,9 @@ export function unregisterComponent(name: string) {
  * 根据组件类型名称获取对应的组件实例，优先从用户自定义组件中查找
  *
  * @param {string} name - 组件类型名称
- * @returns {ComponentType | null} - 返回指定的组件
+ * @returns {ComponentTypeDef | null} - 返回指定的组件
  */
-export function getComponent(name: string): ComponentType | null {
+export function getComponent(name: string): ComponentTypeDef | null {
     return userCompMap[name] || compMap[name as keyof typeof compMap] || (console.warn('未找到该组件类型: ', name), null);
 }
 
@@ -92,9 +92,9 @@ export function getComponent(name: string): ComponentType | null {
  *
  * @param {string} [type] 内置组件(builtIn)
  *
- * @returns {Record<string, ComponentType>} - 返回指定的组件或所有组件的映射表
+ * @returns {Record<string, ComponentTypeDef>} - 返回指定的组件或所有组件的映射表
  */
-export function getAllComponent(type?: 'builtIn' | 'user'): Record<string, ComponentType> {
+export function getAllComponent(type?: 'builtIn' | 'user'): Record<string, ComponentTypeDef> {
     if (!type) return { ...compMap, ...userCompMap };
     else return type === 'user' ? { ...userCompMap } : { ...compMap };
 }

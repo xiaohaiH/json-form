@@ -28,9 +28,9 @@ export function pick<T extends object, TKeys extends keyof T>(obj: T, keys: TKey
  * (props: Record<string, any>) => defineComponent({ render: () => node });
  * ```
  */
-export function getNode(node: Record<string, any> | ((...args: any[]) => VNode) | undefined | null, props?: Record<string, any>) {
+export function getNode(node: Record<string, any> | ((...args: any[]) => VNode) | any, props?: Record<string, any>) {
     // 直接抛出 null, template 中会报错
     if (!node) return null as unknown as {};
     if (typeof node === 'object') return node;
-    return (node as any).mixin ? node : node(props);
+    return node.mixin ? node : node(props);
 }

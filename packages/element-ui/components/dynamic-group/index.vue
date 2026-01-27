@@ -24,7 +24,7 @@
 <script lang="tsx">
 import type { PlainProps, ProvideValue } from '@xiaohaih/json-form-core';
 import { defineCommonMethod, get, hyphenate, isPlainObject, provideKey, set, usePlain } from '@xiaohaih/json-form-core';
-import type { ExtractPropTypes } from 'vue-demi';
+import type { ExtractPropTypes, Ref } from 'vue-demi';
 import { computed, defineComponent, inject, markRaw, ref, set as vueSet, watch } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
 import { getComponent, HGroup } from '../group/index';
@@ -136,7 +136,7 @@ export default defineComponent({
             hyphenate,
             getNode,
             dynamicGroupRef,
-            checked,
+            checked: checked as unknown as Ref<NonNullable<typeof checked.value>>,
             finalConfig,
             getComponent2,
         };

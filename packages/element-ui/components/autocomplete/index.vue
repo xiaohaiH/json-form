@@ -2,14 +2,14 @@
     <!-- eslint-disable vue/no-deprecated-dollar-listeners-api vue/no-v-for-template-key-on-child -->
     <ElFormItem
         v-if="!insetHide"
-        :class="`json-form-item json-form-item--autocomplete json-form-item--${field} json-form-item--${!!slots?.postfix}`"
+        :class="`json-form-item json-form-item--autocomplete json-form-item--${field} json-form-item--${!!slots.postfix}`"
         v-bind="formItemActualProps"
         :prop="formItemActualProps.prop || field"
     >
-        <template v-if="slots?.before || $slots.before">
-            <component :is="getNode(slots?.before || $slots.before)" v-bind="slotProps" />
+        <template v-if="slots.before || $slots.before">
+            <component :is="getNode(slots.before || $slots.before)" v-bind="slotProps" />
         </template>
-        <template v-if="slots?.default">
+        <template v-if="slots.default">
             <component :is="getNode(slots.default)" v-bind="slotProps" />
         </template>
         <slot v-else v-bind="slotProps">
@@ -48,11 +48,11 @@
                 </template> -->
             </ElAutocomplete>
         </slot>
-        <template v-if="slots?.after || $slots.after">
-            <component :is="getNode(slots?.after || $slots.after)" v-bind="slotProps" />
+        <template v-if="slots.after || $slots.after">
+            <component :is="getNode(slots.after || $slots.after)" v-bind="slotProps" />
         </template>
-        <div v-if="slots?.postfix || $slots.postfix" class="json-form-item__postfix">
-            <component :is="getNode(slots?.postfix || $slots.postfix)" />
+        <div v-if="slots.postfix || $slots.postfix" class="json-form-item__postfix">
+            <component :is="getNode(slots.postfix || $slots.postfix)" />
         </div>
     </ElFormItem>
 </template>
