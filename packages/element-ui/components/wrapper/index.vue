@@ -1,7 +1,7 @@
 <template>
     <!-- eslint-disable vue/no-deprecated-dollar-listeners-api vue/no-v-for-template-key-on-child -->
     <!-- 表单容器组件，绑定属性和事件监听 -->
-    <HGroup v-bind="$attrs" ref="groupRef" :disabled="disabled" :config="datum" :model="query" :query="query" :tag="ElForm" v-on="$listeners">
+    <HGroup v-bind="$attrs" ref="groupRef" :disabled="disabled" :config="config || datum" :model="query" :query="query" :tag="ElForm" v-on="$listeners">
         <template v-if="$slots.prepend" #prepend>
             <slot name="prepend" v-bind="slotProps" />
         </template>

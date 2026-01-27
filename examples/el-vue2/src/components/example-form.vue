@@ -8,7 +8,7 @@
             class="example-form flex flex-wrap"
             label-width="110px"
             size="small"
-            :datum="formCondition"
+            :config="formCondition"
             :rules="rules"
             :value="query"
         />

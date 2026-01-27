@@ -1,5 +1,5 @@
 <template>
-    <HGroup v-bind="$attrs" ref="groupRef" :disabled="disabled" :config="datum" :model="query" :query="query" :tag="ElForm">
+    <HGroup v-bind="$attrs" ref="groupRef" :disabled="disabled" :config="config || datum" :model="query" :query="query" :tag="ElForm">
         <template v-if="$slots.prepend" #prepend>
             <slot name="prepend" v-bind="slotProps" />
         </template>

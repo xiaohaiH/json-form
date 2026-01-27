@@ -24,7 +24,7 @@
                 :key="conditions.formOption.key"
                 class="flex flex-wrap items-start"
                 :backfill="conditions.query"
-                :datum="conditions.condition"
+                :config="conditions.condition"
                 :toast="ElMessage.info"
                 @submit.prevent
                 @search="querySearch"
