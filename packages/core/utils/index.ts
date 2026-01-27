@@ -9,9 +9,14 @@ export function getType(value: any): string {
     return Object.prototype.toString.call(value).slice(8, -1);
 }
 
-/** 获取类型 */
+/** 是否是数组 */
 export function isArray(value: any): value is any[] {
     return getType(value) === 'Array';
+}
+
+/** 是否是纯对象 */
+export function isPlainObject(value: any): value is Record<string, any> {
+    return getType(value) === 'Object';
 }
 
 /**
@@ -25,10 +30,15 @@ export function emptyToValue<T>(val: any, defaultVal: T) {
     return isEmptyValue(val) ? defaultVal : val;
 }
 
-/** 判断两个值是否相等, 排除掉空值 */
-export function isEqualExcludeEmptyValue(x: any, y: any) {
-    // 不做引用类型的比较, 防止引用地址不同 导致无法赋值
-    return (isEmptyValue(x) && isEmptyValue(y)); // || isEqual(x, y);
+// /** 判断两个值是否相等, 排除掉空值 */
+// export function isEqualExcludeEmptyValue(x: any, y: any) {
+//     // 不做引用类型的比较, 防止引用地址不同 导致无法赋值
+//     return (isEmptyValue(x) && isEmptyValue(y)); // || isEqual(x, y);
+// }
+
+/** 判断是否不是空值(null, undefined, '') */
+export function isNotEmptyValue(val: any) {
+    return !isEmptyValue(val);
 }
 
 /** 判断是否是空值(null, undefined, '') */
@@ -107,24 +117,6 @@ export function getNode(node: string | number | Record<string, any> | ((...args:
     // 直接抛出 null, template 中会报错
     if (!node && node !== 0) return null as unknown as {};
     return typeof node === 'function' ? node : typeof node === 'object' ? node : () => node;
-}
-
-/**
- * 通过字符串路径获取值
- * @example get(person, 'friends[0].name')
- */
-export function get<TDefault = unknown>(value: any, path: string, defaultValue?: TDefault): TDefault {
-    const segments = path.split(/[.[\]]/);
-    let current: any = value;
-    for (const key of segments) {
-        if (current === null) return defaultValue as TDefault;
-        if (current === undefined) return defaultValue as TDefault;
-        const dequoted = key.replace(/['"]/g, '');
-        if (dequoted.trim() === '') continue;
-        current = current[dequoted];
-    }
-    if (current === undefined) return defaultValue as TDefault;
-    return current;
 }
 
 /**
@@ -226,4 +218,57 @@ export function checkVersion(currentVersion: string, requiredVersion: string, op
     if (operator === '<') return comparison < 0;
     if (operator === '=' || operator === '==') return comparison === 0;
     return false;
+}
+
+/** 正则 - 路径切割 */
+const fieldPathReg = /[.[\]]/;
+/** 正则 - 匹配数字 */
+const numReg = /^\d+$/;
+/** 正则 - 匹配引号 */
+const quotedReg = /['"]/g;
+
+/**
+ * 根据字符串路径获取值
+ *
+ * @example get(person, 'friends[0].name')
+ */
+export function get<TDefault = unknown>(value: any, path: string, defaultValue?: TDefault): TDefault {
+    if (!value || !path) return defaultValue as TDefault;
+    const segments = path.split(fieldPathReg);
+    let current: any = value;
+    for (const key of segments) {
+        if (current === null) return defaultValue as TDefault;
+        if (current === undefined) return defaultValue as TDefault;
+        const dequoted = key.replace(quotedReg, '');
+        if (dequoted.trim() === '') continue;
+        current = current[dequoted];
+        // current = current[key];
+    }
+    if (current === undefined) return defaultValue as TDefault;
+    return current;
+}
+
+/**
+ * 根据字符串路径设置值
+ *
+ * @example
+ * set({}, 'name', 'ra') // => { name: 'ra' }
+ * set({}, 'cards[0].value', 2) // => { cards: [{ value: 2 }] }
+ */
+export function set<T extends object, K>(initial: T, path: string, value: K, assign?: (obj: Record<string, any>, key: string, value: any) => void) {
+    if (!initial || !path) return;
+    const segments = path.split(fieldPathReg).filter((x) => !!x.trim());
+    const _set = (node: any) => {
+        if (segments.length > 1) {
+            const key = segments.shift() as string;
+            node[key] === undefined && (assign
+                ? assign(node, key, (numReg.test(segments[0]) ? [] : {}))
+                : node[key] = (numReg.test(segments[0]) ? [] : {}));
+            _set(node[key]);
+        }
+        else {
+            assign ? assign(node, segments[0], value) : node[segments[0]] = value;
+        }
+    };
+    _set(initial);
 }

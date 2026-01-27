@@ -13,6 +13,13 @@ function camelize(name: string) {
  * @tip
  * props 尽量用 as const, 防止内部的 required 选项无法被识别
  * 当 emits 为数组时, 需要用 as const, 否则无法识别出事件名称
+ * 
+ * @example
+ * ```ts
+ * const typeDef = { type: Function };
+ * emits = { click: noop, dataChange: noop }; // return { onClick: typeDef, onDataChange: typeDef }
+ * emits = ['click', 'data-change']; // return { onClick: typeDef, onDataChange: typeDef }
+ * ```
  */
 export function emits2props<T extends Record<string, any> | undefined | null, E extends (string[] | Record<string, any> | null | undefined)[]>(props: T, ...emits: E) {
     const _r = (props || {}) as (T extends undefined | null ? {} : T) & UnionToIntersection<Emits2Props<NonNullable<E[number]>>>;
@@ -33,6 +40,12 @@ export type Emits2Props<T> = UnionToIntersection<
  * @param {(string[] | object | null)[]} emits 待转换的 emits
  * @tip
  * 当 emits 为数组时, 需要用 as const, 否则无法识别出事件名称
+ * 
+ * @example
+ * ```ts
+ * emits = { click: noop, dataChange: noop }; // return { click: noop, dataChange: noop }
+ * emits = ['click', 'data-change']; // return { click: noop, dataChange: noop }
+ * ```
  */
 export function emits2obj<E extends (string[] | Record<string, any> | null | undefined), R = E extends string[] ? { [P in E[number] as CamelCase<string & P>]: () => true } : E extends null | undefined ? {} : E>(emits: E): ExtractEvents<R> {
     if (!Array.isArray(emits)) return (emits || {}) as ExtractEvents<R>;
