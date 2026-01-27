@@ -1,5 +1,15 @@
 # @xiaohaih/json-form-el
 
+## 0.2.0
+
+### Minor Changes
+
+- 1. 核心模块的逻辑重构(core)
+- 2. 核心模块增加单元测试(core)
+- 3. 增加 autocomplete 组件
+- 4. custom-render 支持直接传递组件
+- 5. 其他更改若干
+
 ## 0.1.12
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @xiaohaih/json-form-core
 
+## 0.2.0
+
+### Minor Changes
+
+- 1. query 相关的逻辑重构
+- 2. 增加单元测试
+
 ## 0.1.12
 
 ### Patch Changes
