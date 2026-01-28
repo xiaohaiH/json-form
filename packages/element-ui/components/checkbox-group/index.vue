@@ -9,11 +9,11 @@
     >
         <!-- 表单项前置内容插槽 -->
         <template v-if="slots.before || $slots.before">
-            <component :is="getNode(slots.before || $slots.before, slotProps)" />
+            <component :is="getNode(slots.before || $slots.before, slotProps)" v-bind="slotProps" />
         </template>
         <!-- 自定义默认插槽内容 -->
         <template v-if="slots.default">
-            <component :is="getNode(slots.default, slotProps)" />
+            <component :is="getNode(slots.default, slotProps)" v-bind="slotProps" />
         </template>
         <!-- 默认复选框组渲染 -->
         <slot v-else v-bind="slotProps">
@@ -40,7 +40,7 @@
                             <component :is="getNode(option)" v-bind="slotProps" v-bind.prop="row" :option="item" :labelKey="labelKey" :valueKey="valueKey" :disabledKey="disabledKey" />
                         </template> -->
                         <template v-if="itemSlots.default" #default>
-                            <component :is="getNode(itemSlots.default, { ...slotProps, option: item, labelKey, valueKey })" />
+                            <component :is="getNode(itemSlots.default, { ...slotProps, option: item, labelKey, valueKey })" v-bind="slotProps" :option="item" :label-key="labelKey" :value-key="valueKey" />
                         </template>
                     </component>
                 </template>
@@ -48,7 +48,7 @@
         </slot>
         <!-- 表单项后置内容插槽 -->
         <template v-if="slots.after || $slots.after">
-            <component :is="getNode(slots.after || $slots.after, slotProps)" />
+            <component :is="getNode(slots.after || $slots.after, slotProps)" v-bind="slotProps" />
         </template>
         <!-- 表单项额外后缀插槽 -->
         <div v-if="slots.postfix || $slots.postfix" class="json-form-item__postfix">

@@ -12,11 +12,11 @@
     >
         <!-- 表单项前置内容插槽 -->
         <template v-if="slots.before || $slots.before">
-            <component :is="getNode(slots.before || $slots.before, slotProps)" />
+            <component :is="getNode(slots.before || $slots.before, slotProps)" v-bind="slotProps" />
         </template>
         <!-- 自定义默认插槽内容 -->
         <template v-if="slots.default">
-            <component :is="getNode(slots.default, slotProps)" />
+            <component :is="getNode(slots.default, slotProps)" v-bind="slotProps" />
         </template>
         <!-- 默认上传组件渲染 -->
         <slot v-else v-bind="slotProps">
@@ -33,14 +33,11 @@
                 :disabled="globalReadonly || globalDisabled || contentActualProps2.disabled"
                 v-on="$listeners"
             >
-                <!-- 自定义默认内容插槽，暂时注释掉
+                <!-- 自定义默认内容插槽，暂时注释掉 -->
                 <template v-if="itemSlots.default" #default>
-                    <div>
-                        <div>123</div>
-                        <component :is="getNode(itemSlots.default, slotProps)" />
-                    </div>
+                    <component :is="getNode(itemSlots.default, slotProps)" v-bind="slotProps" />
                 </template>
-                <template v-else #default>
+                <!-- <template v-else #default>
                     <ElButton v-bind="buttonAttrs">
                         {{ buttonText }}
                     </ElButton>
@@ -48,12 +45,12 @@
 
                 <!-- 上传区域触发按钮插槽 -->
                 <template v-if="itemSlots.trigger" #trigger>
-                    <component :is="getNode(itemSlots.trigger, slotProps)" />
+                    <component :is="getNode(itemSlots.trigger, slotProps)" v-bind="slotProps" />
                 </template>
 
                 <!-- 上传提示说明插槽 -->
                 <template v-if="itemSlots.tip" #tip>
-                    <component :is="getNode(itemSlots.tip, slotProps)" />
+                    <component :is="getNode(itemSlots.tip, slotProps)" v-bind="slotProps" />
                 </template>
 
                 <!-- 动态命名插槽，暂时注释掉
@@ -64,7 +61,7 @@
         </slot>
         <!-- 表单项后置内容插槽 -->
         <template v-if="slots.after || $slots.after">
-            <component :is="getNode(slots.after || $slots.after, slotProps)" />
+            <component :is="getNode(slots.after || $slots.after, slotProps)" v-bind="slotProps" />
         </template>
         <!-- 表单项额外后缀插槽 -->
         <div v-if="slots.postfix || $slots.postfix" class="json-form-item__postfix">

@@ -9,11 +9,11 @@
     >
         <!-- 前置内容插槽 -->
         <template v-if="slots.before || $slots.before">
-            <component :is="getNode(slots.before || $slots.before, slotProps)" />
+            <component :is="getNode(slots.before || $slots.before, slotProps)" v-bind="slotProps" />
         </template>
         <!-- 自定义内容插槽 -->
         <template v-if="slots.default">
-            <component :is="getNode(slots.default, slotProps)" />
+            <component :is="getNode(slots.default, slotProps)" v-bind="slotProps" />
         </template>
         <!-- 默认输入框组件 -->
         <slot v-else v-bind="slotProps">
@@ -30,28 +30,28 @@
             >
                 <!-- 前置元素插槽 -->
                 <template v-if="itemSlots.prepend" #prepend>
-                    <component :is="getNode(itemSlots.prepend, slotProps)" />
+                    <component :is="getNode(itemSlots.prepend, slotProps)" v-bind="slotProps" />
                 </template>
                 <!-- 后置元素插槽 -->
                 <template v-if="itemSlots.append" #append>
-                    <component :is="getNode(itemSlots.append, slotProps)" />
+                    <component :is="getNode(itemSlots.append, slotProps)" v-bind="slotProps" />
                 </template>
                 <!-- 头部图标插槽 -->
                 <template v-if="itemSlots.prefix" #prefix>
-                    <component :is="getNode(itemSlots.prefix, slotProps)" />
+                    <component :is="getNode(itemSlots.prefix, slotProps)" v-bind="slotProps" />
                 </template>
                 <!-- 尾部图标插槽 -->
                 <template v-if="itemSlots.suffix" #suffix>
-                    <component :is="getNode(itemSlots.suffix, slotProps)" />
+                    <component :is="getNode(itemSlots.suffix, slotProps)" v-bind="slotProps" />
                 </template>
                 <!-- <template v-for="(item, slotName) of itemSlots" #[slotName]="row">
-                    <component :is="getNode(item, { ...row, ...slotProps })" :key="slotName" />
+                    <component :is="getNode(item, { ...row, ...slotProps })" v-bind="slotProps" :key="slotName" />
                 </template> -->
             </ElInput>
         </slot>
         <!-- 后置内容插槽 -->
         <template v-if="slots.after || $slots.after">
-            <component :is="getNode(slots.after || $slots.after, slotProps)" />
+            <component :is="getNode(slots.after || $slots.after, slotProps)" v-bind="slotProps" />
         </template>
         <!-- 尾缀插槽 -->
         <div v-if="slots.postfix || $slots.postfix" class="json-form-item__postfix">

@@ -12,11 +12,11 @@
     >
         <!-- 表单项前置内容插槽 -->
         <template v-if="slots.before || $slots.before">
-            <component :is="getNode(slots.before || $slots.before, slotProps)" />
+            <component :is="getNode(slots.before || $slots.before, slotProps)" v-bind="slotProps" />
         </template>
         <!-- 自定义默认插槽内容 -->
         <template v-if="slots.default">
-            <component :is="getNode(slots.default, slotProps)" />
+            <component :is="getNode(slots.default, slotProps)" v-bind="slotProps" />
         </template>
         <!-- 默认时间选择器渲染 -->
         <slot v-else v-bind="slotProps">
@@ -33,7 +33,7 @@
         </slot>
         <!-- 表单项后置内容插槽 -->
         <template v-if="slots.after || $slots.after">
-            <component :is="getNode(slots.after || $slots.after, slotProps)" />
+            <component :is="getNode(slots.after || $slots.after, slotProps)" v-bind="slotProps" />
         </template>
         <!-- 表单项额外后缀插槽 -->
         <div v-if="slots.postfix || $slots.postfix" class="json-form-item__postfix">

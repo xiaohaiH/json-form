@@ -7,10 +7,10 @@
         :prop="formItemActualProps.prop || field"
     >
         <template v-if="slots.before || $slots.before">
-            <component :is="getNode(slots.before || $slots.before, slotProps)" />
+            <component :is="getNode(slots.before || $slots.before, slotProps)" v-bind="slotProps" />
         </template>
         <template v-if="slots.default">
-            <component :is="getNode(slots.default, slotProps)" />
+            <component :is="getNode(slots.default, slotProps)" v-bind="slotProps" />
         </template>
         <slot v-else v-bind="slotProps">
             <ElRate
@@ -20,7 +20,7 @@
             />
         </slot>
         <template v-if="slots.after || $slots.after">
-            <component :is="getNode(slots.after || $slots.after, slotProps)" />
+            <component :is="getNode(slots.after || $slots.after, slotProps)" v-bind="slotProps" />
         </template>
         <div v-if="slots.postfix || $slots.postfix" class="json-form-item__postfix">
             <component :is="getNode(slots.postfix || $slots.postfix)" />

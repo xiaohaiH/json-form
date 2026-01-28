@@ -109,7 +109,7 @@ export function uploadPropsGeneric<T, Query extends Record<string, any>, Option,
         itemSlots: { type: Object as PropType<Partial<{
             /** 自定义触发按钮 */
             trigger: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery>>;
-            // default: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery>>;
+            default: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery>>;
             /** 自定义提示说明 */
             tip: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery>>;
             // file: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery> & { file: UploadFile; index: number }>;

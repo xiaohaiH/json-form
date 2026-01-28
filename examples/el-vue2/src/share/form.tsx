@@ -129,14 +129,14 @@ export function conditionFactory() {
             '上传': {
                 t: 'upload',
                 label: '上传',
-                // staticProps: { class: 'flex' },
+                staticProps: { class: 'flex' },
                 limit: 2,
                 multiple: true,
                 override: true,
-                // itemSlots: {
-                //     // default: () => <div>sss</div>,
-                //     trigger: () => ({ render: (h) => <div>点我</div> }),
-                // },
+                itemSlots: {
+                    default: () => ({ render: (h: any) => <div>sss</div> }),
+                    trigger: { render: (h: any) => <div>点我</div> },
+                },
                 autoUpload: false,
             },
             '自动完成': {

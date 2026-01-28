@@ -39,7 +39,7 @@
                             <component :is="getNode(option)" v-bind="slotProps" v-bind.prop="row" :option="item" :labelKey="labelKey" :valueKey="valueKey" :disabledKey="disabledKey" />
                         </template> -->
                         <template v-if="itemSlots.default" #default>
-                            <component :is="getNode(itemSlots.default, { ...slotProps, option: item, labelKey, valueKey })" />
+                            <component :is="getNode(itemSlots.default, { ...slotProps, option: item, labelKey, valueKey })" v-bind="slotProps" :option="item" :label-key="labelKey" :value-key="valueKey" />
                         </template>
                     </component>
                 </template>
