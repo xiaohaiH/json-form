@@ -10,7 +10,7 @@
             size="small"
             :config="formCondition"
             :rules="rules"
-            :value="query"
+            :model="query"
         />
         <div class="flex">
             <ElButton @click="validate">

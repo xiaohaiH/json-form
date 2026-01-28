@@ -9,7 +9,7 @@
             label-width="110px"
             :config="formCondition"
             :rules="rules"
-            :model-value="query"
+            :model="query"
         />
         <div class="flex">
             <ElButton @click="validate">
