@@ -124,7 +124,7 @@ export default defineComponent({
             getItemProps: () => contentActualProps.value,
             getProps: () => props,
             extraOptions: {
-                modelValue: plain.checked.value,
+                value: plain.checked.value,
                 options: plain.finalOption.value,
                 onChange: plain.change,
                 onEnter: enterHandle,

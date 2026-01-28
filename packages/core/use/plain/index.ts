@@ -141,8 +141,8 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
         onBackfillChange: (backfill, oldBackfill, isChange) => {
             isChange && unref(props).hooks?.backfillChange?.(backfill, oldBackfill, { plain: expose, props: unref(props) });
         },
-        onModelValueChange: (modelValue, oldModelValue) => {
-            // unref(props).hooks?.modelValueChange?.(modelValue, oldModelValue, { plain: expose, props: unref(props) });
+        onModelChange: (model, oldModel) => {
+            // unref(props).hooks?.modelChange?.(model, oldModel, { plain: expose, props: unref(props) });
             updateAllowDependChangeValue();
         },
         trySetDefaultValue(_query: Record<string, any>) {

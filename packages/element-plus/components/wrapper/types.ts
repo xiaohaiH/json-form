@@ -35,8 +35,6 @@ function formAssist() {
     return {
         ...{} as Omit<_Prop, 'model'>,
         ...coreWrapperProps,
-        /** 兼容 v-model, 该值传递后 backfill 不再生效 */
-        modelValue: { type: Object as PropType<Record<string, any>> },
         /**
          * @deprecated 请改用 config 属性
          */

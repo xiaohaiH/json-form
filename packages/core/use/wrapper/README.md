@@ -1,13 +1,13 @@
 ### `useWrapper` 组合式 API
 
-`useWrapper` 是 json-form 库的容器逻辑层，用于管理整个表单的状态、校验、搜索事件和子组件注册。它通过组合式 API 实现，支持 Vue 2.7+ 和 Vue 3。
+`useWrapper` 是 json-form 库的容器逻辑层, 用于管理整个表单的状态、校验、搜索事件和子组件注册。它通过组合式 API 实现, 支持 Vue 2.7+ 和 Vue 3。
 
 #### 功能特性
 
-- **状态管理**: 管理表单的 query 对象，支持 backfill 和 modelValue 双模式
+- **状态管理**: 管理表单的 query 对象, 支持 backfill 和 model 双模式
 - **子组件注册**: 提供注册机制管理所有表单项
 - **搜索控制**: 支持实时搜索和手动搜索模式
-- **校验机制**: 内置校验流程，支持异步校验
+- **校验机制**: 内置校验流程, 支持异步校验
 - **生命周期管理**: 自动处理子组件的注册和卸载
 
 #### Props 参数
@@ -19,8 +19,8 @@
 | realtime               | `boolean`                                                | `undefined` | 否   | 是否在数据发生变动后实时触发搜索事件（仅针对 backfill） |
 | backfill               | `Record<string, any>`                                    | -           | 否   | 回填信息                                                |
 | onBackfillChange       | `WrapperArrayable<onBackfillChange>`                     | -           | 否   | 回填信息发生变化时触发（仅针对 backfill）               |
-| modelValue             | `Record<string, any>`                                    | -           | 否   | 表单形式的双向绑定值                                    |
-| shallowWatchModelValue | `boolean`                                                | `false`      | 否   | 是否浅监听 modelValue，批量赋值时启用以规避 depend 重置 |
+| model             | `Record<string, any>`                                    | -           | 否   | 表单形式的双向绑定值                                    |
+| shallowWatchModel | `boolean`                                                | `false`      | 否   | 是否浅监听 model, 批量赋值时启用以规避 depend 重置 |
 | validator              | `(query: Record<string, any>) => any \| Promise<any>`    | `undefined` | 否   | 自定义校验函数（内部校验通过后触发）                    |
 | toast                  | `(msg: string) => void`                                  | `undefined` | 否   | 校验失败时产生的提示                                    |
 | readonly               | `boolean`                                                | `undefined` | 否   | 表单是否只读                                            |
@@ -34,7 +34,7 @@
 | 属性名          | 类型                                     | 描述                                                 |
 | :-------------- | :--------------------------------------- | :--------------------------------------------------- |
 | child           | `CommonMethod[]`                         | 已注册的所有子组件实例数组                           |
-| wrapperInstance | `ProvideValue`                           | 提供给子组件的注入实例，包含 register、search 等方法 |
+| wrapperInstance | `ProvideValue`                           | 提供给子组件的注入实例, 包含 register、search 等方法 |
 | query           | `Ref<Record<string, any>>`               | 内部表单查询对象                                     |
 | getQuery        | `() => Record<string, any>`              | 获取当前查询对象的副本                               |
 | search          | `() => Promise<void>`                    | 触发搜索事件（包含校验逻辑）                         |
@@ -90,11 +90,11 @@ if (error) {
 - 搜索事件通过 `onSearch` 回调触发
 - 回填数据变化时触发 `onBackfillChange`
 
-##### ModelValue 模式
+##### Model 模式
 
-当使用 `modelValue` 属性时：
+当使用 `model` 属性时：
 
-- 表单值直接与外部 `modelValue` 同步
+- 表单值直接与外部 `model` 同步
 - 不支持实时搜索
 - 搜索逻辑由外部控制
 
@@ -107,15 +107,15 @@ if (error) {
 | realtime               | `Ref<boolean \| undefined>`                       | 是否实时触发搜索            |
 | readonly               | `Ref<boolean \| undefined>`                       | 表单只读状态                |
 | disabled               | `Ref<boolean \| undefined>`                       | 表单禁用状态                |
-| register               | `(config: CommonMethod) => () => void`            | 注册子组件，返回注销函数    |
-| beforeUpdateQueryValue | `() => void`                                      | 更新 query 前调用，暂停监听 |
-| afterUpdateQueryValue  | `() => void`                                      | 更新 query 后调用，恢复监听 |
+| register               | `(config: CommonMethod) => () => void`            | 注册子组件, 返回注销函数    |
+| beforeUpdateQueryValue | `() => void`                                      | 更新 query 前调用, 暂停监听 |
+| afterUpdateQueryValue  | `() => void`                                      | 更新 query 后调用, 恢复监听 |
 | search                 | `() => Promise<string \| void> \| string \| void` | 触发搜索事件                |
 | options                | `Record<string, any[]>`                           | 所有子组件的数据源集合      |
 
 #### 子组件注册机制
 
-子组件通过 `inject` 获取 `ProvideValue`，然后调用 `register` 方法注册自身：
+子组件通过 `inject` 获取 `ProvideValue`, 然后调用 `register` 方法注册自身：
 
 ```typescript
 const wrapper = inject<ProvideValue>(provideKey);
@@ -132,10 +132,10 @@ onBeforeUnmount(unregister);
 
 #### 校验流程
 
-1. **字段级校验**: 遍历所有已注册的子组件，调用各自的 `validator` 方法
-2. **表单级校验**: 如果字段级校验都通过，调用 `props.validator` 进行表单级校验
-3. **错误处理**: 第一个返回字符串的校验结果作为错误信息，通过 `toast` 回调显示
+1. **字段级校验**: 遍历所有已注册的子组件, 调用各自的 `validator` 方法
+2. **表单级校验**: 如果字段级校验都通过, 调用 `props.validator` 进行表单级校验
+3. **错误处理**: 第一个返回字符串的校验结果作为错误信息, 通过 `toast` 回调显示
 
 ---
 
-**注意**: 该 API 主要用于框架内部实现，UI 组件通常通过 `packages/element-plus` 或 `packages/element-ui` 中的适配组件使用。
+**注意**: 该 API 主要用于框架内部实现, UI 组件通常通过 `packages/element-plus` 或 `packages/element-ui` 中的适配组件使用。

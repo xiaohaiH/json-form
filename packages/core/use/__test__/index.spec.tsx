@@ -24,10 +24,10 @@ const userWrapperComponent = defineComponent({
     props: {
         ...wrapperProps,
         onReady: { type: Function as PropType<(query: Record<string, any>) => void> },
-        getOption: { type: Function as PropType<() => ({ backfill?: Ref<Record<string, any>>; modelValue?: Ref<Record<string, any>>; options: Ref<Record<string, PlainOption>> })>, required: true },
+        getOption: { type: Function as PropType<() => ({ backfill?: Ref<Record<string, any>>; model?: Ref<Record<string, any>>; options: Ref<Record<string, PlainOption>> })>, required: true },
     },
     setup(props) {
-        const { backfill: packageBackfill, modelValue: packageModelValue, options: packageOptions } = props.getOption();
+        const { backfill: packageBackfill, model: packageModel, options: packageOptions } = props.getOption();
         const wrapperRef = ref<ComponentExposed<typeof WrapperComponent>>(null as unknown as ComponentExposed<typeof WrapperComponent>);
         props.onReady && onMounted(() => {
             props.onReady!(wrapperRef.value.getQuery());
@@ -35,14 +35,14 @@ const userWrapperComponent = defineComponent({
 
         return {
             packageBackfill,
-            packageModelValue,
+            packageModel,
             packageOptions,
             wrapperRef,
         };
     },
     render() {
-        const { packageBackfill, packageModelValue, packageOptions, $props: { onReady, getOption, ...$props } } = this;
-        return <WrapperComponent {...$props} ref="wrapperRef" options={packageOptions} backfill={packageBackfill} modelValue={packageModelValue} />;
+        const { packageBackfill, packageModel, packageOptions, $props: { onReady, getOption, ...$props } } = this;
+        return <WrapperComponent {...$props} ref="wrapperRef" options={packageOptions} backfill={packageBackfill} model={packageModel} />;
     },
 });
 const WrapperComponent = defineComponent({
@@ -166,10 +166,10 @@ const PlainComponent = defineComponent({
     },
 });
 
-function genWrapperComponent({ mockOptions, mockQuery, mockModelValue, readySpy, searchSpy, onReady, onReset, onSearch, ...props }: {
+function genWrapperComponent({ mockOptions, mockQuery, mockModel, readySpy, searchSpy, onReady, onReset, onSearch, ...props }: {
     mockOptions: Ref<Record<string, PlainOption>>;
     mockQuery?: Ref<Record<string, any>>;
-    mockModelValue?: Ref<Record<string, any>>;
+    mockModel?: Ref<Record<string, any>>;
     onReady?: (q: Record<string, any>) => void;
     onReset?: (q: Record<string, any>) => void;
     onSearch?: (q: Record<string, any>) => void;
@@ -179,7 +179,7 @@ function genWrapperComponent({ mockOptions, mockQuery, mockModelValue, readySpy,
     return mount(userWrapperComponent, {
         props: {
             getOption() {
-                return { options: mockOptions, backfill: mockQuery, modelValue: mockModelValue };
+                return { options: mockOptions, backfill: mockQuery, model: mockModel };
             },
             realtime: true,
             onReady: (q) => {
@@ -291,7 +291,7 @@ describe('usePlain-useWrapper组合测试', () => {
     });
 
     commonTest();
-    modelValueTest();
+    modelTest();
     function commonTest() {
         describe('初始化行为', () => {
             it('应该返回正确的 expose 对象结构', async () => {
@@ -1483,11 +1483,11 @@ describe('usePlain-useWrapper组合测试', () => {
         });
     }
 
-    function modelValueTest() {
-        describe('modelValue 测试', () => {
+    function modelTest() {
+        describe('model 测试', () => {
             it('应该返回正确的 expose 对象结构', async () => {
                 const searchSpy = vi.fn();
-                const mockModelValue = ref<Record<string, any>>({ 输入框: '测试值' });
+                const mockModel = ref<Record<string, any>>({ 输入框: '测试值' });
                 const mockOptions = ref<Record<string, PlainOption>>({
                     '输入框': {},
                     '数字': { initialValue: 123, defaultValue: 999, getOptions(cb, query, option) { option.changeInitialValue(666); } },
@@ -1537,7 +1537,7 @@ describe('usePlain-useWrapper组合测试', () => {
                     },
                     '值为数组 - 多选': { defaultValue: ['1'], options: [{ label: 'check1', value: '1' }, { label: 'check2', value: '2' }] },
                 });
-                const wrapper = genWrapperComponent({ mockOptions, mockModelValue, searchSpy });
+                const wrapper = genWrapperComponent({ mockOptions, mockModel, searchSpy });
                 const wrapperComp = wrapper.vm.wrapperRef;
 
                 // 测试基本值
@@ -1554,22 +1554,22 @@ describe('usePlain-useWrapper组合测试', () => {
                 expect(wrapperComp.refObj['值为数组 - 多选'].checked).toEqual(['1']);
 
                 // 改变外部 query 的值
-                mockModelValue.value['数字'] = 789456123;
+                mockModel.value['数字'] = 789456123;
                 expect(wrapperComp.refObj['数字'].checked).toBe(789456123);
                 // 通过 query 改变组件内部的值
                 wrapperComp.refObj['数字'].query['数字'] = 987654321;
                 expect(wrapperComp.refObj['数字'].checked).toBe(987654321);
-                expect(mockModelValue.value['数字']).toBe(987654321);
+                expect(mockModel.value['数字']).toBe(987654321);
                 // 通过方法改变组件内部的值
                 wrapperComp.refObj['数字'].change(123456);
                 expect(searchSpy).toBeCalledTimes(0);
-                expect(mockModelValue.value['数字']).toBe(123456);
+                expect(mockModel.value['数字']).toBe(123456);
                 // getOptions 异步触发的, 因此需要等下个周期执行
                 await nextTick();
                 // 重置整个 query 对象
-                mockModelValue.value = {};
+                mockModel.value = {};
                 await nextTick();
-                expect(mockModelValue.value).toEqual({ '数字': 666, '默认值': '0', '值为数组 - 多选': ['1'] });
+                expect(mockModel.value).toEqual({ '数字': 666, '默认值': '0', '值为数组 - 多选': ['1'] });
                 // 重置 mockOptions
                 mockOptions.value = {
                     重置后的值: { initialValue: 123, defaultValue: 999 },
@@ -1587,30 +1587,30 @@ describe('usePlain-useWrapper组合测试', () => {
                 expect(wrapperComp.refObj['重置后的值'].checked).toBe(123);
                 wrapperComp.refObj['重置后的值'].change('888');
                 expect(wrapperComp.refObj['重置后的值'].checked).toBe('888');
-                expect(mockModelValue.value['重置后的值']).toEqual('888');
-                mockModelValue.value['重置后的值'] = '777';
+                expect(mockModel.value['重置后的值']).toEqual('888');
+                mockModel.value['重置后的值'] = '777';
                 expect(wrapperComp.refObj['重置后的值'].checked).toBe('777');
-                expect(mockModelValue.value['重置后的值']).toEqual('777');
+                expect(mockModel.value['重置后的值']).toEqual('777');
 
                 await nextTick();
                 wrapper.unmount();
             });
 
-            it('初始值为空的 modelValue 应该使用默认值', async () => {
+            it('初始值为空的 model 应该使用默认值', async () => {
                 const searchSpy = vi.fn();
-                const mockModelValue = ref<Record<string, any>>({});
+                const mockModel = ref<Record<string, any>>({});
                 const mockOptions = ref<Record<string, PlainOption>>({
                     有默认值: { defaultValue: 'default' },
                     有初始值: { initialValue: 'initial' },
                     无默认值: {},
                 });
-                const wrapper = genWrapperComponent({ mockOptions, mockModelValue, searchSpy });
+                const wrapper = genWrapperComponent({ mockOptions, mockModel, searchSpy });
                 const wrapperComp = wrapper.vm.wrapperRef;
 
                 expect(wrapperComp.refObj['有默认值'].checked).toBe('default');
                 expect(wrapperComp.refObj['有初始值'].checked).toBe('initial');
                 expect(wrapperComp.refObj['无默认值'].checked).toBeUndefined();
-                expect(mockModelValue.value).toEqual({ 有默认值: 'default', 有初始值: 'initial' });
+                expect(mockModel.value).toEqual({ 有默认值: 'default', 有初始值: 'initial' });
 
                 await nextTick();
                 wrapper.unmount();
@@ -1618,74 +1618,74 @@ describe('usePlain-useWrapper组合测试', () => {
 
             it('多字段级联的同步应该正确处理', async () => {
                 const searchSpy = vi.fn();
-                const mockModelValue = ref<Record<string, any>>({ startDate: '2024-01-01', endDate: '2024-12-31' });
+                const mockModel = ref<Record<string, any>>({ startDate: '2024-01-01', endDate: '2024-12-31' });
                 const mockOptions = ref<Record<string, PlainOption>>({
                     时间范围: {
                         fields: ['startDate', 'endDate'],
                         options: [],
                     },
                 });
-                const wrapper = genWrapperComponent({ mockOptions, mockModelValue, searchSpy });
+                const wrapper = genWrapperComponent({ mockOptions, mockModel, searchSpy });
                 const wrapperComp = wrapper.vm.wrapperRef;
 
                 expect(wrapperComp.refObj['时间范围'].checked).toEqual(['2024-01-01', '2024-12-31']);
-                expect(mockModelValue.value).toEqual({ startDate: '2024-01-01', endDate: '2024-12-31' });
+                expect(mockModel.value).toEqual({ startDate: '2024-01-01', endDate: '2024-12-31' });
                 // 改变内部值
                 wrapperComp.refObj['时间范围'].change(['2025-01-01', '2025-12-31']);
-                expect(mockModelValue.value.startDate).toBe('2025-01-01');
-                expect(mockModelValue.value.endDate).toBe('2025-12-31');
+                expect(mockModel.value.startDate).toBe('2025-01-01');
+                expect(mockModel.value.endDate).toBe('2025-12-31');
                 // 改变外部值
-                mockModelValue.value = { startDate: '2026-01-01', endDate: '2026-12-31' };
+                mockModel.value = { startDate: '2026-01-01', endDate: '2026-12-31' };
                 await nextTick();
                 expect(wrapperComp.refObj['时间范围'].checked).toEqual(['2026-01-01', '2026-12-31']);
                 // 不改变引用时改变值
-                Object.assign(mockModelValue.value, { startDate: '2022-12-12', endDate: '2302-03-03' });
+                Object.assign(mockModel.value, { startDate: '2022-12-12', endDate: '2302-03-03' });
                 expect(wrapperComp.refObj['时间范围'].checked).toEqual(['2022-12-12', '2302-03-03']);
 
                 await nextTick();
                 wrapper.unmount();
             });
 
-            it('依赖项变化时 modelValue 应该正确重置子字段', async () => {
+            it('依赖项变化时 model 应该正确重置子字段', async () => {
                 const searchSpy = vi.fn();
-                const mockModelValue = ref<Record<string, any>>({ 城市: '北京', 区域: '大兴', 楼栋: '旺德福' });
+                const mockModel = ref<Record<string, any>>({ 城市: '北京', 区域: '大兴', 楼栋: '旺德福' });
                 const mockOptions = ref<Record<string, PlainOption>>({
                     城市: {},
                     区域: { depend: true, dependFields: '城市', defaultValue: '朝阳' },
                     楼栋: { defaultValue: '新星小区' },
                 });
-                const wrapper = genWrapperComponent({ mockOptions, mockModelValue, searchSpy, shallowWatchModelValue: true });
+                const wrapper = genWrapperComponent({ mockOptions, mockModel, searchSpy, shallowWatchModel: true });
                 const wrapperComp = wrapper.vm.wrapperRef;
 
                 expect(wrapperComp.refObj['城市'].checked).toBe('北京');
                 expect(wrapperComp.refObj['区域'].checked).toBe('大兴');
-                expect(mockModelValue.value).toEqual({ 城市: '北京', 区域: '大兴', 楼栋: '旺德福' });
+                expect(mockModel.value).toEqual({ 城市: '北京', 区域: '大兴', 楼栋: '旺德福' });
                 await nextTick();
                 // 改变城市，区域应该重置
                 wrapperComp.refObj['城市'].change('上海');
                 await nextTick();
                 expect(wrapperComp.refObj['区域'].checked).toBe('朝阳');
-                expect(mockModelValue.value).toEqual({ 城市: '上海', 区域: '朝阳', 楼栋: '旺德福' });
+                expect(mockModel.value).toEqual({ 城市: '上海', 区域: '朝阳', 楼栋: '旺德福' });
                 // 改变外部值时, 内部不跟随重置 - 引用发生改变
-                mockModelValue.value = { 城市: '长沙', 区域: '岳麓' };
+                mockModel.value = { 城市: '长沙', 区域: '岳麓' };
                 await nextTick();
                 expect(wrapperComp.refObj['城市'].checked).toBe('长沙');
                 expect(wrapperComp.refObj['区域'].checked).toBe('岳麓');
-                expect(mockModelValue.value).toEqual({ 城市: '长沙', 区域: '岳麓', 楼栋: '新星小区' });
+                expect(mockModel.value).toEqual({ 城市: '长沙', 区域: '岳麓', 楼栋: '新星小区' });
                 // 改变外部值时, 内部跟随重置 - 引用未发生改变
-                Object.assign(mockModelValue.value, { 城市: '湘潭', 区域: '雨湖' });
+                Object.assign(mockModel.value, { 城市: '湘潭', 区域: '雨湖' });
                 await nextTick();
                 expect(wrapperComp.refObj['城市'].checked).toBe('湘潭');
                 expect(wrapperComp.refObj['区域'].checked).toBe('雨湖');
-                expect(mockModelValue.value).toEqual({ 城市: '湘潭', 区域: '雨湖', 楼栋: '新星小区' });
+                expect(mockModel.value).toEqual({ 城市: '湘潭', 区域: '雨湖', 楼栋: '新星小区' });
 
                 await nextTick();
                 wrapper.unmount();
             });
 
-            it('异步数据源加载后应该同步到 modelValue', async () => {
+            it('异步数据源加载后应该同步到 model', async () => {
                 const searchSpy = vi.fn();
-                const mockModelValue = ref<Record<string, any>>({});
+                const mockModel = ref<Record<string, any>>({});
                 let callback: any;
                 const mockOptions = ref<Record<string, PlainOption>>({
                     异步字段: {
@@ -1694,7 +1694,7 @@ describe('usePlain-useWrapper组合测试', () => {
                         },
                     },
                 });
-                const wrapper = genWrapperComponent({ mockOptions, mockModelValue, searchSpy });
+                const wrapper = genWrapperComponent({ mockOptions, mockModel, searchSpy });
                 const wrapperComp = wrapper.vm.wrapperRef;
 
                 expect(wrapperComp.refObj['异步字段'].finalOption).toEqual([]);
@@ -1706,28 +1706,28 @@ describe('usePlain-useWrapper组合测试', () => {
                 expect(wrapperComp.refObj['异步字段'].finalOption).toEqual([{ label: '选项1', value: '1' }, { label: '选项2', value: '2' }]);
                 // 选择值
                 wrapperComp.refObj['异步字段'].change('1');
-                expect(mockModelValue.value['异步字段']).toBe('1');
+                expect(mockModel.value['异步字段']).toBe('1');
 
                 await nextTick();
                 wrapper.unmount();
             });
 
-            it('重置操作应该恢复 modelValue 到初始状态', async () => {
+            it('重置操作应该恢复 model 到初始状态', async () => {
                 const searchSpy = vi.fn();
-                const mockModelValue = ref<Record<string, any>>({ 字段: 'changed' });
+                const mockModel = ref<Record<string, any>>({ 字段: 'changed' });
                 const mockOptions = ref<Record<string, PlainOption>>({
                     字段: {
                         initialValue: 'initial',
                         defaultValue: 'default',
                     },
                 });
-                const wrapper = genWrapperComponent({ mockOptions, mockModelValue, searchSpy });
+                const wrapper = genWrapperComponent({ mockOptions, mockModel, searchSpy });
                 const wrapperComp = wrapper.vm.wrapperRef;
 
                 expect(wrapperComp.refObj['字段'].checked).toBe('changed');
                 wrapperComp.reset();
                 expect(wrapperComp.refObj['字段'].checked).toBe('initial');
-                expect(mockModelValue.value['字段']).toBe('initial');
+                expect(mockModel.value['字段']).toBe('initial');
 
                 await nextTick();
                 wrapper.unmount();
@@ -1735,23 +1735,23 @@ describe('usePlain-useWrapper组合测试', () => {
 
             it('数组类型值的同步应该正确处理', async () => {
                 const searchSpy = vi.fn();
-                const mockModelValue = ref<Record<string, any>>({ 多选: ['1', '2'] });
+                const mockModel = ref<Record<string, any>>({ 多选: ['1', '2'] });
                 const mockOptions = ref<Record<string, PlainOption>>({
                     多选: {
                         defaultValue: ['1'],
                         options: [{ label: '选项1', value: '1' }, { label: '选项2', value: '2' }, { label: '选项3', value: '3' }],
                     },
                 });
-                const wrapper = genWrapperComponent({ mockOptions, mockModelValue, searchSpy });
+                const wrapper = genWrapperComponent({ mockOptions, mockModel, searchSpy });
                 const wrapperComp = wrapper.vm.wrapperRef;
 
                 expect(wrapperComp.refObj['多选'].checked).toEqual(['1', '2']);
-                expect(mockModelValue.value['多选']).toEqual(['1', '2']);
+                expect(mockModel.value['多选']).toEqual(['1', '2']);
                 // 改变值
                 wrapperComp.refObj['多选'].change(['3']);
-                expect(mockModelValue.value['多选']).toEqual(['3']);
+                expect(mockModel.value['多选']).toEqual(['3']);
                 // 外部改变
-                mockModelValue.value['多选'] = ['1', '3'];
+                mockModel.value['多选'] = ['1', '3'];
                 expect(wrapperComp.refObj['多选'].checked).toEqual(['1', '3']);
 
                 await nextTick();
@@ -1760,7 +1760,7 @@ describe('usePlain-useWrapper组合测试', () => {
 
             it('复杂级联选择器的值同步', async () => {
                 const searchSpy = vi.fn();
-                const mockModelValue = ref<Record<string, any>>({ province: 'bj', city: 'cy' });
+                const mockModel = ref<Record<string, any>>({ province: 'bj', city: 'cy' });
                 const mockOptions = ref<Record<string, PlainOption>>({
                     级联: {
                         fields: ['province', 'city'],
@@ -1773,34 +1773,34 @@ describe('usePlain-useWrapper组合测试', () => {
                         ],
                     },
                 });
-                const wrapper = genWrapperComponent({ mockOptions, mockModelValue, searchSpy });
+                const wrapper = genWrapperComponent({ mockOptions, mockModel, searchSpy });
                 const wrapperComp = wrapper.vm.wrapperRef;
 
                 expect(wrapperComp.refObj['级联'].checked).toEqual(['bj', 'cy']);
-                expect(mockModelValue.value).toEqual({ province: 'bj', city: 'cy' });
+                expect(mockModel.value).toEqual({ province: 'bj', city: 'cy' });
                 // 改变级联值
                 wrapperComp.refObj['级联'].change(['bj', 'hd']);
-                expect(mockModelValue.value.province).toBe('bj');
-                expect(mockModelValue.value.city).toBe('hd');
+                expect(mockModel.value.province).toBe('bj');
+                expect(mockModel.value.city).toBe('hd');
 
                 await nextTick();
                 wrapper.unmount();
             });
 
-            it('modelValue 改变不触发搜索', async () => {
+            it('model 改变不触发搜索', async () => {
                 const searchSpy = vi.fn();
-                const mockModelValue = ref<Record<string, any>>({ 字段: 'value1' });
+                const mockModel = ref<Record<string, any>>({ 字段: 'value1' });
                 const mockOptions = ref<Record<string, PlainOption>>({
                     字段: {},
                 });
-                const wrapper = genWrapperComponent({ mockOptions, mockModelValue, searchSpy });
+                const wrapper = genWrapperComponent({ mockOptions, mockModel, searchSpy });
                 const wrapperComp = wrapper.vm.wrapperRef;
 
                 expect(wrapperComp.refObj['字段'].checked).toBe('value1');
                 // 改变值不触发搜索
                 wrapperComp.refObj['字段'].change('value2');
                 expect(searchSpy).not.toHaveBeenCalled();
-                expect(mockModelValue.value['字段']).toBe('value2');
+                expect(mockModel.value['字段']).toBe('value2');
 
                 await nextTick();
                 wrapper.unmount();

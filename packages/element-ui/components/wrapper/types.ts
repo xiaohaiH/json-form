@@ -42,8 +42,6 @@ function formAssist() {
          * @deprecated 请改用 config 属性
          */
         datum: { type: [Object, Array, Function] as PropType<any> },
-        /** 兼容 v-model, 该值传递后 backfill 不再生效 */
-        value: { type: Object as PropType<Record<string, any>> },
         // /** 是否启用排序 */
         // sortable: { type: Boolean as PropType<boolean> },
     } as const;

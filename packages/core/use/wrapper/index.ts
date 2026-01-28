@@ -23,8 +23,8 @@ type WrapperProps = ExtractPropTypes<typeof wrapperProps>;
 
 /** 用来给 v2 版本做兼容 */
 interface Config {
-    /** modelValue 的字段 */
-    modelValueField?: string;
+    /** model 的字段 */
+    modelField?: string;
     /** backfill 发生变化后的回调 */
     onBackfillChange?: (backfill: Record<string, any>, oldBackfill: Record<string, any>, expose: ReturnType<typeof useWrapper>) => void;
     /** 搜索回调 */
@@ -34,7 +34,7 @@ interface Config {
 /** 封装 wrapper 组件必备的信息(config 用来给 v2版本做兼容) */
 export function useWrapper(props: WrapperProps, config?: Config) {
     /** 兼容 v2版本的 value */
-    const MODEL_VALUE = (config?.modelValueField || 'modelValue') as 'modelValue';
+    const MODEL_VALUE = (config?.modelField || 'model') as 'model';
 
     const child: CommonMethod[] = [];
     onBeforeUnmount(() => child.splice(0));
@@ -81,8 +81,8 @@ export function useWrapper(props: WrapperProps, config?: Config) {
     /**
      * 内部条件的值
      * 传 backfill 时, 在没触发搜索按钮前, 不会同步到外部
-     * 传 modelValue 时, query 与 modelValue 是一致的
-     * backfill 或 modelValue 必须要传一个
+     * 传 model 时, query 与 model 是一致的
+     * backfill 或 model 必须要传一个
      */
     const query = ref<Record<string, string>>(props[MODEL_VALUE] || { ...props.backfill });
     let queryWatchFlag = true;
@@ -175,13 +175,13 @@ export function useWrapper(props: WrapperProps, config?: Config) {
     watch(
         () => props[MODEL_VALUE],
         (val, oldVal) => {
-            // modelValue 不允许重置为空, 为空说明外部的代码逻辑有问题
+            // model 不允许重置为空, 为空说明外部的代码逻辑有问题
             if (!val) return;
             query.value = val;
-            // modelValue 为空或是空对象时, 重置整个表单(由于 query.value 异步更新的, 因此得传递新的 query)
+            // model 为空或是空对象时, 重置整个表单(由于 query.value 异步更新的, 因此得传递新的 query)
             if (!Object.keys(val).length) return reset(query.value);
             child.forEach((o) => {
-                o.onModelValueChange?.(val, oldVal);
+                o.onModelChange?.(val, oldVal);
                 o.trySetDefaultValue(query.value);
             });
         },
@@ -190,12 +190,12 @@ export function useWrapper(props: WrapperProps, config?: Config) {
     // 而非 query.value = { 字段1, 字段2 } 形式赋值
     watch(
         [
-            () => props.shallowWatchModelValue && props[MODEL_VALUE] && ({ ...props[MODEL_VALUE] }),
-            () => props.shallowWatchModelValue && props[MODEL_VALUE],
+            () => props.shallowWatchModel && props[MODEL_VALUE] && ({ ...props[MODEL_VALUE] }),
+            () => props.shallowWatchModel && props[MODEL_VALUE],
         ],
         ([val, mv], [oldVal, oldMv]) => {
             // 如果 val, oldVal 不全为对象, 忽略后续逻辑
-            // 如果 modelValue 引用发生变化(上一个 watch 中会处理), 忽略后续逻辑
+            // 如果 model 引用发生变化(上一个 watch 中会处理), 忽略后续逻辑
             if (!(val && oldVal) || mv !== oldMv) return;
             // 统计哪些字段进行了更新, 更新数量超过 1 个, 说明是批量更新, 不触发 depend 相关的逻辑
             let count = 0;
@@ -207,7 +207,7 @@ export function useWrapper(props: WrapperProps, config?: Config) {
                 val[k] !== oldVal[k] && (allFields.has(k) ? ++count : flag || (flag = ++count));
             });
             // 如果更新数量大于 1, 说明是 assign 赋值, 视同为批量赋值, 此时不应该重置值
-            count > 1 && child.forEach((o) => o.onModelValueChange?.(val, oldVal));
+            count > 1 && child.forEach((o) => o.onModelChange?.(val, oldVal));
         },
     );
 

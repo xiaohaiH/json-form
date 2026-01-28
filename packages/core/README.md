@@ -54,7 +54,7 @@ json-form 采用 **组合式架构设计**，将表单逻辑与 UI 层完全解�
 - 管理整个表单的状态 (`query` 对象)
 - 协调所有表单项的注册和通信
 - 处理搜索事件和校验流程
-- 支持 `backfill` 和 `modelValue` 双模式
+- 支持 `backfill` 和 `model` 双模式
 
 #### usePlain (表单项组件)
 
@@ -135,7 +135,7 @@ const cityPlain = usePlain({
 | :--------- | :------------------------------------ | :---------- | :------------------- |
 | realtime   | `boolean`                             | `undefined` | 是否实时触发搜索事件 |
 | backfill   | `Record<string, any>`                 | -           | 回填数据             |
-| modelValue | `Record<string, any>`                 | -           | 双向绑定值           |
+| model | `Record<string, any>`                 | -           | 双向绑定值           |
 | validator  | `(query: Record<string, any>) => any` | -           | 表单级校验函数       |
 | toast      | `(msg: string) => void`               | -           | 校验失败提示         |
 | readonly   | `boolean`                             | -           | 表单只读状态         |

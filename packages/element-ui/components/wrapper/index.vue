@@ -66,7 +66,7 @@ export default defineComponent({
 
         // 使用核心库提供的wrapper钩子
         const wrapper = useWrapper(props, {
-            modelValueField: 'value',
+            // modelField: 'model',
             onBackfillChange(...args) {
                 listeners.backfillChange && execOnCallback(listeners.backfillChange as any, ...args);
                 props.onBackfillChange && execOnCallback(props.onBackfillChange, ...args);

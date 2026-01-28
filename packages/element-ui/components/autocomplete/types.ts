@@ -66,7 +66,7 @@ export interface AutocompleteSlotOption<T, Query extends Record<string, any>, Op
     getItemProps: () => Partial<ExtractPropTypes<typeof elAutocompleteProps>>;
     getProps: () => AutocompleteProps<T, Query, Option, OptionQuery>;
     extraOptions: {
-        modelValue: T;
+        value: T;
         options: Option[];
         onChange: (value: T) => void;
         onEnter: (ev: Event | KeyboardEvent) => void;

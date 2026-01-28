@@ -47,10 +47,10 @@ export interface CommonMethod {
     reset: (query?: Record<string, any>) => void;
     /** 校验方法 */
     validator?: (query: Record<string, any>) => Promise<any> | any;
-    /** 在 watch 中 modelValue 改变后, 需要执行回调 */
+    /** 在 watch 中 backfill 改变后, 需要执行回调 */
     onBackfillChange?: (backfill: Record<string, any>, oldBackfill: Record<string, any>, isChange: boolean) => void;
-    /** modelValue 引用发生变化后, 需要执行的回调 */
-    onModelValueChange?: (modelValue: Record<string, any>, oldModelValue: Record<string, any> | undefined) => void;
+    /** model 引用发生变化后, 需要执行的回调 */
+    onModelChange?: (model: Record<string, any>, oldModel: Record<string, any> | undefined) => void;
     /** 尝试设置默认值 */
     trySetDefaultValue: (query: Record<string, any>) => boolean;
 }
