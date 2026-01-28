@@ -1,5 +1,13 @@
 # @xiaohaih/json-form-plus
 
+## 0.2.1
+
+### Patch Changes
+
+- core 模块的 model-value 改为 model(与主流框架保持统一)
+- Updated dependencies
+  - @xiaohaih/json-form-core@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes

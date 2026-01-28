@@ -1,5 +1,14 @@
 # @xiaohaih/json-form-el
 
+## 0.2.1
+
+### Patch Changes
+
+- 1. core 模块的 model-value 改为 model(与主流框架保持统一)
+- 2. 修复插槽参数错误传递导致无法使用
+- Updated dependencies
+  - @xiaohaih/json-form-core@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes
