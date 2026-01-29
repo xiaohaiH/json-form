@@ -84,31 +84,35 @@ import { ref } from 'vue';
 const formData = ref({
     username: '',
     email: '',
-    password: ''
+    password: '',
 });
 
-const formConfig = defineOption({
-    username: {
+/** 数组形式定义 */
+const formConfig = defineOption([
+    {
+        field: 'username',
         t: 'input',
         label: '用户名',
         placeholder: '请输入用户名',
         rules: [
-            { required: true, message: '请输入用户名' }
+            { required: true, message: '请输入用户名' },
         ],
     },
-    email: {
+    {
+        field: 'email',
         t: 'input',
         label: '邮箱',
         placeholder: '请输入邮箱',
     },
-    password: {
+    {
+        field: 'password',
         t: 'input',
         label: '密码',
         type: 'password',
         placeholder: '请输入密码',
         showPassword: true,
     },
-});
+]);
 
 function handleInput(data) {
     formData.value = data;
@@ -123,13 +127,14 @@ function submit() {
 ### 依赖关系
 
 ```typescript
+/** 对象形式定义 */
 const formConfig = defineOption({
     province: {
         t: 'select',
         label: '省份',
         options: [
             { label: '北京市', value: 'beijing' },
-            { label: '上海市', value: 'shanghai' }
+            { label: '上海市', value: 'shanghai' },
         ],
     },
     city: {
@@ -145,64 +150,18 @@ const formConfig = defineOption({
 });
 ```
 
-### 高级配置
-
-```javascript
-const formConfig = {
-    // 表单布局
-    layout: {
-        labelWidth: '100px',
-        span: 24
-    },
-
-    // 表单字段
-    fields: [
-        {
-            t: 'input',
-            field: 'username',
-            label: '用户名',
-
-            // Element UI 组件属性
-            props: {
-                placeholder: '请输入用户名',
-                clearable: true,
-                maxlength: 20
-            },
-
-            // 校验规则
-            rules: [
-                { required: true, message: '用户名不能为空' },
-                { min: 3, max: 20, message: '用户名长度在 3 到 20 个字符' }
-            ],
-
-            // 依赖配置
-            depend: true,
-            dependFields: 'department',
-
-            // 自定义渲染
-            render: (h, { field, value, onChange }) => {
-                return h('el-input', {
-                    props: { value },
-                    on: { input: onChange }
-                });
-            }
-        }
-    ]
-};
-```
-
 ## 📚 API 参考
 
 ### HForm Props
 
-| 属性名      | 类型                                    | 默认值  | 描述           |
-| :---------- | :-------------------------------------- | :------ | :------------- |
-| value       | `Record<string, any>`                   | -       | 表单数据       |
-| config      | `() => ReturnType<typeof defineOption>` | -       | 表单配置对象   |
-| label-width | `string \| number`                      | -       | 标签宽度       |
-| readonly    | `boolean`                               | `false` | 是否只读       |
-| disabled    | `boolean`                               | `false` | 是否禁用       |
-| rules       | `Record<string, Rule[]>`                | -       | 表单级校验规则 |
+| 属性名      | 类型                                                                         | 默认值  | 描述           |
+| :---------- | :--------------------------------------------------------------------------- | :------ | :------------- |
+| value       | `Record<string, any>`                                                        | -       | 表单数据       |
+| config      | `() => ReturnType<typeof defineOption>` \| `ReturnType<typeof defineOption>` | -       | 表单配置对象   |
+| label-width | `string \| number`                                                           | -       | 标签宽度       |
+| readonly    | `boolean`                                                                    | `false` | 是否只读       |
+| disabled    | `boolean`                                                                    | `false` | 是否禁用       |
+| rules       | `Record<string, Rule[]>`                                                     | -       | 表单级校验规则 |
 
 ### HForm Events
 
@@ -223,10 +182,17 @@ const formConfig = {
 
 用于创建响应式表单配置的函数。
 
+- 推荐用数组形式, 能推断出子级 `config` 下的字段
+
 ```typescript
-function defineOption<T extends Record<string, any>, O extends Partial<Record<keyof T, any>>>(
+// 数组形式创建配置项
+function defineOption<T extends Record<string, any>, O extends Partial<Record<keyof T, any>> = Partial<Record<keyof T, any>>>(
+    config: JSONFormOption[]
+): Ref<JSONFormOption[]>;
+// 对象形式创建配置项
+function defineOption<T extends Record<string, any>, O extends Partial<Record<keyof T, any>> = Partial<Record<keyof T, any>>>(
     config: Record<string, JSONFormOption>
-): Record<string, JSONFormOption>;
+): Ref<Record<string, JSONFormOption>>;
 ```
 
 ### 字段配置结构
@@ -284,8 +250,9 @@ interface BaseFieldConfig {
 #### `input` - 文本输入框
 
 ```typescript
-const formConfig = defineOption({
-    username: {
+const formConfig = defineOption([
+    {
+        field: 'username',
         t: 'input',
         label: '用户名',
         placeholder: '请输入用户名',
@@ -293,41 +260,46 @@ const formConfig = defineOption({
         maxlength: 20,
         showWordLimit: true,
         rules: [
-            { required: true, message: '请输入用户名' }
-        ]
-    }
-});
+            { required: true, message: '请输入用户名' },
+        ],
+    },
+]);
 ```
 
 #### `input-number` - 数字输入框
 
 ```typescript
-const formConfig = defineOption({
-    age: {
+const formConfig = defineOption([
+    {
+        field: 'age',
         t: 'input-number',
         label: '年龄',
         min: 0,
         max: 120,
         step: 1,
-        precision: 0
-    }
-});
+        precision: 0,
+    },
+]);
 ```
 
 #### `autocomplete` - 自动补全输入框
 
 ```tsx
-const formConfig = defineOption({
-    city: {
+const formConfig = defineOption([
+    {
+        field: 'city',
         t: 'autocomplete',
         label: '城市',
         placeholder: '请输入城市',
-        fetchSuggestions: querySearch,
+        getOptions(cb) {
+            const { status, data } = fetchData();
+            cb(status ? data : []);
+        },
         itemSlots: {
-            suffix: () => <ElIcon><Search /></ElIcon>
-        }
-    }
-});
+            suffix: { render: (h: any) => <ElIcon><Search /></ElIcon> },
+        },
+    },
+]);
 ```
 
 ### 选择器
@@ -335,70 +307,68 @@ const formConfig = defineOption({
 #### `select` - 下拉选择
 
 ```typescript
-const formConfig = defineOption({
-    status: {
+const formConfig = defineOption([
+    {
+        field: 'status',
         t: 'select',
         label: '状态',
         options: [
             { label: '启用', value: 1 },
-            { label: '禁用', value: 0 }
+            { label: '禁用', value: 0 },
         ],
         clearable: true,
         filterable: true,
     },
-});
+]);
 ```
 
 #### `cascader` - 级联选择
 
 ```typescript
-const formConfig = defineOption({
-    region: {
+const formConfig = defineOption([
+    {
+        field: 'region',
         t: 'cascader',
         label: '地区',
         options: regionData,
-        staticProps: {
-            props: {
-                value: 'code',
-                label: 'name',
-                children: 'children'
-            }
-        },
+        props: { value: 'code', label: 'name', children: 'children' },
         filterable: true,
-        showAllLevels: false
-    }
-});
+        showAllLevels: false,
+    },
+]);
 ```
 
 #### `radio-group` - 单选框组
 
 ```typescript
-const formConfig = defineOption({
-    gender: {
+const formConfig = defineOption([
+    {
+        field: 'gender',
         t: 'radio-group',
         label: '性别',
         options: [
             { label: '男', value: 'male' },
-            { label: '女', value: 'female' }
-        ]
-    }
-});
+            { label: '女', value: 'female' },
+        ],
+    },
+]);
 ```
 
 #### `checkbox-group` - 多选框组
 
 ```typescript
-const formConfig = defineOption({
-    hobbies: {
+const formConfig = defineOption([
+    {
+        field: 'hobbies',
         t: 'checkbox-group',
         label: '兴趣爱好',
         options: [
             { label: '阅读', value: 'reading' },
             { label: '运动', value: 'sports' },
-            { label: '音乐', value: 'music' }
-        ]
-    }
-});
+            { label: '音乐', value: 'music' },
+        ],
+    },
+]);
 ```
 
 ### 日期时间
@@ -406,30 +376,32 @@ const formConfig = defineOption({
 #### `date-picker` - 日期选择
 
 ```typescript
-const formConfig = defineOption({
-    birthday: {
+const formConfig = defineOption([
+    {
+        field: 'birthday',
         t: 'date-picker',
         label: '生日',
         type: 'date',
         placeholder: '选择日期',
         format: 'YYYY-MM-DD',
         valueFormat: 'YYYY-MM-DD',
-    }
-});
+    },
+]);
 ```
 
 #### `time-picker` - 时间选择
 
 ```typescript
-const formConfig = defineOption({
-    meetingTime: {
+const formConfig = defineOption([
+    {
+        field: 'meetingTime',
         t: 'time-picker',
         label: '会议时间',
         placeholder: '选择时间',
         format: 'HH:mm:ss',
         valueFormat: 'HH:mm:ss',
-    }
-});
+    },
+]);
 ```
 
 ### 其他组件
@@ -437,65 +409,70 @@ const formConfig = defineOption({
 #### `switch` - 开关
 
 ```typescript
-const formConfig = defineOption({
-    enabled: {
+const formConfig = defineOption([
+    {
+        field: 'enabled',
         t: 'switch',
         label: '启用',
         activeText: '开',
         inactiveText: '关',
         activeValue: 1,
         inactiveValue: 0,
-    }
-});
+    },
+]);
 ```
 
 #### `slider` - 滑块
 
 ```typescript
-const formConfig = defineOption({
-    volume: {
+const formConfig = defineOption([
+    {
+        field: 'volume',
         t: 'slider',
         label: '音量',
         min: 0,
         max: 100,
         step: 1,
         showInput: true,
-    }
-});
+    },
+]);
 ```
 
 #### `rate` - 评分
 
 ```typescript
-const formConfig = defineOption({
-    rating: {
+const formConfig = defineOption([
+    {
+        field: 'rating',
         t: 'rate',
         label: '评分',
         max: 5,
         allowHalf: true,
         showScore: true,
-    }
-});
+    },
+]);
 ```
 
 #### `color-picker` - 颜色选择
 
 ```typescript
-const formConfig = defineOption({
-    themeColor: {
+const formConfig = defineOption([
+    {
+        field: 'themeColor',
         t: 'color-picker',
         label: '主题色',
         showAlpha: true,
         predefine: ['#ff4500', '#ff8c00', '#ffd700', '#90ee90', '#00ced1', '#1e90ff', '#c71585'],
-    }
-});
+    },
+]);
 ```
 
 #### `upload` - 文件上传
 
 ```typescript
-const formConfig = defineOption({
-    files: {
+const formConfig = defineOption([
+    {
+        field: 'files',
         t: 'upload',
         label: '附件',
         action: '/api/upload',
@@ -503,33 +480,37 @@ const formConfig = defineOption({
         limit: 5,
         accept: '.jpg,.jpeg,.png,.gif',
         listType: 'picture-card',
-    }
-});
+    },
+]);
 ```
 
 #### `custom-render` - 自定义渲染
 
 ```tsx
-const formConfig = defineOption({
-    customField: {
+const formConfig = defineOption([
+    {
+        field: 'customField',
         t: 'custom-render',
-        render: ({ plain }) => {
-            function onClick() {
-                if (!plain.checked.value) return plain.checked.value = 1;
-                ++plain.checked.value;
-            }
-            return () => {
+        render: {
+            props: { plain: { type: Object } },
+            methods: {
+                onClick() {
+                    const val = this.plain.checked.value;
+                    this.plain.change((val + 1) || 1);
+                },
+            },
+            render(this: any) {
                 return (
-                    <div>
-                        <span>自定义内容</span>
-                        <span>{plain.checked.value || 0}</span>
-                        <ElButton onClick={onClick}>自增</ElButton>
+                    <div onClick={this.onClick}>
+                        自定义内容
+                        <span>{this.plain.checked.value || 0}</span>
+                        <ElButton onClick={this.onClick}>自增</ElButton>
                     </div>
                 );
-            };
+            },
         },
-    }
-});
+    },
+]);
 ```
 
 ## 🔧 高级用法
@@ -537,8 +518,9 @@ const formConfig = defineOption({
 ### 动态属性
 
 ```typescript
-const formConfig = defineOption({
-    email: {
+const formConfig = defineOption([
+    {
+        field: 'email',
         t: 'input',
         label: '邮箱',
         placeholder: '请输入邮箱',
@@ -547,40 +529,50 @@ const formConfig = defineOption({
         // 动态属性，根据表单其他字段的值动态设置
         dynamicProps: (query) => ({
             disabled: !query.username,
-            placeholder: query.username ? '请输入邮箱' : '请先输入用户名'
-        })
-    }
-});
+            placeholder: query.username ? '请输入邮箱' : '请先输入用户名',
+        }),
+    },
+]);
 ```
 
 ### 插槽使用
 
 ```tsx
-const formConfig = defineOption({
-    password: {
+const formConfig = defineOption([
+    {
+        field: 'password',
         t: 'input',
         label: '密码',
         type: 'password',
         showPassword: true,
         // 表单项插槽
         itemSlots: {
-            label: () => (
-                <span class="custom-label">
-                    密码
-                    <ElIcon><Star /></ElIcon>
-                </span>
-            ),
-            suffix: () => <ElButton text type="primary">生成密码</ElButton>
-        }
-    }
-});
+            label: {
+                render(this: any) {
+                    return (
+                        <span class="custom-label">
+                            密码
+                            <ElIcon><Star /></ElIcon>
+                        </span>
+                    );
+                },
+            },
+            suffix: {
+                render(this: any) {
+                    return (<ElButton text type="primary">生成密码</ElButton>);
+                },
+            },
+        },
+    },
+]);
 ```
 
 ### 异步数据源
 
 ```typescript
-const formConfig = defineOption({
-    city: {
+const formConfig = defineOption([
+    {
+        field: 'city',
         t: 'select',
         label: '城市',
         depend: true,
@@ -594,50 +586,54 @@ const formConfig = defineOption({
                 console.error('获取城市数据失败:', error);
                 cb([]);
             }
-        }
-    }
-});
+        },
+    },
+]);
 ```
 
 ### 表单分组
 
 ```typescript
-const formConfig = defineOption({
-    userInfo: {
+const formConfig = defineOption([
+    {
+        field: 'userInfo',
         t: 'group',
         label: '用户信息',
-        config: {
-            username: {
+        config: [
+            {
+                field: 'username',
                 t: 'input',
-                label: '用户名'
+                label: '用户名',
             },
-            email: {
+            {
+                field: 'email',
                 t: 'input',
-                label: '邮箱'
-            }
-        }
-    }
-});
+                label: '邮箱',
+            },
+        ],
+    },
+]);
 ```
 
 ### 动态列表
 
 ```tsx
-const formConfig = defineOption({
-    users: {
+const formConfig = defineOption([
+    {
+        field: 'users',
         t: 'dynamic-group',
         label: '用户列表',
         config: ({ item, index }) => ({
             name: {
                 t: 'input',
                 label: '姓名',
-                placeholder: '请输入姓名'
+                placeholder: '请输入姓名',
             },
             age: {
                 t: 'input-number',
                 label: '年龄',
                 min: 0,
-                max: 120
+                max: 120,
             }
         }),
         itemSlots: {
@@ -645,29 +641,31 @@ const formConfig = defineOption({
                 <ElButton onClick={() => checked.splice(index, 1)} type="danger" size="small">
                     删除
                 </ElButton>
-            )
+            ),
         },
         slots: {
             append: ({ query }) => (
                 <ElButton onClick={() => query.users.push({ name: '', age: 0 })} type="primary">
                     添加用户
                 </ElButton>
-            )
-        }
-    }
-});
+            ),
+        },
+    },
+]);
 ```
 
 ### 表单联动
 
 ```typescript
-const formConfig = defineOption({
-    country: {
+const formConfig = defineOption([
+    {
+        field: 'country',
         t: 'select',
         label: '国家',
         options: countryList,
     },
-    province: {
+    {
+        field: 'province',
         t: 'select',
         label: '省份',
         depend: true,
@@ -675,16 +673,17 @@ const formConfig = defineOption({
         getOptions: async (cb, query) => {
             const provinces = await fetchProvinces(query.country);
             cb(provinces);
-        }
-    }
-});
+        },
+    },
+]);
 ```
 
 ### 自定义校验
 
 ```typescript
-const formConfig = defineOption({
-    password: {
+const formConfig = defineOption([
+    {
+        field: 'password',
         t: 'input',
         label: '密码',
         rules: [
@@ -699,11 +698,11 @@ const formConfig = defineOption({
                     else {
                         callback();
                     }
-                }
-            }
-        ]
-    }
-});
+                },
+            },
+        ],
+    },
+]);
 ```
 
 ## 🗂️ 目录结构

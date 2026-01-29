@@ -1,4 +1,4 @@
-import type { CoreOption } from '@xiaohaih/json-form-core';
+import type { CoreOption, GetOptions } from '@xiaohaih/json-form-core';
 import type {
     AutocompleteProps as PureAutocompleteProps,
     CascaderProps as PureCascaderProps,
@@ -27,7 +27,19 @@ import type {
     UploadProps as PureUploadProps,
 } from '../components/index';
 
-type BuiltInField<T = ''> = CoreOption.BuiltInField | T;
+type BuiltInField<T = ''> = CoreOption.BuiltInField | keyof RewriteOption<any, any, any, any> | T;
+
+/** 重写下列选项(函数内导出的属性无法被推断出来) */
+interface RewriteOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
+    /** 提交的字段 */
+    field?: T;
+    /** 提交的字段集(多选时, 每个下标对应的字段可能不一样)) */
+    fields?: T[];
+    /** 数据源 */
+    options?: Option;
+    /** 获取数据源的方法 */
+    getOptions?: GetOptions<T, Query, Option, OptionQuery>;
+}
 
 /** 条件声明集合 */
 export type JSONFormOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>
@@ -62,7 +74,7 @@ export interface AutocompleteProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureAutocompleteProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureAutocompleteProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'autocomplete';
 }
 export interface CascaderProps<
@@ -70,7 +82,7 @@ export interface CascaderProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureCascaderProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureCascaderProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'cascader';
 }
 export interface CheckboxGroupProps<
@@ -78,7 +90,7 @@ export interface CheckboxGroupProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureCheckboxGroupProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureCheckboxGroupProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'checkbox-group';
 }
 export interface CheckboxProps<
@@ -86,7 +98,7 @@ export interface CheckboxProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureCheckboxProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureCheckboxProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'checkbox';
 }
 export interface ColorPickerProps<
@@ -94,7 +106,7 @@ export interface ColorPickerProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureColorPickerProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureColorPickerProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'color-picker';
 }
 export interface CustomRenderProps<
@@ -102,7 +114,7 @@ export interface CustomRenderProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureCustomRenderProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureCustomRenderProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'custom-render';
 }
 export interface DatepickerProps<
@@ -110,7 +122,7 @@ export interface DatepickerProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureDatepickerProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureDatepickerProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'date-picker';
 }
 export interface DynamicGroupProps<
@@ -118,7 +130,7 @@ export interface DynamicGroupProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureDynamicGroupProps<T, Query, Option, OptionQuery>, BuiltInField | 'config'> {
+> extends Omit<PureDynamicGroupProps<T, Query, Option, OptionQuery>, BuiltInField | 'config'>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'dynamic-group';
     /** 渲染的子条件(重写该属性以补充声明) */
     config?: MaybeFunction<[{ item: Record<string, any>; query: Query; checked: any; index: number }], JSONFormOption<T, Query, Option, OptionQuery>[] | Record<keyof Query, JSONFormOption<T, Query, Option, OptionQuery>>>;
@@ -128,7 +140,7 @@ export interface GroupProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureGroupProps<T, Query, Option, OptionQuery>, BuiltInField | 'config'> {
+> extends Omit<PureGroupProps<T, Query, Option, OptionQuery>, BuiltInField | 'config'>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'group';
     /** 渲染的子条件(重写该属性以补充声明) */
     config?: MaybeFunction<[{ query: Query; checked: any }], JSONFormOption<T, Query, Option, OptionQuery>[] | Record<keyof Query, JSONFormOption<T, Query, Option, OptionQuery>>>;
@@ -138,7 +150,7 @@ export interface InputNumberProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureInputNumberProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureInputNumberProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'input-number';
 }
 export interface InputProps<
@@ -146,7 +158,7 @@ export interface InputProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureInputProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureInputProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'input';
 }
 export interface InputTagProps<
@@ -154,7 +166,7 @@ export interface InputTagProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureInputTagProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureInputTagProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'input-tag';
 }
 export interface MentionProps<
@@ -162,7 +174,7 @@ export interface MentionProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureMentionProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureMentionProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'mention';
     // 需要重新声明, 否则 ts 会报层级过深
     inputStyle?: string | string[] | Record<string, any>;
@@ -172,7 +184,7 @@ export interface RadioGroupProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureRadioGroupProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureRadioGroupProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'radio-group';
 }
 export interface RadioProps<
@@ -180,7 +192,7 @@ export interface RadioProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureRadioProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureRadioProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'radio';
 }
 export interface RateProps<
@@ -188,7 +200,7 @@ export interface RateProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureRateProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureRateProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'rate';
 }
 export interface SegmentedProps<
@@ -196,7 +208,7 @@ export interface SegmentedProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureSegmentedProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureSegmentedProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'segmented';
 }
 export interface SelectProps<
@@ -204,7 +216,7 @@ export interface SelectProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureSelectProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureSelectProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'select';
 }
 export interface SelectV2Props<
@@ -212,7 +224,7 @@ export interface SelectV2Props<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureSelectV2Props<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureSelectV2Props<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'select-v2';
 }
 export interface SliderProps<
@@ -220,7 +232,7 @@ export interface SliderProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureSliderProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureSliderProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'slider';
 }
 export interface SwitchProps<
@@ -228,7 +240,7 @@ export interface SwitchProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureSwitchProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureSwitchProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'switch';
 }
 export interface TimePickerProps<
@@ -236,7 +248,7 @@ export interface TimePickerProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureTimePickerProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureTimePickerProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'time-picker';
 }
 export interface TimeSelectProps<
@@ -244,7 +256,7 @@ export interface TimeSelectProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureTimeSelectProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureTimeSelectProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'time-select';
 }
 export interface TreeSelectProps<
@@ -252,7 +264,7 @@ export interface TreeSelectProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureTreeSelectProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureTreeSelectProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'tree-select';
 }
 export interface UploadProps<
@@ -260,7 +272,7 @@ export interface UploadProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureUploadProps<T, Query, Option, OptionQuery>, BuiltInField> {
+> extends Omit<PureUploadProps<T, Query, Option, OptionQuery>, BuiltInField>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'upload';
 }
 

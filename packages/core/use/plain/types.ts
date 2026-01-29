@@ -48,12 +48,12 @@ export function plainPropsGeneric<T, Query extends Record<string, any>, Option, 
         validator: { type: [Function] as PropType<(query: Query) => any | Promise<any>> },
         /** 初始值 - 初始或重置时设置的值, 优先级高于 defaultValue(重置时取该字段, 依赖变化后的重置默认值), 可被清空 */
         initialValue: {
-            type: [String, Number, Boolean, Function, Array, Object] as PropType<T | ((option: { query: Query }) => T)>,
+            type: [String, Number, Boolean, Function, Array, Object] as PropType<((option: { query: Query }) => any) | any>,
             default: undefined,
         },
         /** 默认值 - 初始或重置时设置的值, 当对应字段的值为空值时, 会用该值替换 */
         defaultValue: {
-            type: [String, Number, Boolean, Function, Array, Object] as PropType<T | ((option: { query: Query }) => T)>,
+            type: [String, Number, Boolean, Function, Array, Object] as PropType<((option: { query: Query }) => any) | any>,
             default: undefined,
         },
         /** 重置时当前值与默认值/初始值相同时, 自定义赋值逻辑(默认不改变) */
