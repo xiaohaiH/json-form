@@ -1,5 +1,11 @@
 # @xiaohaih/json-form-core
 
+## 0.2.2
+
+### Patch Changes
+
+- 调整 defineOption 的声明以及返回格式(支持定义数组, 返回类型为 Ref)
+
 ## 0.2.1
 
 ### Patch Changes
