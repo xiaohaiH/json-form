@@ -1,4 +1,4 @@
-import type { CoreOption } from '@xiaohaih/json-form-core';
+import type { CoreOption, getProvideValue } from '@xiaohaih/json-form-core';
 import type { ExtractPropTypes, PropType, Ref } from 'vue-demi';
 import { ref } from 'vue-demi';
 import type * as JSONFormTs from './interface';
@@ -15,18 +15,32 @@ type FalsyType = number | boolean | string | null | undefined;
 /** 允许调用任意字段 */
 type TypeAll = Record<string | symbol | number, any>;
 
-/** 定义配置项 */
-export function defineOption<T extends Record<string, any>, O extends Partial<Record<keyof T, any>> = Partial<Record<keyof T, any>>>(config: (AssistOptionArr<T, O> | FalsyType)[]): Ref<AssistOptionArr<T, O>[]>;
-export function defineOption<T extends Record<string, any>, O extends Partial<Record<keyof T, any>> = Partial<Record<keyof T, any>>>(config: AssistOption<T, O>): Ref<AssistOption<T, O>>;
+/**
+ * 定义配置项
+ * 未补充泛型声明时, 不建议通过函数返回对象形式的配置项(声明会报错)
+ */
+export function defineOption<T extends Record<string, any>, O extends Partial<Record<keyof T, any>> = Partial<Record<keyof T, any>>>(config: (AssistOptionArr<T, O> | FalsyType)[]): AssistOptionArr<T, O>[];
+export function defineOption<T extends Record<string, any>, O extends Partial<Record<keyof T, any>> = Partial<Record<keyof T, any>>>(config: (opt: DefineOptionParams<T, O>) => (AssistOptionArr<T, O> | FalsyType)[]): AssistOptionArr<T, O>[];
+export function defineOption<T extends Record<string, any>, O extends Partial<Record<keyof T, any>> = Partial<Record<keyof T, any>>>(config: AssistOption<T, O>): AssistOption<T, O>;
+export function defineOption<T extends Record<string, any>, O extends Partial<Record<keyof T, any>> = Partial<Record<keyof T, any>>>(config: (opt: DefineOptionParams<T, O>) => AssistOption<T, O>): AssistOption<T, O>;
 export function defineOption(config: any) {
-    return ref(config);
+    return config;
+}
+
+/** defineOption 为函数时所携带的参数 */
+export interface DefineOptionParams<Query extends Record<string, any>, Options extends Record<string, any>> {
+    /** 表单 model 对象 */
+    query: Query;
+    /** 表单封装的一些参数 */
+    wrapper: Pick<NonNullable<ReturnType<typeof getProvideValue<Query, Options>>>, 'disabled' | 'readonly' | 'options' | 'reset'> | undefined;
 }
 
 // /* 使用示例 - start
 // ------------------------------------------ */
-// // 对象形式定义
-// defineOption({
-//     ab: {
+// // 数组形式定义
+// defineOption([
+//     {
+//         field: 'ab',
 //         t: 'input',
 //         // defaultValue: '123,',
 //         // placeholder: '',
@@ -37,7 +51,8 @@ export function defineOption(config: any) {
 //             console.log(r);
 //         },
 //     },
-//     cc: {
+//     {
+//         field: 'cc',
 //         t: 'custom-render',
 //         // defaultValue: 111,
 //         // getOptions(cb, query, option) {
@@ -46,7 +61,8 @@ export function defineOption(config: any) {
 //             return () => {};
 //         },
 //     },
-//     test: {
+//     {
+//         field: 'test',
 //         t: 'group',
 //         config: [
 //             {
@@ -57,7 +73,8 @@ export function defineOption(config: any) {
 //             },
 //         ],
 //     },
-//     test2: {
+//     {
+//         field: 'test2',
 //         t: 'dynamic-group',
 //         config: () => [
 //             {
@@ -80,62 +97,9 @@ export function defineOption(config: any) {
 //             },
 //         ],
 //     },
-// });
-// defineOption<{ ab: string; cc: number; bb: string }>({
-//     ab: {
-//         t: 'input',
-//         fields: [],
-//         defaultValue: '123,',
-//         placeholder: '',
-//         options: [{ label: 123, value: 123 }],
-//         itemSlots: {},
-//         getOptions(cb, query, option) {
-//             const r = option.options.ab; // ab 的类型
-//             console.log(r);
-//         },
-//     },
-//     cc: {
-//         t: 'custom-render',
-//         defaultValue: 111,
-//         getOptions(cb, query, option) {
-//             const r = option.options.cc; // cc 的类型
-//             console.log(r);
-//         },
-//         render() {
-//             return () => {};
-//         },
-//     },
-// });
-// defineOption<
-//     { ab: string; cc: number },
-//     { ab: { label: number; value: number }[]; cc: string[]; bb: Record<string, string>[] }
-// >({
-//     ab: {
-//         t: 'input',
-//         fields: [],
-//         defaultValue: '123,',
-//         placeholder: '',
-//         options: [{ label: 123, value: 123 }],
-//         itemSlots: {},
-//         getOptions(cb, query, option) {
-//             const r = option.options.ab; // ab 的类型
-//             console.log(r);
-//         },
-//     },
-//     cc: {
-//         t: 'custom-render',
-//         defaultValue: 111,
-//         getOptions(cb, query, option) {
-//             const r = option.options.cc; // ab 的类型
-//             console.log(r);
-//         },
-//         render() {
-//             return () => {};
-//         },
-//     },
-// });
-// // 数组形式定义
-// defineOption([
+// ]);
+// // defineOption<Record<'ab' | 'cc' | 'test' | 'test2' | '自定义' | '自定义s1s', string>>((opt) => [
+// defineOption(() => [
 //     {
 //         field: 'ab',
 //         t: 'input',
@@ -250,6 +214,117 @@ export function defineOption(config: any) {
 //         },
 //     },
 // ]);
+
+// // 对象形式定义
+// defineOption({
+//     ab: {
+//         t: 'input',
+//         // defaultValue: '123,',
+//         // placeholder: '',
+//         options: [{ label: '' }],
+//         // itemSlots: {},
+//         getOptions(cb, query, option) {
+//             const r = option.options.ab; // ab 的类型
+//             console.log(r);
+//         },
+//     },
+//     cc: {
+//         t: 'custom-render',
+//         // defaultValue: 111,
+//         // getOptions(cb, query, option) {
+//         // },
+//         render() {
+//             return () => {};
+//         },
+//     },
+//     test: {
+//         t: 'group',
+//         config: [
+//             {
+//                 field: '自定义',
+//                 t: 'date-picker',
+//                 getOptions(cb, query, option) {
+//                 },
+//             },
+//         ],
+//     },
+//     test2: {
+//         t: 'dynamic-group',
+//         config: () => [
+//             {
+//                 field: '强啊',
+//                 t: 'color-picker',
+//                 getOptions(cb, query, option) {
+//                 },
+//             },
+//             {
+//                 field: 'test',
+//                 t: 'group',
+//                 config: [
+//                     {
+//                         field: '强化版',
+//                         t: 'date-picker',
+//                         getOptions(cb, query, option) {
+//                         },
+//                     },
+//                 ],
+//             },
+//         ],
+//     },
+// });
+// defineOption<{ ab: string; cc: number; bb: string }>({
+//     ab: {
+//         t: 'input',
+//         fields: [],
+//         defaultValue: '123,',
+//         placeholder: '',
+//         options: [{ label: 123, value: 123 }],
+//         itemSlots: {},
+//         getOptions(cb, query, option) {
+//             const r = option.options.ab; // ab 的类型
+//             console.log(r);
+//         },
+//     },
+//     cc: {
+//         t: 'custom-render',
+//         defaultValue: 111,
+//         getOptions(cb, query, option) {
+//             const r = option.options.cc; // cc 的类型
+//             console.log(r);
+//         },
+//         render() {
+//             return () => {};
+//         },
+//     },
+// });
+// defineOption<
+//     { ab: string; cc: number },
+//     { ab: { label: number; value: number }[]; cc: string[]; bb: Record<string, string>[] }
+// >({
+//     ab: {
+//         t: 'input',
+//         fields: [],
+//         defaultValue: '123,',
+//         placeholder: '',
+//         options: [{ label: 123, value: 123 }],
+//         itemSlots: {},
+//         getOptions(cb, query, option) {
+//             const r = option.options.ab; // ab 的类型
+//             console.log(r);
+//         },
+//     },
+//     cc: {
+//         t: 'custom-render',
+//         defaultValue: 111,
+//         getOptions(cb, query, option) {
+//             const r = option.options.cc; // ab 的类型
+//             console.log(r);
+//         },
+//         render() {
+//             return () => {};
+//         },
+//     },
+// });
 // /* 使用示例 - end
 // ------------------------------------------ */
 

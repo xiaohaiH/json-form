@@ -20,7 +20,7 @@
 </template>
 
 <script lang="tsx">
-import { get, getNode, hyphenate, usePlain } from '@xiaohaih/json-form-core';
+import { get, getNode, getProvideValue, hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import type { FunctionalComponent, SlotsType } from 'vue';
 import { computed, defineComponent, markRaw, ref, watch } from 'vue';
 import { pick } from '../../src/utils';
@@ -43,12 +43,14 @@ export default defineComponent({
     setup(props, ctx) {
         const virtualGroupRef = ref<Record<string, any> | undefined>();
         const tagRef = computed(() => virtualGroupRef.value?.tagRef);
+        /** 容器注入值 */
+        const wrapper = getProvideValue();
         const checked = undefined;
         // const checked = computed(() => get<any>(props.query, props.field!));
         const finalConfig = computed(() => {
             const { config, parseConfig } = props;
             if (!parseConfig) return [];
-            return typeof config === 'function' ? config({ query: props.query }) : config;
+            return typeof config === 'function' ? config({ query: props.query, wrapper }) : config;
         });
         /** 对 group 组件特殊处理 */
         function getComponent2(name: string) {

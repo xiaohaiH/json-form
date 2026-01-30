@@ -26,7 +26,7 @@
 </template>
 
 <script lang="tsx">
-import { get, hasOwn, hyphenate, usePlain } from '@xiaohaih/json-form-core';
+import { get, getProvideValue, hasOwn, hyphenate, usePlain } from '@xiaohaih/json-form-core';
 // import type { SlotsType } from 'vue';
 import { computed, defineComponent, markRaw, ref, watch } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
@@ -46,12 +46,14 @@ export default defineComponent({
     // slots: Object as SlotsType<GroupSlots>,
     setup(props, ctx) {
         const tagRef = ref<Record<string, any> | undefined>();
+        /** 容器注入值 */
+        const wrapper = getProvideValue();
         const checked = undefined;
         // const checked = computed(() => get<any>(props.query, props.field!));
         const finalConfig = computed(() => {
             const { config, parseConfig } = props;
             if (!parseConfig) return [];
-            return typeof config === 'function' ? config({ query: props.query }) : config;
+            return typeof config === 'function' ? config({ query: props.query, wrapper }) : config;
         });
         /** 对 group 组件特殊处理 */
         function getComponent2(name: string) {

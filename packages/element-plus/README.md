@@ -155,14 +155,14 @@ const formConfig = defineOption({
 
 ### HForm Props
 
-| 属性名      | 类型                                                                         | 默认值  | 描述             |
-| :---------- | :--------------------------------------------------------------------------- | :------ | :--------------- |
-| v-model     | `Record<string, any>`                                                        | -       | 表单数据双向绑定 |
-| config      | `() => ReturnType<typeof defineOption>` \| `ReturnType<typeof defineOption>` | -       | 表单配置对象     |
-| label-width | `string \| number`                                                           | -       | 标签宽度         |
-| readonly    | `boolean`                                                                    | `false` | 是否只读         |
-| disabled    | `boolean`                                                                    | `false` | 是否禁用         |
-| rules       | `Record<string, Rule[]>`                                                     | -       | 表单级校验规则   |
+| 属性名      | 类型                              | 默认值  | 描述             |
+| :---------- | :-------------------------------- | :------ | :--------------- |
+| v-model     | `Record<string, any>`             | -       | 表单数据双向绑定 |
+| config      | `ReturnType<typeof defineOption>` | -       | 表单配置对象     |
+| label-width | `string \| number`                | -       | 标签宽度         |
+| readonly    | `boolean`                         | `false` | 是否只读         |
+| disabled    | `boolean`                         | `false` | 是否禁用         |
+| rules       | `Record<string, Rule[]>`          | -       | 表单级校验规则   |
 
 ### HForm Events
 
@@ -183,17 +183,26 @@ const formConfig = defineOption({
 
 用于创建响应式表单配置的函数。
 
-- 推荐用数组形式, 能推断出子级 `config` 下的字段
+- 推荐用数组形式, 能推断出子级 `config` 下的字段, 且通过函数返回配置值时, 不主动声明泛型参数时, `typescript` 也不会报错
+- 数组形式定义配置项时, 如果声明报错, 可以试试在数组后加上 `const`(深层 `config` 是函数形式返回时会出现这种声明报错) -> `defineOption([{}, ...config] as const)`
+- 未补充泛型声明时, 不建议通过函数返回对象形式的配置项(声明会报错)
 
 ```typescript
 // 数组形式创建配置项
-function defineOption<T extends Record<string, any>, O extends Partial<Record<keyof T, any>> = Partial<Record<keyof T, any>>>(
-    config: JSONFormOption[]
-): Ref<JSONFormOption[]>;
+function defineOption(config: JSONFormOption[]): JSONFormOption[];
+// 基于函数返回数组形式创建配置项
+function defineOption(config: (option: ConfigOption) => JSONFormOption[]): () => JSONFormOption[];
 // 对象形式创建配置项
-function defineOption<T extends Record<string, any>, O extends Partial<Record<keyof T, any>> = Partial<Record<keyof T, any>>>(
-    config: Record<string, JSONFormOption>
-): Ref<Record<string, JSONFormOption>>;
+function defineOption(config: Record<string, JSONFormOption>): Record<string, JSONFormOption>;
+// 基于函数返回对象形式创建配置项
+function defineOption(config: (option: ConfigOption) => Record<string, JSONFormOption>): () => Record<string, JSONFormOption>;
+
+interface ConfigOption {
+    /** 表单的 model 对象 */
+    query: Record<string, any>;
+    /** 表单级的共用属性 */
+    wrapper: ReturnType<typeof useWrapper>;
+}
 ```
 
 ### 字段配置结构
