@@ -4,9 +4,10 @@ import { h, set } from 'vue';
 
 export function conditionFactory() {
     return {
-        condition: defineOption({
-            '布局组件': {
+        condition: defineOption([
+            {
                 t: 'dynamic-group',
+                field: '布局组件',
                 tag: 'div',
                 class: 'w-full',
                 // config: {
@@ -92,8 +93,9 @@ export function conditionFactory() {
                 //     },
                 // ],
             },
-            '自定义': {
+            {
                 t: 'custom-render',
+                field: '自定义',
                 label: '自定义',
                 render: {
                     props: { plain: { type: Object } },
@@ -126,8 +128,9 @@ export function conditionFactory() {
                 //     ) });
                 // },
             },
-            '上传': {
+            {
                 t: 'upload',
+                field: '上传',
                 label: '上传',
                 staticProps: { class: 'flex' },
                 limit: 2,
@@ -139,8 +142,9 @@ export function conditionFactory() {
                 },
                 autoUpload: false,
             },
-            '自动完成': {
+            {
                 t: 'autocomplete',
+                field: '自动完成',
                 label: '自动完成',
                 placeholder: '请输入',
                 // fetchSuggestions: [{ value: 'aa' }, { value: 'bb' }],
@@ -157,14 +161,16 @@ export function conditionFactory() {
                 //     props.query.input1 = item.id;
                 // },
             },
-            '颜色': {
+            {
                 t: 'color-picker',
+                field: '颜色',
                 label: '颜色',
                 showAlpha: true,
                 colorFormat: 'hsl',
             },
-            'input-num': {
+            {
                 t: 'input-number',
+                field: 'input-num',
                 label: 'input-num',
                 placeholder: 'gs',
                 initialValue: 123,
@@ -177,35 +183,40 @@ export function conditionFactory() {
                 // decreaseIcon: <div>123</div>,
                 // increaseIcon: <div>456</div>,
             },
-            'rate': {
+            {
                 t: 'rate',
+                field: 'rate',
                 label: 'rate',
                 colors: ['#99A9BF', '#F7BA2A', '#FF9900'],
                 allowHalf: true,
                 showScore: true,
                 scoreTemplate: '{value} 分',
             },
-            'slider': {
+            {
                 t: 'slider',
+                field: 'slider',
                 // style: { width: '400px' },
                 label: 'slider',
                 showInput: true,
                 // range: true,
             },
-            '切换器': {
+            {
                 t: 'switch',
+                field: '切换器',
                 label: '切换器',
                 activeValue: '1',
                 inactiveValue: '0',
                 defaultValue: '0',
             },
-            '时间': {
+            {
                 t: 'time-picker',
+                field: '时间',
                 label: '时间',
                 placeholder: '快选择时间',
             },
-            'input1': {
+            {
                 t: 'input',
+                field: 'input1',
                 label: 'input1',
                 placeholder: '哈哈哈',
                 // itemSlots: {
@@ -218,14 +229,16 @@ export function conditionFactory() {
                 //     },
                 // },
             },
-            'input2': {
+            {
                 t: 'input',
+                field: 'input2',
                 label: 'input2',
                 placeholder: '666',
                 rules: [{ required: true, message: '必填项' }],
             },
-            'sel1': {
+            {
                 t: 'select',
+                field: 'sel1',
                 label: 'sel1',
                 placeholder: '哈哈哈',
                 options: [
@@ -234,8 +247,9 @@ export function conditionFactory() {
                     { label: '第三', value: '3' },
                 ],
             },
-            'sel2': {
+            {
                 t: 'select',
+                field: 'sel2',
                 label: 'sel2',
                 placeholder: 'test',
                 labelKey: 'dictLabel',
@@ -254,15 +268,17 @@ export function conditionFactory() {
                 },
                 rules: [{ required: true, message: '必填项' }],
             },
-            'date1': {
+            {
                 t: 'date-picker',
+                field: 'date1',
                 label: 'date1',
                 placeholder: 'fff',
                 // format: 'MM-DD',
                 // valueFormat: 'YYYY-MM-DD',
             },
-            'date2': {
+            {
                 t: 'date-picker',
+                field: 'date2',
                 type: 'daterange',
                 label: 'date2',
                 fields: ['date11', 'date22'],
@@ -271,8 +287,9 @@ export function conditionFactory() {
                 endPlaceholder: '止',
                 rules: [{ required: true, message: '必填项' }],
             },
-            'cas1': {
+            {
                 t: 'cascader',
+                field: 'cas1',
                 label: 'cas1',
                 placeholder: 'fff',
                 fields: ['cas1', 'cas1_1'],
@@ -301,8 +318,9 @@ export function conditionFactory() {
                 //     console.log(query, 111, query.date11, query.date22);
                 // },
             },
-            'cas2': {
+            {
                 t: 'cascader',
+                field: 'cas2',
                 label: 'cas2',
                 placeholder: '999',
                 props: { emitPath: false },
@@ -328,8 +346,9 @@ export function conditionFactory() {
                     ]);
                 },
             },
-            'che-g1': {
+            {
                 t: 'checkbox-group',
+                field: 'che-g1',
                 label: 'che-g1',
                 type: 'button',
                 // itemSlots: {
@@ -341,8 +360,9 @@ export function conditionFactory() {
                     { label: 'check2', value: '2' },
                 ],
             },
-            'che-g2': {
+            {
                 t: 'checkbox-group',
+                field: 'che-g2',
                 label: 'che-g2',
                 defaultValue: ['2'],
                 rules: [{ required: true, message: '必填项' }],
@@ -358,8 +378,9 @@ export function conditionFactory() {
                     }, 1000);
                 },
             },
-            '多选框': {
+            {
                 t: 'checkbox',
+                field: '多选框',
                 label: '多选框',
                 staticProps: { label: '男生' },
                 // type: 'button',
@@ -371,8 +392,9 @@ export function conditionFactory() {
                 // },
                 rules: [{ required: true, message: '必填项' }],
             },
-            'radio-group1': {
+            {
                 t: 'radio-group',
+                field: 'radio-group1',
                 label: 'radio-group1',
                 type: 'button',
                 defaultValue: '1',
@@ -384,8 +406,9 @@ export function conditionFactory() {
                     { label: 'radio2', value: '2' },
                 ],
             },
-            'rdg-cancel': {
+            {
                 t: 'radio-group',
+                field: 'rdg-cancel',
                 label: 'rdg-cancel',
                 rules: [{ required: true, message: '必填项' }],
                 cancelable: true,
@@ -403,8 +426,9 @@ export function conditionFactory() {
                     }, 1000);
                 },
             },
-            'radio1': {
+            {
                 t: 'radio',
+                field: 'radio1',
                 label: 'radio1',
                 value: '1',
                 staticProps: { label: '男生' },
@@ -416,6 +440,6 @@ export function conditionFactory() {
                 // type: 'button',
                 initialValue: '1',
             },
-        }),
+        ]),
     };
 }

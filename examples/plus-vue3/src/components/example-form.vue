@@ -35,7 +35,7 @@ import { conditionFactory } from '~share/form';
 import { markRaw, nextTick, onMounted, ref } from 'vue';
 
 /** @file 作为表单显示 */
-defineOption({
+defineOptions({
     name: 'ExampleForm',
 });
 
