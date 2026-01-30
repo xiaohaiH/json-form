@@ -23,6 +23,8 @@ export function groupPropsGeneric<T, Query extends Record<string, any>, Option, 
         tag: { type: [Object, String, Array, Function] as PropType<any>, default: 'div' },
         /** 渲染的子条件 */
         config: { type: [Object, Array, Function] as PropType<any> },
+        /** 是否解析 config, false 直接返回空数组 - 配合 dynamic-group 使用 */
+        parseConfig: { type: Boolean as PropType<boolean>, default: true },
         /** 传递给组件的插槽 */
         slots: { type: Object as PropType<GroupSlots<T, Query, Option, OptionQuery>> },
         /** 组件额外的钩子() */

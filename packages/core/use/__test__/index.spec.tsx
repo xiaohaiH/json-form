@@ -79,7 +79,7 @@ const PlainComponent = defineComponent({
     props: {
         ...plainProps,
         parentField: { type: String, default: '' },
-        config: { type: [Array, Object, Function] as PropType<Record<string, PlainOption> | PlainOption[] | ((option: { item: PlainOption & { field: string }; index: number }) => PlainOption[])> },
+        config: { type: [Array, Object, Function] as PropType<Record<string, PlainOption> | PlainOption[] | ((option: { item: PlainOption & { field: string }; index: number; query: Record<string, any> }) => PlainOption[])> },
         setRef: { type: Function as PropType<(field: string) => (ins: Record<string, any> | null) => void>, required: true },
         refObj: { type: Object as PropType<Record<string, any>>, required: true },
         /**
@@ -115,26 +115,55 @@ const PlainComponent = defineComponent({
             return Object.entries(config).map(([key, value]) => ({ ...value, field: key }));
         });
 
-        // 此处动态表单实现参考的 packages\element-plus\components\dynamic-group\index.vue
-        const options = ref<{ uniqueValue: string | number; result: PlainOption[] }[]>([]);
-        watch(
-            [() => Array.isArray(queryValue.value) && [...queryValue.value], () => props.config],
-            ([value, config], oldVal) => {
-                if (!configIsArr.value) return;
-                if (!(value && value.length)) return options.value = [];
-                const { uniqueKey } = props;
-                const isFunc = typeof config === 'function';
-                const arr = coverObjOption2Arr<PlainOption[]>(config);
-                options.value = value.map((o, i) => ({ uniqueValue: uniqueKey ? o[uniqueKey] : getId(o, oldVal as any, i), result: isFunc ? coverObjOption2Arr<PlainOption[]>(config({ item: o, index: i })) : arr }));
-            },
-            { immediate: true },
-        );
+        // (旧版)此处动态表单实现参考的 packages\element-plus\components\dynamic-group\index.vue
+        // const options = ref<{ uniqueValue: string | number; result: PlainOption[] }[]>([]);
+        // watch(
+        //     [() => Array.isArray(queryValue.value) && [...queryValue.value], () => props.config],
+        //     ([value, config], oldVal) => {
+        //         if (!configIsArr.value) return;
+        //         if (!(value && value.length)) return options.value = [];
+        //         const { uniqueKey } = props;
+        //         const isFunc = typeof config === 'function';
+        //         const arr = !isFunc && coverObjOption2Arr<PlainOption[]>(config);
+        //         options.value = value.map((o, i) => ({ uniqueValue: uniqueKey ? o[uniqueKey] : getId(o, oldVal?.[0] as any, i), result: isFunc ? coverObjOption2Arr<PlainOption[]>(config({ item: o, index: i, query: props.query })) : arr as PlainOption[] }));
+        //     },
+        //     { immediate: true },
+        // );
+        // /**
+        //  * 获取唯一 id, 如果与旧引用相同, 则复用唯一 id
+        //  * (为动态新增的表单项做的优化, 不然可以用下方的计算属性(finalConfig))
+        //  */
+        // function getId(val: Record<string, any>, oldVal: Record<string, any>[], idx: number) {
+        //     return oldVal?.[idx] === val ? options.value[idx].uniqueValue : ++globalId;
+        // }
+        // (新版)此处动态表单实现参考的 packages\element-plus\components\dynamic-group\index.vue
+        /** 由于计算属性不似 watch 有上条数据, 因为手动记录 */
+        let configSnapshot = {
+            /** 记录每行配置项的唯一值集合 */
+            configUniqueValue: [] as any[],
+            /** 记录每行数据的值集合 */
+            checkedValue: [] as any[],
+        };
+        /** 计算属性版本的 config 配置项(防止生成的配置项中用了响应式变量, 不在计算属性中生成无法捕捉到) */
+        const options = computed(() => {
+            const { config } = props;
+            if (!config) return [];
+            const value = queryValue.value;
+            if (!value?.length) return [];
+            const isFunc = typeof config === 'function';
+            const arr = !isFunc && coverObjOption2Arr<PlainOption[]>(config);
+            const { uniqueKey } = props;
+            const result = value.map((o, i) => ({ uniqueValue: uniqueKey ? o[uniqueKey] : getId(o, i), result: isFunc ? coverObjOption2Arr<PlainOption[]>(config({ item: o, index: i, query: props.query })) : arr as PlainOption[] }));
+            configSnapshot.configUniqueValue = result.map((r) => r.uniqueValue);
+            configSnapshot.checkedValue = [...value];
+            return result;
+        });
         /**
-         * 获取唯一 id, 如果与旧引用相同, 则复用唯一 id
+         * 获取唯一 id, 如果与旧引用相同, 则复用唯一 id(配合 finalConfig - computed 版本使用)
          * (为动态新增的表单项做的优化, 不然可以用下方的计算属性(finalConfig))
          */
-        function getId(val: Record<string, any>, oldVal: Record<string, any>[][], idx: number) {
-            return oldVal?.[0] && oldVal[0][idx] === val ? options.value[idx].uniqueValue : ++globalId;
+        function getId(val: Record<string, any>, idx: number) {
+            return configSnapshot.checkedValue[idx] === val ? configSnapshot.configUniqueValue[idx] : ++globalId;
         }
         /** 将对象形式的配置项转为数组 */
         function coverObjOption2Arr<T>(opt: any): T {

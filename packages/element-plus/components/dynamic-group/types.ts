@@ -8,7 +8,7 @@ import type { ComponentType } from '../share';
 /** 组件传参 - 私有 */
 export function dynamicGroupPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
     return {
-        ...groupProps as ReturnType<typeof groupPropsGeneric<T, Query, Option, OptionQuery>>,
+        ...groupProps as Omit<ReturnType<typeof groupPropsGeneric<T, Query, Option, OptionQuery>>, 'parseConfig'>,
         /**
          * 如果是组件是存在于数组中的, 需要传递一个唯一键, 读取当前对象中的某个值
          * 防止依赖本数组其它下标中的值时, 如果前一项被删除, 导致依赖误触发

@@ -46,7 +46,8 @@ export default defineComponent({
         const checked = undefined;
         // const checked = computed(() => get<any>(props.query, props.field!));
         const finalConfig = computed(() => {
-            const { config } = props;
+            const { config, parseConfig } = props;
+            if (!parseConfig) return [];
             return typeof config === 'function' ? config({ query: props.query }) : config;
         });
         /** 对 group 组件特殊处理 */

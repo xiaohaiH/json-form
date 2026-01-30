@@ -1,6 +1,6 @@
 <template>
     <!-- eslint-disable vue/no-deprecated-dollar-listeners-api vue/no-v-for-template-key-on-child -->
-    <HGroup ref="dynamicGroupRef" :config="config" :query="query" :tag="tag" :field="field" :hooks="hooks" :slots="slots" v-bind="$attrs" v-on="$listeners">
+    <HGroup ref="dynamicGroupRef" :config="config" :query="query" :tag="tag" :field="field" :hooks="hooks" :slots="slots" :parse-config="false" v-bind="$attrs" v-on="$listeners">
         <template v-if="$slots.prepend" #prepend>
             <slot :query="query" name="prepend" />
         </template>
@@ -49,38 +49,57 @@ export default defineComponent({
     setup(props, ctx) {
         const dynamicGroupRef = ref<Record<string, any> | undefined>();
         const checked = computed(() => get<Record<string, any>[] | undefined>(props.query, props.field!));
-        const finalConfig = ref<{ uniqueValue: string | number; options: Option[] }[]>([]);
-        watch(
-            [() => checked.value && [...checked.value], () => props.config],
-            ([value, config], oldVal) => {
-                if (!value?.length) return finalConfig.value = [];
-                const { uniqueKey } = props;
-                const isFunc = typeof config === 'function';
-                const arr = coverObjOption2Arr<Option[]>(config);
-                finalConfig.value = value.map((o, i) => ({
-                    uniqueValue: uniqueKey ? o[uniqueKey] : getId(o, oldVal, i),
-                    options: isFunc ? coverObjOption2Arr<Option[]>(config({ item: o, index: i, query: props.query })) : arr,
-                }));
-            },
-            { immediate: true },
-        );
+        // /** watch 版本的配置项, watch 自带旧值记录, 方便做优化 */
+        // const finalConfig = ref<{ uniqueValue: string | number; options: Option[] }[]>([]);
+        // watch(
+        //     [() => checked.value && [...checked.value], () => props.config],
+        //     ([value, config], oldVal) => {
+        //         if (!value?.length) return finalConfig.value = [];
+        //         const { uniqueKey } = props;
+        //         const isFunc = typeof config === 'function';
+        //         const arr = !isFunc && coverObjOption2Arr<Option[]>(config);
+        //         finalConfig.value = value.map((o, i) => ({
+        //             uniqueValue: uniqueKey ? o[uniqueKey] : getId(o, oldVal?.[0], i),
+        //             options: isFunc ? coverObjOption2Arr<Option[]>(config({ item: o, index: i, query: props.query })) : arr as Option[],
+        //         }));
+        //     },
+        //     { immediate: true },
+        // );
+        // /**
+        //  * 获取唯一 id, 如果与旧引用相同, 则复用唯一 id(配合 finalConfig - watch 版本使用)
+        //  * (为动态新增的表单项做的优化, 不然可以用下方的计算属性(finalConfig))
+        //  */
+        // function getId(val: Record<string, any>, oldVal: Record<string, any>[] | undefined, idx: number) {
+        //     return oldVal?.[idx] === val ? finalConfig.value[idx].uniqueValue : ++globalId;
+        // }
+        /** 由于计算属性不似 watch 有上条数据, 因为手动记录 */
+        let configSnapshot = {
+            /** 记录每行配置项的唯一值集合 */
+            configUniqueValue: [] as any[],
+            /** 记录每行数据的值集合 */
+            checkedValue: [] as any[],
+        };
+        /** 计算属性版本的 config 配置项(防止生成的配置项中用了响应式变量, 不在计算属性中生成无法捕捉到) */
+        const finalConfig = computed(() => {
+            const { config } = props;
+            if (!config) return [];
+            const value = checked.value;
+            if (!value?.length) return [];
+            const isFunc = typeof config === 'function';
+            const arr = !isFunc && coverObjOption2Arr<Option[]>(config);
+            const { uniqueKey } = props;
+            const result = value.map((o, i) => ({ uniqueValue: uniqueKey ? o[uniqueKey] : getId(o, i), options: isFunc ? coverObjOption2Arr<Option[]>(config({ item: o, index: i, query: props.query })) : arr as Option[] }));
+            configSnapshot.configUniqueValue = result.map((r) => r.uniqueValue);
+            configSnapshot.checkedValue = [...value];
+            return result;
+        });
         /**
-         * 获取唯一 id, 如果与旧引用相同, 则复用唯一 id
+         * 获取唯一 id, 如果与旧引用相同, 则复用唯一 id(配合 finalConfig - computed 版本使用)
          * (为动态新增的表单项做的优化, 不然可以用下方的计算属性(finalConfig))
          */
-        function getId(val: Record<string, any>, oldVal: Record<string, any>[][], idx: number) {
-            return oldVal?.[0] && oldVal[0][idx] === val ? finalConfig.value[idx].uniqueValue : ++globalId;
+        function getId(val: Record<string, any>, idx: number) {
+            return configSnapshot.checkedValue[idx] === val ? configSnapshot.configUniqueValue[idx] : ++globalId;
         }
-        // const finalConfig = computed(() => {
-        //     const { config } = props;
-        //     if (!config) return [];
-        //     const { uniqueKey } = props;
-        //     const value = checked.value;
-        //     if (!value?.length) return [];
-        //     const isFunc = typeof config === 'function';
-        //     const arr = coverObjOption2Arr<Option[]>(config);
-        //     return value.map((o, i) => ({ uniqueValue: uniqueKey ? o[uniqueKey] : ++globalId, options: isFunc ? coverObjOption2Arr<Option[]>(config({ item: o, index: i, query: props.query })) : arr }));
-        // });
         /** 将对象形式的配置项转为数组 */
         function coverObjOption2Arr<T>(opt: any): T {
             return (isPlainObject(opt) ? Object.entries(opt).map(([key, value]) => ({ ...value, field: key })) : opt) as unknown as T;

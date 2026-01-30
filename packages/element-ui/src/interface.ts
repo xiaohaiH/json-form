@@ -121,7 +121,7 @@ export interface DynamicGroupProps<
 > extends Omit<PureDynamicGroupProps<T, Query, Option, OptionQuery>, BuiltInField | 'config'>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'dynamic-group';
     /** 渲染的子条件(重写该属性以补充声明) */
-    config?: MaybeFunction<[{ item: Record<string, any>; query: Query; checked: any; index: number }], JSONFormOption<T, Query, Option, OptionQuery>[] | Record<keyof Query, JSONFormOption<T, Query, Option, OptionQuery>>>;
+    config?: MaybeFunction<[{ item: Record<string, any>; query: Query; index: number }], JSONFormOption<T, Query, Option, OptionQuery>[] | Record<keyof Query, JSONFormOption<T, Query, Option, OptionQuery>>>;
 }
 export interface GroupProps<
     T,
@@ -131,7 +131,7 @@ export interface GroupProps<
 > extends Omit<PureGroupProps<T, Query, Option, OptionQuery>, BuiltInField | 'config'>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'group';
     /** 渲染的子条件(重写该属性以补充声明) */
-    config?: MaybeFunction<[{ query: Query; checked: any }], JSONFormOption<T, Query, Option, OptionQuery>[] | Record<keyof Query, JSONFormOption<T, Query, Option, OptionQuery>>>;
+    config?: MaybeFunction<[{ query: Query }], JSONFormOption<T, Query, Option, OptionQuery>[] | Record<keyof Query, JSONFormOption<T, Query, Option, OptionQuery>>>;
 }
 export interface InputNumberProps<
     T,
