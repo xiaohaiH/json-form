@@ -21,8 +21,8 @@
 </template>
 
 <script lang="tsx">
-import type { PlainProps, ProvideValue } from '@xiaohaih/json-form-core';
-import { defineCommonMethod, get, getNode, hyphenate, isPlainObject, provideKey, set, usePlain } from '@xiaohaih/json-form-core';
+import type { PlainProps } from '@xiaohaih/json-form-core';
+import { defineCommonMethod, get, getNode, getProvideValue, hyphenate, isPlainObject, set, usePlain } from '@xiaohaih/json-form-core';
 import type { ExtractPublicPropTypes, SlotsType } from 'vue';
 import { computed, defineComponent, inject, markRaw, ref, watch } from 'vue';
 import { pick } from '../../src/utils';
@@ -107,7 +107,7 @@ export default defineComponent({
         }
 
         /** 容器注入值 */
-        const wrapper = inject<ProvideValue>(provideKey);
+        const wrapper = getProvideValue();
         const option = defineCommonMethod({
             reset(this: void, query?: Record<string, any>) {
                 set(query || props.query, props.field!, getDef());

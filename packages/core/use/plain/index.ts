@@ -14,7 +14,7 @@ import {
 import { get, isArray, isEmptyValue, isNotEmptyValue, noop } from '../../utils/index';
 import { useFlag, vueSet } from '../assist';
 import type { ProvideValue } from '../constant';
-import { defineCommonMethod, provideKey } from '../constant';
+import { defineCommonMethod, getProvideValue } from '../constant';
 import type { HookOption, plainProps, PlainProps } from './types';
 
 /** 外部需传递的 props */
@@ -88,7 +88,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
 
     const unwatchs: (() => void)[] = [];
     /** 容器注入值 */
-    const wrapper = inject<ProvideValue>(provideKey);
+    const wrapper = getProvideValue();
     /** 覆盖 props 的值 */
     const coverProps = ref({ } as Record<'initialValue' | 'defaultValue', any>);
     watch(() => unref(props).initialValue, (val) => coverProps.value.initialValue = val, { immediate: true });

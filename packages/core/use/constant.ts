@@ -1,5 +1,5 @@
-import { version } from 'vue-demi';
 import type { Ref } from 'vue-demi';
+import { inject, version } from 'vue-demi';
 
 /** 判断是否是 2.7.* 版本, 监听生命周期需对该版本做处理 */
 export const IS_COMPOSITION_VERSION = version.slice(0, 3) === '2.7';
@@ -8,7 +8,7 @@ export const IS_COMPOSITION_VERSION = version.slice(0, 3) === '2.7';
 export const provideKey = 'json-form-wrapper';
 
 /** 容器注入值的类型 */
-export interface ProvideValue {
+export interface ProvideValue<Query extends Record<string, any> = Record<string, any>, Options extends Record<string, any> = Record<string, any>> {
     /** 表单是否只读 */
     readonly?: Ref<boolean | undefined>;
     /** 表单是否禁用 */
@@ -32,8 +32,14 @@ export interface ProvideValue {
      * 提供给组件内部的直接触发到外部的搜索事件
      */
     search: () => Promise<string | void> | string | void;
+    /** 重置表单 */
+    reset: (target?: Record<string, any>) => void;
     /** 所有条件的 options 数据 */
-    options: Record<string, any[]>;
+    options: Options;
+}
+/** 获取容器注入的值 */
+export function getProvideValue<Query extends Record<string, any> = Record<string, any>, Options extends Record<string, any> = Record<string, any>>(): ProvideValue<Query, Options> | undefined {
+    return inject(provideKey);
 }
 export function defineProvideValue<T extends ProvideValue>(option: T) {
     return option;
