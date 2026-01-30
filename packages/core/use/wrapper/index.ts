@@ -48,6 +48,7 @@ export function useWrapper(props: WrapperProps, config?: Config) {
         readonly: toRef(props, 'readonly', false),
         disabled: toRef(props, 'disabled', false),
         realtime: toRef(props, 'realtime', false),
+        reset,
         register(compOption) {
             compOption.field && allFields.add(compOption.field);
             child.push(compOption);

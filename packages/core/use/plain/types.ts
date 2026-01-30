@@ -116,9 +116,9 @@ export interface TriggerOption<T, Query extends Record<string, any>, OptionQuery
      */
     options: OptionQuery;
     /** 仅更改默认值 */
-    changeDefaultValue: (value: T) => this;
+    changeDefaultValue: (value: any) => this;
     /** 仅更改初始值 */
-    changeInitialValue: (value: T) => this;
+    changeInitialValue: (value: any) => this;
     /**
      * 仅改变内部的值, 不触发搜索事件
      * @param {*} value 需改变的值

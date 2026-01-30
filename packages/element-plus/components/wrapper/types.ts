@@ -26,32 +26,24 @@ const elFormProps = ElForm.props as Obj2Props<ComponentProps<typeof ElForm>>;
  */
 const elFormEmits = emits2obj(ElForm.emits);
 
-/** 由于 formPropsGeneric 需要重载, 所以需要一个辅助函数 */
-function formAssist() {
+/** 表单属性生成函数 */
+export function formPropsGeneric<T extends Record<string, any> = Record<string, any>, O extends Record<keyof T, any> = Record<keyof T, any>>() {
     type _Prop = typeof elFormProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elFormEmits>]>> & {
         class: { type: PropType<string | Record<string, any> | any[]> };
         style: { type: PropType<string | Record<string, any> | any[]> };
     };
+
     return {
         ...{} as Omit<_Prop, 'model'>,
         ...coreWrapperProps,
         /**
-         * @deprecated 请改用 config 属性
+         * @deprecated 兼容旧版, 请改用 config 属性
          */
         datum: { type: [Object, Array, Function] as PropType<any> },
+        /** 数据源 - 表单项配置对象(由于泛型会导致不兼容, 因此只要符合基本格式即可) */
+        config: { type: [Object, Array, Function] as PropType<any[] | ((...args: any[]) => any) | Record<string, any>> },
         // /** 是否启用排序 */
         // sortable: { type: Boolean as PropType<boolean> },
-    } as const;
-}
-
-export type ConfigType<T extends Record<string, any> = Record<string, any>> = T | T[] | (() => T | T[]);
-
-/** 表单属性生成函数 */
-export function formPropsGeneric<T extends Record<string, any> = Record<string, any>, O extends Record<keyof T, any> = Record<keyof T, any>>() {
-    return {
-        ...formAssist(),
-        /** 数据源 - 表单项配置对象 */
-        config: { type: [Object, Array, Function] as PropType<ConfigType<typeof defineOption<T, O>>> },
     } as const;
 }
 /** 表单组件内部使用的属性定义 */
