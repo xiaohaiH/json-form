@@ -11,6 +11,16 @@ export function pick<T extends object, TKeys extends keyof T>(obj: T, keys: TKey
     }, {} as Pick<T, TKeys>);
 }
 
+/**
+ * 数组扁平化
+ */
+export function flat<T>(lists: readonly T[][]): T[] {
+    return lists.reduce((acc, list) => {
+        acc.push(...list);
+        return acc;
+    }, []);
+}
+
 // /**
 //  * 对树节点做过滤, 优先过滤子级, 过滤后子级还有剩余时, 自身不再做过滤处理
 //  * @param {Array} data 数据源

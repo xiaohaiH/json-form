@@ -25,7 +25,7 @@ export function dynamicGroupPropsGeneric<T, Query extends Record<string, any>, O
         /** 传递给每行表单项 DOM 节点的属性 */
         itemProps: { type: Object as PropType<Partial<Record<'class' | 'style', string | Record<string, any> | any[]>>> },
         /** 传递给组件的插槽 - 重写声明 */
-        slots: { type: Object as PropType<Omit<DynamicGroupSlots<T, Query, Option, OptionQuery>, 'default'>>, default: () => ({}) },
+        slots: { type: Object as PropType<Omit<DynamicGroupSlots<Query, OptionQuery>, 'default'>>, default: () => ({}) },
         /** 传递给动态渲染组件的插槽 */
         itemSlots: { type: Object as PropType<{
             /** 在动态表单项前渲染 */
@@ -57,5 +57,5 @@ export const dynamicGroupEmitsPrivate = dynamicGroupEmitsGeneric();
 export const dynamicGroupEmits = dynamicGroupEmitsPrivate;
 export type DynamicGroupEmits<T> = ReturnType<typeof dynamicGroupEmitsGeneric<T>>;
 
-export interface DynamicGroupSlots<T = any, Query extends Record<string, any> = any, Option = any, OptionQuery extends Record<string, any> = any> extends GroupSlots<T, Query, Option, OptionQuery> {
+export interface DynamicGroupSlots<Query extends Record<string, any> = any,  OptionQuery extends Record<string, any> = any> extends GroupSlots<Query, OptionQuery> {
 }

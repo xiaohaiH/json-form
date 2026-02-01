@@ -5,7 +5,7 @@ import { ElTree, ElTreeSelect } from 'element-plus';
 // import { SelectProps as elSelectProps } from 'element-plus/es/components/select/src/select';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 // 主动提取 props, 不从内部导入, 防止 2.9.5版本与高版本导出名称不一致
@@ -18,40 +18,27 @@ export function treeSelectPropsGeneric<T, Query extends Record<string, any>, Opt
     return {
         ...{} as _Prop,
         ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<T, TreeSelectSlotOption<T, Query, Option, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, TreeSelectSlotOption<Query, OptionQuery>, Query, Option>,
         ...formItemProps as FormItemProps<Query, Option>,
-        /** 组件静态属性(与 formItem 或内置的属性冲突时, 可通过该属性传递) */
-        staticProps: { type: Object as PropType<StaticProps<_Prop>> },
-        /** 组件动态属性 */
-        dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         /** 是否可过滤 */
         filterable: { type: Boolean as PropType<boolean>, default: true },
         /** 是否可清除 */
         clearable: { type: Boolean as PropType<boolean>, default: true },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            header: ComponentType<TreeSelectSlotOption<T, Query, Option, OptionQuery>>;
-            footer: ComponentType<TreeSelectSlotOption<T, Query, Option, OptionQuery>>;
-            prefix: ComponentType<TreeSelectSlotOption<T, Query, Option, OptionQuery>>;
-            empty: ComponentType<TreeSelectSlotOption<T, Query, Option, OptionQuery>>;
-            tag: ComponentType<TreeSelectSlotOption<T, Query, Option, OptionQuery>>;
-            loading: ComponentType<TreeSelectSlotOption<T, Query, Option, OptionQuery>>;
-            label: ComponentType<TreeSelectSlotOption<T, Query, Option, OptionQuery>>;
+            header: ComponentType<TreeSelectSlotOption<Query, OptionQuery>>;
+            footer: ComponentType<TreeSelectSlotOption<Query, OptionQuery>>;
+            prefix: ComponentType<TreeSelectSlotOption<Query, OptionQuery>>;
+            empty: ComponentType<TreeSelectSlotOption<Query, OptionQuery>>;
+            tag: ComponentType<TreeSelectSlotOption<Query, OptionQuery>>;
+            loading: ComponentType<TreeSelectSlotOption<Query, OptionQuery>>;
+            label: ComponentType<TreeSelectSlotOption<Query, OptionQuery>>;
         }>> },
     } as const;
 }
-export interface TreeSelectSlotOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
-    getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
-    getItemProps: () => Partial<ExtractPublicPropTypes<typeof elSelectProps>>;
-    getProps: () => TreeSelectProps<T, Query, Option, OptionQuery>;
-    extraOptions: {
-        modelValue: T;
-        options: Option[];
-        filterValue: string;
-        filterMethod: ((val: string) => void) | undefined;
-        onChange: (value: T) => void;
-    };
-    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
+export interface TreeSelectSlotOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends CommonSlotsProps<Query, OptionQuery> {
+    /** 主动触发远程搜索 */
+    remoteMethod: (val: string) => void;
 }
 /** 组件传参 - 私有 */
 export const treeSelectPropsPrivate = treeSelectPropsGeneric();

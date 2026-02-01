@@ -3,7 +3,7 @@ import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { ElSelect } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 const elSelectProps = ElSelect.props as Obj2Props<ComponentProps<typeof ElSelect>>;
@@ -16,12 +16,8 @@ export function selectPropsGeneric<T, Query extends Record<string, any>, Option,
     return {
         ...{} as _Prop,
         ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<T, SelectSlotOption<T, Query, Option, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, SelectSlotOption<Query, OptionQuery>, Query, Option>,
         ...formItemProps as FormItemProps<Query, Option>,
-        /** 组件静态属性(与 formItem 或内置的属性冲突时, 可通过该属性传递) */
-        staticProps: { type: Object as PropType<StaticProps<_Prop>> },
-        /** 组件动态属性 */
-        dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         /** 是否将选项进行分组 */
         group: { type: Boolean as PropType<boolean>, default: undefined },
         /** 存在分组时的子级键 @default children */
@@ -42,31 +38,21 @@ export function selectPropsGeneric<T, Query extends Record<string, any>, Option,
         disabledKey: { type: String as PropType<string>, default: 'disabled' },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            header: ComponentType<SelectSlotOption<T, Query, Option, OptionQuery>>;
-            footer: ComponentType<SelectSlotOption<T, Query, Option, OptionQuery>>;
-            prefix: ComponentType<SelectSlotOption<T, Query, Option, OptionQuery>>;
-            empty: ComponentType<SelectSlotOption<T, Query, Option, OptionQuery>>;
-            tag: ComponentType<SelectSlotOption<T, Query, Option, OptionQuery>>;
-            loading: ComponentType<SelectSlotOption<T, Query, Option, OptionQuery>>;
-            label: ComponentType<SelectSlotOption<T, Query, Option, OptionQuery>>;
+            header: ComponentType<SelectSlotOption<Query, OptionQuery>>;
+            footer: ComponentType<SelectSlotOption<Query, OptionQuery>>;
+            prefix: ComponentType<SelectSlotOption<Query, OptionQuery>>;
+            empty: ComponentType<SelectSlotOption<Query, OptionQuery>>;
+            tag: ComponentType<SelectSlotOption<Query, OptionQuery>>;
+            loading: ComponentType<SelectSlotOption<Query, OptionQuery>>;
+            label: ComponentType<SelectSlotOption<Query, OptionQuery>>;
             option: ComponentType<{ item: Option; disabled?: boolean; parent?: Option }>;
         }>> },
     } as const;
 }
-export interface SelectSlotOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
-    getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
-    getItemProps: () => Partial<ExtractPublicPropTypes<typeof elSelectProps>>;
-    getProps: () => SelectProps<T, Query, Option, OptionQuery>;
-    extraOptions: {
-        modelValue: T;
-        options: Option[];
-        filterValue: string;
-        filterMethod: ((val: string) => void) | undefined;
-        /** 主动触发远程搜索 */
-        remoteMethod: (val: string) => void;
-        onChange: (value: T) => void;
-    };
-    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
+export interface SelectSlotOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends CommonSlotsProps<Query, OptionQuery> {
+    filterValue: string;
+    /** 主动触发远程搜索 */
+    remoteMethod: (val: string) => void;
 }
 /** 组件传参 - 私有 */
 export const selectPropsPrivate = selectPropsGeneric();

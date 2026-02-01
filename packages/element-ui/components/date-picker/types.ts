@@ -9,7 +9,7 @@ import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { DatePicker as ElDatePicker } from 'element-ui';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
-import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, ElObj2Props, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /**
@@ -31,12 +31,6 @@ const elDatePickerEmits = {
 /**
  * 日期选择器属性生成函数 - 泛型版本
  * 生成日期选择器组件所需的所有属性定义
- *
- * @template T 日期选择器数据类型
- * @template Query 查询参数类型
- * @template Option 选项类型
- * @template OptionQuery 选项查询类型
- * @returns 日期选择器属性定义对象
  */
 export function datePickerPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elDatePickerProps;
@@ -44,24 +38,20 @@ export function datePickerPropsGeneric<T, Query extends Record<string, any>, Opt
     return {
         ...{} as _Prop,
         ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<T, DatePickerSlotOption<T, Query, Option, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, DatePickerSlotOption<Query, OptionQuery>, Query, Option>,
         ...formItemProps as FormItemProps<Query, Option>,
         /** 监听触发值改变的事件 @default input */
         changeName: { type: String, default: 'input' },
-        /** 组件静态属性(与 formItem 或内置的属性冲突时, 可通过该属性传递) */
-        staticProps: { type: Object as PropType<StaticProps<_Prop>> },
-        /** 组件动态属性 */
-        dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         /** 日期格式化的类型 */
         valueFormat: { type: String as PropType<string>, default: 'yyyy-MM-dd' },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            // default: ComponentType<DatePickerSlotOption<T, Query, Option, OptionQuery>>;
-            // rangeSeparator: ComponentType<DatePickerSlotOption<T, Query, Option, OptionQuery>>;
-            // prevMonth: ComponentType<DatePickerSlotOption<T, Query, Option, OptionQuery>>;
-            // nextMonth: ComponentType<DatePickerSlotOption<T, Query, Option, OptionQuery>>;
-            // prevYear: ComponentType<DatePickerSlotOption<T, Query, Option, OptionQuery>>;
-            // nextYear: ComponentType<DatePickerSlotOption<T, Query, Option, OptionQuery>>;
+            // default: ComponentType<DatePickerSlotOption<Query, OptionQuery>>;
+            // rangeSeparator: ComponentType<DatePickerSlotOption<Query, OptionQuery>>;
+            // prevMonth: ComponentType<DatePickerSlotOption<Query, OptionQuery>>;
+            // nextMonth: ComponentType<DatePickerSlotOption<Query, OptionQuery>>;
+            // prevYear: ComponentType<DatePickerSlotOption<Query, OptionQuery>>;
+            // nextYear: ComponentType<DatePickerSlotOption<Query, OptionQuery>>;
         }>> },
     } as const;
 }
@@ -70,24 +60,7 @@ export function datePickerPropsGeneric<T, Query extends Record<string, any>, Opt
  * 日期选择器插槽配置项接口
  * 定义传递给插槽的属性和方法
  */
-export interface DatePickerSlotOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
-    /** 获取表单项属性的方法 */
-    getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
-    /** 获取日期选择器组件属性的方法 */
-    getItemProps: () => Partial<ExtractPropTypes<typeof elDatePickerProps>>;
-    /** 获取所有属性的方法 */
-    getProps: () => DatePickerProps<T, Query, Option, OptionQuery>;
-    /** 额外选项 */
-    extraOptions: {
-        /** 当前绑定的值 */
-        value: T;
-        /** 可用选项列表 */
-        options: Option[];
-        /** 值变更处理函数 */
-        onChange: (value: T) => void;
-    };
-    /** 组件扁平化数据对象 */
-    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
+export interface DatePickerSlotOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends CommonSlotsProps<Query, OptionQuery> {
 }
 
 /** 日期选择器组件内部使用的属性定义 */

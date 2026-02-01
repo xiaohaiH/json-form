@@ -22,7 +22,7 @@ import { hyphenate, noop, usePlain } from '@xiaohaih/json-form-core';
 import { FormItem as ElFormItem } from 'element-ui';
 import { computed, defineComponent, markRaw, reactive, ref, watch } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useFormItemProps } from '../use';
 import { customRenderEmitsPrivate as emits, customRenderPropsPrivate as props } from './types';
 
 /**
@@ -41,43 +41,26 @@ export default defineComponent({
     props,
     emits,
     setup(props, ctx) {
-        // 计算表单项静态属性
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-
-        // 计算表单项实际属性（合并静态和动态属性）
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
-
-        // 使用核心平台提供的状态管理
         const plain = usePlain(props);
-
-        // 准备传递给自定义渲染函数的参数
-        const slotProps = {
-            getFormItemProps: () => formItemActualProps.value,
-            getProps: () => props,
+        const { formItemActualProps } = useFormItemProps(props, ctx);
+        const slotProps = computed(() => ({
+            formItemProps: formItemActualProps.value,
+            props,
             plain,
-        };
-
-        // 主动监听 checked 变量, 在发生改变后自动触发搜索事件(如果是实时搜索时), 便于外部开发
-        // 不需要监听深层, 因为深层是引用类型
-        watch(plain.checked, plain.change);
-        // 调用自定义渲染函数获取渲染内容
-        const customRender = getNode(props.render, slotProps);
+        }));
+        const customRender = computed(() => {
+            return getNode(props.render, slotProps);
+        });
 
         return {
             hyphenate,
             getNode,
             ...plain,
-            trigger: noop,
-            formItemStaticProps,
             formItemActualProps,
             slotProps,
             customRender,
+            /** @deprecated 兼容低版本暴露给外部的函数 */
+            trigger: noop,
         };
     },
 });

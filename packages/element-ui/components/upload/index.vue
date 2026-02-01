@@ -29,6 +29,7 @@
                 :on-remove="handleRemove"
                 :on-error="handleError"
                 :file-list="checked"
+                :auto-upload="autoUpload"
                 v-bind="contentActualProps2"
                 :disabled="globalReadonly || globalDisabled || contentActualProps2.disabled"
                 v-on="$listeners"
@@ -76,7 +77,7 @@ import { Button as ElButton, FormItem as ElFormItem, Upload as ElUpload } from '
 import type { ElUploadInternalFileDetail as UploadFile, ElUploadInternalRawFile as UploadRawFile, HttpRequestOptions as UploadRequestOptions } from 'element-ui/types/upload.d';
 import { computed, defineComponent, onMounted, ref } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useCommonSetup } from '../use';
 import type { UploadSlots } from './types';
 import { uploadEmitsPrivate as emits, genFileId, uploadPropsPrivate as props } from './types';
 
@@ -105,39 +106,16 @@ export default defineComponent({
         // 上传组件实例引用，用于调用上传组件内部方法
         const uploadRef = ref<InstanceType<typeof ElUpload>>();
 
-        // 计算表单项静态属性
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-
-        // 计算表单项实际属性（合并静态和动态属性）
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
-
-        // 计算内容静态属性
-        const contentStaticProps = computed(() => ({ autoUpload: props.autoUpload, ...ctx.attrs, ...props.staticProps }));
-
-        // 计算内容实际属性（合并静态和动态属性）
-        const contentActualProps = computed(() => {
-            const { query, dynamicProps } = props;
-            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
-        });
-
+        const plain = usePlain(props);
+        const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
         // 实际传给上传组件的属性，排除已经在组件中单独处理的事件属性
         const contentActualProps2 = computed(() => {
             const { onExceed, onRemove, onError, ...args } = contentActualProps.value;
             return args;
         });
 
-        // 使用核心库的usePlain钩子处理组件状态和逻辑
-        const plain = usePlain(props);
-
         // 计算最终的http请求处理函数，如果有自定义的httpRequest则使用customHttpRequest包装
-        const finalHttpRequest = computed(() => contentActualProps.value.httpRequest && customHttpRequest);
-
+        const finalHttpRequest = computed(() => props.httpRequest && customHttpRequest);
         /**
          * 自定义HTTP请求处理函数
          * 防止Promise结果和回调函数都执行时，结果会执行两次
@@ -164,9 +142,8 @@ export default defineComponent({
             }
 
             // 调用用户自定义的httpRequest处理函数
-            const r = contentActualProps.value.httpRequest!(_option);
+            const r = props.httpRequest!(_option);
             // 如果返回Promise，则处理异步结果
-            // @ts-expect-error element-ui内部将其置为void, 实际不是
             if (r instanceof Promise) r.then(onSuccess).catch(onError);
             else return r;
         }
@@ -196,8 +173,7 @@ export default defineComponent({
         function uploadPrefix(files: FileList) {
             if (files.length === 0) return [];
             const _checked = (plain.checked.value as UploadFile[]) || [];
-            // @ts-expect-error staticProps 中未补充 fileMaxSize 声明
-            const fileMaxSize = contentActualProps.value.fileMaxSize || props.fileMaxSize;
+            const fileMaxSize = props.fileMaxSize;
             // 过滤不符合上传条件的文件
             const filterFiles = Array.from(files).filter((file) => {
                 // 超过文件大小限制的不上传
@@ -230,14 +206,11 @@ export default defineComponent({
             const _checked = (plain.checked.value as UploadFile[]) || [];
             const total = files.length + _checked.length;
             let discardFiles: File[] = [];
-            // @ts-expect-error staticProps 中未补充 override 声明
-            const override = contentActualProps.value.override === undefined ? props.override : contentActualProps.value.override;
-
             if (_props.limit && total > _props.limit) {
                 // 超过数量时
                 // 如果开启覆盖, 则从现有文件中删除超过的数量
                 // 否则从待上传文件中删除超过的数量
-                if (override) {
+                if (props.override) {
                     for (let i = total - _props.limit; i > 0; i--) {
                         // @ts-expect-error 内部未补充 uploadFiles 声明
                         if (uploadRef.value.uploadFiles.length) discardFiles.push(uploadRef.value.uploadFiles.splice(0, 1)[0]);
@@ -250,15 +223,15 @@ export default defineComponent({
             }
 
             // 显示超出限制的提示
-            discardFiles.length && props.onExceedToast(discardFiles, override);
+            discardFiles.length && props.onExceedToast(discardFiles, props.override);
             discardFiles = [];
 
             // 处理剩余文件的上传
             files.forEach((file) => {
                 (file as any).uid = genFileId();
                 // @ts-expect-error 内部未对该方法补充声明
-                uploadRef.value.handleStart(file);
-                _props.autoUpload && uploadRef.value!.submit();
+                uploadRef.value!.handleStart(file);
+                props.autoUpload && uploadRef.value!.submit();
             });
         }
 
@@ -285,37 +258,18 @@ export default defineComponent({
             contentActualProps.value.onError?.(err, file, files);
         }
 
-        // 计算插槽属性，用于传递给插槽组件
-        const slotProps = computed(() => ({
-            uploadRef: uploadRef.value,
-            getFormItemProps: () => formItemActualProps.value,
-            getItemProps: () => contentActualProps.value,
-            getProps: () => props,
-            extraOptions: {
-                value: plain.checked.value,
-                options: plain.finalOption.value,
-                onChange: plain.change,
-                httpRequest: finalHttpRequest,
-                onExceed: handleExceed,
-                onRemove: handleRemove,
-                onError: handleError,
-            },
-            plain,
-        }));
-
         return {
             uploadRef,
             hyphenate,
             getNode,
             ...plain,
             formItemActualProps,
-            contentActualProps,
             contentActualProps2,
+            slotProps,
             finalHttpRequest,
             handleExceed,
             handleRemove,
             handleError,
-            slotProps,
         };
     },
 });

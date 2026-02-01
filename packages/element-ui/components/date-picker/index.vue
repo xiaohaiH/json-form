@@ -44,7 +44,7 @@ import { hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { DatePicker as ElDatePicker, FormItem as ElFormItem } from 'element-ui';
 import { computed, defineComponent, reactive } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useCommonSetup } from '../use';
 import type { DatePickerSlots } from './types';
 import { datePickerEmitsPrivate as emits, datePickerPropsPrivate as props } from './types';
 
@@ -77,57 +77,8 @@ export default defineComponent({
     emits,
     // slots: Object as SlotsType<DatePickerSlots>,
     setup(props, ctx) {
-        /**
-         * 表单项静态属性
-         * 合并从props中提取的表单项属性和formItemProps属性
-         */
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-
-        /**
-         * 表单项实际属性
-         * 合并静态属性和动态属性
-         */
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
-
-        /**
-         * 日期选择器静态属性
-         * 合并从attrs中提取的属性和staticProps属性
-         */
-        const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-
-        /**
-         * 日期选择器实际属性
-         * 合并静态属性和动态属性
-         */
-        const contentActualProps = computed(() => {
-            const { query, dynamicProps } = props;
-            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
-        });
-
-        // 使用核心库的usePlain钩子初始化数据和方法
         const plain = usePlain(props);
-
-        /**
-         * 插槽属性
-         * 提供给插槽内容的数据和方法
-         */
-        const slotProps = computed(() => ({
-            getFormItemProps: () => formItemActualProps.value,
-            getItemProps: () => contentActualProps.value,
-            getProps: () => props,
-            extraOptions: {
-                value: plain.checked.value,
-                options: plain.finalOption.value,
-                onChange: plain.change,
-            },
-            plain,
-        }));
+        const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
 
         return {
             hyphenate,

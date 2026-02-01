@@ -4,7 +4,7 @@ import { ElSelectV2 } from 'element-plus';
 import type ElSelectV2Type from 'element-plus/es/components/select-v2/src/select.vue';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 const elSelectV2Props = ElSelectV2.props as Obj2Props<ComponentProps<typeof ElSelectV2Type>>;
@@ -17,12 +17,8 @@ export function selectV2PropsGeneric<T, Query extends Record<string, any>, Optio
     return {
         ...{} as _Prop,
         ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<T, SelectV2SlotOption<T, Query, Option, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, SelectV2SlotOption<Query, OptionQuery>, Query, Option>,
         ...formItemProps as FormItemProps<Query, Option>,
-        /** 组件静态属性(与 formItem 或内置的属性冲突时, 可通过该属性传递) */
-        staticProps: { type: Object as PropType<StaticProps<_Prop>> },
-        /** 组件动态属性 */
-        dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         /** 是否可过滤 */
         filterable: { type: Boolean as PropType<boolean>, default: true },
         /** 是否可清除 */
@@ -31,31 +27,21 @@ export function selectV2PropsGeneric<T, Query extends Record<string, any>, Optio
         filterMethod: { type: Function as unknown as PropType<(val: string, option: T) => boolean> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ComponentType<SelectV2SlotOption<T, Query, Option, OptionQuery>>;
-            header: ComponentType<SelectV2SlotOption<T, Query, Option, OptionQuery>>;
-            footer: ComponentType<SelectV2SlotOption<T, Query, Option, OptionQuery>>;
-            prefix: ComponentType<SelectV2SlotOption<T, Query, Option, OptionQuery>>;
-            empty: ComponentType<SelectV2SlotOption<T, Query, Option, OptionQuery>>;
-            tag: ComponentType<SelectV2SlotOption<T, Query, Option, OptionQuery>>;
-            loading: ComponentType<SelectV2SlotOption<T, Query, Option, OptionQuery>>;
-            label: ComponentType<SelectV2SlotOption<T, Query, Option, OptionQuery>>;
+            default: ComponentType<SelectV2SlotOption<Query, OptionQuery>>;
+            header: ComponentType<SelectV2SlotOption<Query, OptionQuery>>;
+            footer: ComponentType<SelectV2SlotOption<Query, OptionQuery>>;
+            prefix: ComponentType<SelectV2SlotOption<Query, OptionQuery>>;
+            empty: ComponentType<SelectV2SlotOption<Query, OptionQuery>>;
+            tag: ComponentType<SelectV2SlotOption<Query, OptionQuery>>;
+            loading: ComponentType<SelectV2SlotOption<Query, OptionQuery>>;
+            label: ComponentType<SelectV2SlotOption<Query, OptionQuery>>;
         }>> },
     } as const;
 }
-export interface SelectV2SlotOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
-    getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
-    getItemProps: () => Partial<ExtractPublicPropTypes<typeof elSelectV2Props>>;
-    getProps: () => SelectV2Props<T, Query, Option, OptionQuery>;
-    extraOptions: {
-        modelValue: T;
-        options: Option[];
-        filterValue: string;
-        filterMethod: ((val: string) => void) | undefined;
-        /** 主动触发远程搜索 */
-        remoteMethod: (val: string) => void;
-        onChange: (value: T) => void;
-    };
-    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
+export interface SelectV2SlotOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends CommonSlotsProps<Query, OptionQuery> {
+    filterValue: string;
+    /** 主动触发远程搜索 */
+    remoteMethod: (val: string) => void;
 }
 /** 组件传参 - 私有 */
 export const selectV2PropsPrivate = selectV2PropsGeneric();

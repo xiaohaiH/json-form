@@ -1,4 +1,4 @@
-import type { Obj2Props } from '@xiaohaih/json-form-core';
+import type { Obj2Props, usePlain } from '@xiaohaih/json-form-core';
 import { Checkbox, FormItem as ElFormItem } from 'element-ui';
 import type { ElementUIComponent } from 'element-ui/types/component.d';
 import type { ComponentProps } from 'vue-component-type-helpers';
@@ -32,9 +32,24 @@ export interface SlotQuery {
  * 用于生成各组件的通用属性配置
  * @returns 通用属性对象
  */
-export function commonPropsGeneric<T, SlotProps, Query extends Record<string, any>, Option = Record<string, any>>() {
+export function commonPropsGeneric<ContentProps, SlotProps, Query extends Record<string, any>, Option = Record<string, any>>() {
     return {
-        /** 字段别名(优先级高于条件对象的 key) */
+        /**
+         * @deprecated 表单项动态属性 - 下个版本删除
+         * 可改用 defineOption 的函数形式获取 query
+         * @example
+         * ```
+         * defineOption(({ query }) => ([
+         *     { field: '警号', t: 'input', placeholder: !query.name ? '请输入警号' : '请先选择用户', ... }
+         * ]));
+         * ```
+         */
+        dynamicProps: { type: Function as PropType<(opt: Record<'query', any>) => Record<string, any>> },
+        /** 传递给表单元素的属性 - 在与 FormItem props 冲突时使用 */
+        contentProps: { type: Object as PropType<Partial<ExtractPropTypes<ContentProps> & Record<'class' | 'style', any>>> },
+        /** 传递给表单元素的事件 */
+        on: { type: Object as PropType<Record<string, any>> },
+        /** @deprecated 字段别名(优先级高于条件对象的 key) - 下个版本删除 */
         as: { type: String as PropType<string> },
         // /** 开启排序时, 排序下标 @default 0 */
         // conditionSortIndex: { type: Number as PropType<number> },
@@ -52,8 +67,7 @@ export function commonPropsGeneric<T, SlotProps, Query extends Record<string, an
 }
 /** 通用属性对象实例 */
 export const commonProps = commonPropsGeneric();
-/** 通用属性类型定义 */
-export type CommonProps<T, SlotProps, Query extends Record<string, any>, Option> = ReturnType<typeof commonPropsGeneric<T, SlotProps, Query, Option>>;
+export type CommonProps<ContentProps, SlotProps, Query extends Record<string, any>, Option> = ReturnType<typeof commonPropsGeneric<ContentProps, SlotProps, Query, Option>>;
 
 /** 提取Element UI的FormItem属性 */
 const elFormItemProps = (ElFormItem as any).props as ElObj2Props<ElFormItem>;
@@ -68,10 +82,6 @@ export function formItemPropsGeneric<Query extends Record<string, any>, Option>(
     return {
         ...itemProps,
         prop: { type: prop.type, validator: prop.validator },
-        /** 表单项静态渲染的字段 */
-        formItemProps: { type: Object as PropType<Partial<ExtractPropTypes<CustomFormItemProps>>> },
-        /** 表单项返回动态渲染的字段 */
-        formItemDynamicProps: { type: Function as PropType<(option: { query: Query }) => Partial<ExtractPropTypes<CustomFormItemProps>>> },
         // class: { type: [Object, Array, String] as PropType<string | Record<string, any> | any[]> },
         // style: { type: [Object, Array, String] as PropType<string | Record<string, any> | any[]> },
     } as const;
@@ -80,24 +90,8 @@ export function formItemPropsGeneric<Query extends Record<string, any>, Option>(
 export const formItemProps = formItemPropsGeneric();
 /** 表单项属性类型定义 */
 export type FormItemProps<Query extends Record<string, any>, Option> = ReturnType<typeof formItemPropsGeneric<Query, Option>>;
-/** 自定义表单项属性类型 */
-type CustomFormItemProps = typeof elFormItemProps & {
-    class: { type: PropType<string | Record<string, any> | any[]> };
-    style: { type: PropType<string | Record<string, any> | any[]> };
-};
-
-/**
- * 组件动态属性类型
- * 基于当前表单数据动态生成组件属性
- */
-export type DynamicProps<T extends Record<string, any>, Query extends Record<string, any>, Option = Record<string, any>> = (option: { query: Query }) => Partial<ExtractPropTypes<T>>;
-/**
- * 组件静态属性类型
- * 直接配置的固定组件属性
- */
-export type StaticProps<T extends Record<string, any>> = Partial<ExtractPropTypes<T> & Partial<Record<'class' | 'style', string | Record<string, any> | any[]>>>;
 /** 表单项属性键名数组，排除特定属性 */
-export const formItemPropKeys = Object.keys(formItemProps).filter((k) => k !== 'formItemProps' && k !== 'formItemDynamicProps');
+export const formItemPropKeys = Object.keys(formItemProps);
 
 /**
  * 通用插槽类型接口
@@ -112,6 +106,13 @@ export interface CommonSlots<T> {
     after?: ComponentType<T>;
     /** 在最后渲染 */
     postfix?: ComponentType<{}>;
+}
+
+export interface CommonSlotsProps<Query extends Record<string, any>, Options extends Record<string, any>> {
+    // formItemProps: Partial<ExtracedPropTypes<typeof formItemProps>>;
+    // contentProps: Record<string, any>;
+    props: Record<string, any>;
+    plain: ReturnType<typeof usePlain<any, Query, any, Options>>;
 }
 
 /**

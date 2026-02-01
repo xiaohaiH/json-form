@@ -47,7 +47,7 @@ import { hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { FormItem as ElFormItem, Radio as ElRadio, RadioButton as ElRadioButton, RadioGroup as ElRadioGroup } from 'element-ui';
 import { computed, defineComponent, ref } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useCommonSetup } from '../use';
 import type { RadioSlots } from './types';
 import { radioEmitsPrivate as emits, radioPropsPrivate as props } from './types';
 
@@ -70,49 +70,25 @@ export default defineComponent({
         const radioType = computed(() => (props.type === 'button' ? 'ElRadioButton' : 'ElRadio'));
         const eventName = computed(() => (props.cancelable ? 'click' : null));
 
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
-        const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-        const contentActualProps = computed(() => {
-            const { query, dynamicProps } = props;
-            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
-        });
         const plain = usePlain(props);
+        const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
         /** 单选框选中事件 - 处理可取消选中 */
         function customChange() {
             const val = plain.checked.value === contentActualProps.value.value ? '' : contentActualProps.value.value;
             plain.change(val);
             val === '' && (document.activeElement as HTMLInputElement)?.blur?.();
         }
-        const slotProps = computed(() => ({
-            getFormItemProps: () => formItemActualProps.value,
-            getItemProps: () => contentActualProps.value,
-            getProps: () => props,
-            extraOptions: {
-                value: plain.checked.value,
-                options: plain.finalOption.value,
-                onChange: plain.change,
-                radioType: radioType.value,
-            },
-            plain,
-        }));
 
         return {
             hyphenate,
             getNode,
             ...plain,
-            radioType,
-            eventName,
             formItemActualProps,
             contentActualProps,
-            customChange,
             slotProps,
+            radioType,
+            eventName,
+            customChange,
         };
     },
 });

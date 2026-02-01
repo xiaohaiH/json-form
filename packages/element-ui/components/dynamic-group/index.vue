@@ -12,7 +12,7 @@
                 <div :key="opt.uniqueValue" v-bind="itemProps">
                     <component :is="itemSlots.prepend" :query="query" :checked="checked" :index="idx" />
                     <template v-for="(item) of opt.options">
-                        <component :is="getComponent2(item.t)" v-if="item" :key="`${field}.${idx}.${item.field}`" v-bind="item" :unique-value="opt.uniqueValue" :field="`${field}.${idx}.${item.field}`" :query="query" :parent-query="checked[idx]" />
+                        <component :is="getComponent2(item.t)" v-if="item" :key="`${field}.${idx}.${item.field}`" v-bind="item" :unique-value="opt.uniqueValue" :field="`${field}.${idx}.${item.field}`" :query="query" :parent-query="checked[idx]" v-on="item.on" />
                     </template>
                     <component :is="itemSlots.append" :query="query" :checked="checked" :index="idx" />
                 </div>
@@ -31,7 +31,10 @@ import { getComponent, HGroup } from '../group/index';
 import type { DynamicGroupSlots } from './types';
 import { dynamicGroupEmitsPrivate as emits, dynamicGroupPropsPrivate as props } from './types';
 
-type Option = Omit<ExtractPropTypes<PlainProps<any, Record<string, any>, any>>, 'query'> & { t: string };
+type Option = Omit<ExtractPropTypes<PlainProps<any, Record<string, any>, any>>, 'query'> & {
+    t: string;
+    on?: Record<string, any>;
+};
 
 let globalId = 0;
 
@@ -133,7 +136,7 @@ export default defineComponent({
                     r!.length && (def = r);
                 }
                 if (def) {
-                    set(_query, props.field!, def);
+                    set(_query, props.field!, def, vueSet);
                     return true;
                 }
                 return false;

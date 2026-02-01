@@ -23,6 +23,7 @@
                 :disabled="globalDisabled || contentActualProps.disabled"
                 :value-key="valueKey"
                 :fetch-suggestions="finalFetchSuggestions"
+                v-on="rewriteOn"
                 @input="change"
                 @select="selectHandle"
                 @keydown.enter="enterHandle"
@@ -64,7 +65,7 @@ import type { ComponentExposed } from 'vue-component-type-helpers';
 // import type { SlotsType } from 'vue';
 import { computed, defineComponent, ref, watch } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useCommonSetup } from '../use';
 import type { AutocompleteSlots } from './types';
 import { autocompleteEmitsPrivate as emits, autocompletePropsPrivate as props } from './types';
 
@@ -84,20 +85,13 @@ export default defineComponent({
     setup(props, ctx) {
         const autocompleteRef = ref<ComponentExposed<typeof ElAutocomplete>>();
 
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
-        const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps, fetchSuggestions: props.fetchSuggestions }));
-        const contentActualProps = computed(() => {
-            const { query, dynamicProps } = props;
-            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
+        /** 重写 on 事件 */
+        const rewriteOn = computed(() => {
+            const { select, ...args } = ctx.listeners;
+            return args;
         });
         const plain = usePlain(props);
+        const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
 
         /** 重写数据源, 优先用传递的 */
         const finalFetchSuggestions = computed(() => {
@@ -117,33 +111,21 @@ export default defineComponent({
         /** 重写 select 事件 */
         function selectHandle(item: any) {
             ctx.emit('select', item, { props, plain });
-            props.onSelect?.(item, { props, plain });
         }
-        const slotProps = computed(() => ({
-            getFormItemProps: () => formItemActualProps.value,
-            getItemProps: () => contentActualProps.value,
-            getProps: () => props,
-            extraOptions: {
-                value: plain.checked.value,
-                options: plain.finalOption.value,
-                onChange: plain.change,
-                onEnter: enterHandle,
-            },
-            plain,
-        }));
 
         return {
             hyphenate,
             getNode,
             autocompleteRef,
+            rewriteOn,
             ...plain,
-            finalFetchSuggestions,
-            filterCallback,
             formItemActualProps,
             contentActualProps,
+            slotProps,
+            finalFetchSuggestions,
+            filterCallback,
             enterHandle,
             selectHandle,
-            slotProps,
         };
     },
 });

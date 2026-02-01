@@ -64,7 +64,7 @@ import { Checkbox as ElCheckbox, CheckboxButton as ElCheckboxButton, CheckboxGro
 import type { Ref } from 'vue-demi';
 import { computed, defineComponent, ref } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useCommonSetup } from '../use';
 import type { CheckboxGroupSlots } from './types';
 import { checkboxGroupEmitsPrivate as emits, checkboxGroupPropsPrivate as props } from './types';
 
@@ -91,54 +91,20 @@ export default defineComponent({
         // 根据type属性决定使用普通复选框还是按钮式复选框
         const checkboxType = computed(() => (props.type === 'button' ? 'ElCheckboxButton' : 'ElCheckbox'));
 
-        // 计算表单项静态属性
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-
-        // 计算表单项实际属性（合并静态和动态属性）
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
-
-        // 计算内容静态属性
-        const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-
-        // 计算内容实际属性（合并静态和动态属性）
-        const contentActualProps = computed(() => {
-            const { query, dynamicProps } = props;
-            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
-        });
-
         const plain = usePlain(props);
+        const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
         // 重写声明, 防止报错
         const finalOption = plain.finalOption as Ref<any[]>;
-
-        // 计算插槽属性
-        const slotProps = computed(() => ({
-            getFormItemProps: () => formItemActualProps.value,
-            getItemProps: () => contentActualProps.value,
-            getProps: () => props,
-            extraOptions: {
-                value: plain.checked.value,
-                options: plain.finalOption.value,
-                onChange: plain.change,
-                checkboxType: checkboxType.value,
-            },
-            plain,
-        }));
 
         return {
             hyphenate,
             getNode,
             checkboxType,
             ...plain,
-            finalOption,
             formItemActualProps,
             contentActualProps,
             slotProps,
+            finalOption,
         };
     },
 });

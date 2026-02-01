@@ -11,7 +11,7 @@ import { Message as ElMessage, Upload as ElUpload } from 'element-ui';
 import type { ElUploadInternalFileDetail as UploadFile, ElUploadInternalRawFile as UploadRawFile, HttpRequestOptions as UploadRequestOptions } from 'element-ui/types/upload.d';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
-import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, ElObj2Props, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /**
@@ -56,12 +56,8 @@ export function uploadPropsGeneric<T, Query extends Record<string, any>, Option,
     return {
         ...{} as _Prop,
         ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<T, UploadSlotOption<T, Query, Option, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, UploadSlotOption<Query, OptionQuery>, Query, Option>,
         ...formItemProps as FormItemProps<Query, Option>,
-        /** 组件静态属性(与 formItem 或内置的属性冲突时, 可通过该属性传递) */
-        staticProps: { type: Object as PropType<StaticProps<_Prop>> },
-        /** 组件动态属性 */
-        dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option> & Partial<{ fileMaxSize: number; override: boolean }>> },
         /** 重声明该字段并做优化, 内部处理 success 和 promise 结果只执行一次 */
         httpRequest: {
             type: Function as PropType<(option: UploadRequestOptions) => Promise<unknown> | XMLHttpRequest | void>,
@@ -99,7 +95,7 @@ export function uploadPropsGeneric<T, Query extends Record<string, any>, Option,
          */
         onExceedToast: {
             type: Function as PropType<(files: File[], override: boolean | undefined) => void>,
-            default: (files: File[], override?: boolean) => ElMessage.error(override ? `文件数量超过限制, 已替换现有文件` : '文件数量超过限制, 已采用最新的文件'),
+            default: (files: File[], override?: boolean) => ElMessage.error(override ? `文件数量超过限制, 已替换现有文件` : '上传失败, 文件数量超过限制'),
         },
         /** 自动上传文件 - 需要与 element-plus 保持一致 */
         autoUpload: elUploadProps.autoUpload,
@@ -108,11 +104,11 @@ export function uploadPropsGeneric<T, Query extends Record<string, any>, Option,
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
             /** 自定义触发按钮 */
-            trigger: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery>>;
-            default: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery>>;
+            trigger: ComponentType<UploadSlotOption<Query, OptionQuery>>;
+            default: ComponentType<UploadSlotOption<Query, OptionQuery>>;
             /** 自定义提示说明 */
-            tip: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery>>;
-            // file: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery> & { file: UploadFile; index: number }>;
+            tip: ComponentType<UploadSlotOption<Query, OptionQuery>>;
+            // file: ComponentType<UploadSlotOption<Query, OptionQuery> & { file: UploadFile; index: number }>;
         }>>, default: () => ({}) },
     } as const;
 }
@@ -121,34 +117,7 @@ export function uploadPropsGeneric<T, Query extends Record<string, any>, Option,
  * 上传插槽配置项接口
  * 定义传递给插槽的属性和方法
  */
-export interface UploadSlotOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
-    /** 上传组件实例引用 */
-    uploadRef: InstanceType<typeof ElUpload> | undefined;
-    /** 获取表单项属性的方法 */
-    getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
-    /** 获取上传组件属性的方法 */
-    getItemProps: () => Partial<ExtractPropTypes<typeof elUploadProps>>;
-    /** 获取所有属性的方法 */
-    getProps: () => UploadProps<T, Query, Option, OptionQuery>;
-    /** 额外选项 */
-    extra: {
-        /** 当前绑定的值 */
-        value: T;
-        /** 可用选项列表 */
-        options: Option[];
-        /** 值变更处理函数 */
-        onChange: (value: T) => void;
-        /** 自定义上传请求方法 */
-        httpRequest: (option: UploadRequestOptions) => Promise<unknown> | XMLHttpRequest | void;
-        /** 文件超出限制处理函数 */
-        onExceed: (file: File[], fileList: UploadFile[]) => void;
-        /** 文件移除处理函数 */
-        onRemove: (file: UploadFile, files: UploadFile[]) => void;
-        /** 上传错误处理函数 */
-        onError: (err: ErrorEvent, file: UploadFile, files: UploadFile[]) => void;
-    };
-    /** 组件扁平化数据对象 */
-    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
+export interface UploadSlotOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends CommonSlotsProps<Query, OptionQuery> {
 }
 
 /** 上传组件内部使用的属性定义 */

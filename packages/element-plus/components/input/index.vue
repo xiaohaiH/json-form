@@ -19,7 +19,7 @@
                 v-bind="contentActualProps"
                 :readonly="globalReadonly || contentActualProps.readonly"
                 :disabled="globalDisabled || contentActualProps.disabled"
-                @update:model-value="debounceChange"
+                @update:model-value="change"
                 @keydown.enter="enterHandle"
             >
                 <template v-for="(item, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">
@@ -42,7 +42,7 @@ import { ElFormItem, ElInput } from 'element-plus';
 import type { SlotsType } from 'vue';
 import { computed, defineComponent, ref, watch } from 'vue';
 import { pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useCommonSetup, useTempChecked } from '../use';
 import type { InputSlots } from './types';
 import { inputEmitsPrivate as emits, inputPropsPrivate as props } from './types';
 
@@ -60,44 +60,24 @@ export default defineComponent({
     emits,
     slots: Object as SlotsType<InputSlots>,
     setup(props, ctx) {
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
-        const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-        const contentActualProps = computed(() => {
-            const { query, dynamicProps } = props;
-            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
-        });
         const plain = usePlain(props);
-        const tempChecked = ref(plain.checked.value);
-        watch(plain.checked, (value) => tempChecked.value = value);
+        const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
+        const { tempChecked, changeSync } = useTempChecked(plain.checked);
 
         /**
          * 节流
          * @param {string} value: 输入值
          */
         let timer = 0;
-        function debounceChange(value: string) {
+        function change(value: string) {
             if (value === tempChecked.value) return;
             const { debounceTime } = props;
             timer && clearTimeout(timer);
             tempChecked.value = value;
 
             debounceTime
-                ? timer = setTimeout(() => changeCallback(tempChecked.value), debounceTime) as unknown as number
-                : changeCallback(value);
-        }
-        /** 防止值改变失败时, 输入框与实际值不一致 */
-        function changeCallback(value: string) {
-            const _value = plain.checked.value;
-            plain.change(value);
-            // /** 当更新后的值与现有的相等时, 说明内部逻辑做特殊处理了(比如重置为默认值等操作) */
-            plain.checked.value === _value && (tempChecked.value = _value);
+                ? timer = setTimeout(() => changeSync(tempChecked.value), debounceTime) as unknown as number
+                : changeSync(value);
         }
         /** 回车事件 */
         function enterHandle(ev: Event | KeyboardEvent) {
@@ -105,29 +85,17 @@ export default defineComponent({
             plain.checked.value !== tempChecked.value && (plain.checked.value = tempChecked.value);
             plain.wrapper?.search();
         }
-        const slotProps = computed(() => ({
-            getFormItemProps: () => formItemActualProps.value,
-            getItemProps: () => contentActualProps.value,
-            getProps: () => props,
-            extraOptions: {
-                modelValue: tempChecked.value,
-                options: plain.finalOption.value,
-                onChange: debounceChange,
-                onEnter: enterHandle,
-            },
-            plain,
-        }));
 
         return {
             hyphenate,
             getNode,
             ...plain,
-            tempChecked,
             formItemActualProps,
             contentActualProps,
-            debounceChange,
-            enterHandle,
             slotProps,
+            tempChecked,
+            change,
+            enterHandle,
         };
     },
 });

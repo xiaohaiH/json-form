@@ -4,7 +4,7 @@ import type { radioEmits as elRadioEmits, radioProps as elRadioProps } from 'ele
 import { radioGroupEmits as elRadioGroupEmits, radioGroupProps as elRadioGroupProps } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /** 组件传参 - 私有 */
@@ -14,12 +14,8 @@ export function radioGroupPropsGeneric<T, Query extends Record<string, any>, Opt
     return {
         ...{} as _Prop,
         ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<T, RadioGroupSlotOption<T, Query, Option, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, RadioGroupSlotOption<Query, OptionQuery>, Query, Option>,
         ...formItemProps as FormItemProps<Query, Option>,
-        /** 组件静态属性(与 formItem 或内置的属性冲突时, 可通过该属性传递) */
-        staticProps: { type: Object as PropType<StaticProps<_Prop>> },
-        /** 组件动态属性 */
-        dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         /** 展示的字段 */
         labelKey: { type: String as PropType<string>, default: 'label' },
         /** 提交的字段 */
@@ -34,23 +30,12 @@ export function radioGroupPropsGeneric<T, Query extends Record<string, any>, Opt
         itemProps: { type: Object as PropType<Partial<ExtractPublicPropTypes<ReturnType<typeof emits2props<typeof elRadioProps, [NonNullable<typeof elRadioEmits>]>>>>> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ComponentType<RadioGroupSlotOption<T, Query, Option, OptionQuery> & { option: Option; labelKey: string; valueKey: string; disabledKey: string }>;
+            default: ComponentType<RadioGroupSlotOption<Query, OptionQuery> & { option: Option; labelKey: string; valueKey: string; disabledKey: string }>;
         }>> },
     } as const;
 }
 /** 插槽配置项 */
-export interface RadioGroupSlotOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
-    getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
-    getItemProps: () => Partial<ExtractPublicPropTypes<typeof elRadioGroupProps>>;
-    getProps: () => RadioGroupProps<T, Query, Option, OptionQuery>;
-    extraOptions: {
-        modelValue: T;
-        options: Option[];
-        onChange: (value: T) => void;
-        onCancelable: (newVal: T, currentVal: T, cb: (value: T) => void) => void;
-        radioType: 'ElRadioButton' | 'ElRadio';
-    };
-    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
+export interface RadioGroupSlotOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends CommonSlotsProps<Query, OptionQuery> {
 }
 /** 组件传参 - 私有 */
 export const radioGroupPropsPrivate = radioGroupPropsGeneric();

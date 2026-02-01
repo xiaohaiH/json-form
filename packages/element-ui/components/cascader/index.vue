@@ -21,7 +21,7 @@
                 :filterable="filterable"
                 :clearable="clearable"
                 :options="finalOption"
-                :value="checked"
+                :value="tempChecked"
                 class="json-form-item__content"
                 v-bind="contentActualProps"
                 :disabled="globalReadonly || globalDisabled || contentActualProps.disabled"
@@ -53,9 +53,9 @@
 import { hyphenate, isEmptyValue, usePlain } from '@xiaohaih/json-form-core';
 import { Cascader as ElCascader, FormItem as ElFormItem } from 'element-ui';
 import type { PropType } from 'vue-demi';
-import { computed, defineComponent, nextTick, reactive } from 'vue-demi';
+import { computed, defineComponent, nextTick, reactive, ref, watch } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useCommonSetup, useTempChecked } from '../use';
 import type { CascaderSlots } from './types';
 import { cascaderEmitsPrivate as emits, cascaderPropsPrivate as props } from './types';
 
@@ -76,55 +76,9 @@ export default defineComponent({
     emits,
     // slots: Object as SlotsType<CascaderSlots>,
     setup(props, ctx) {
-        // 计算表单项静态属性
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-
-        // 计算表单项实际属性（合并静态和动态属性）
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
-        // 计算内容静态属性
-        const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-
-        // 计算内容实际属性（合并静态和动态属性）
-        const contentActualProps = computed(() => {
-            const { query, dynamicProps } = props;
-            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
-        });
-
         const plain = usePlain(props);
-
-        // 计算插槽属性
-        const slotProps = computed(() => ({
-            getFormItemProps: () => formItemActualProps.value,
-            getItemProps: () => contentActualProps.value,
-            getProps: () => props,
-            extraOptions: {
-                value: plain.checked.value,
-                options: plain.finalOption.value,
-                onChange: insetChange,
-            },
-            plain,
-        }));
-
-        /**
-         * 重写 change 事件
-         * 防止存在默认值时, element-ui 组件清空值时
-         * 内部马上重写会导致值更新了, ui 未更新
-         */
-        function insetChange(val: any) {
-            if (!isEmptyValue(props.defaultValue) && isEmptyValue(val)) {
-                (plain.checked as any).value = undefined;
-                nextTick(() => plain.change(props.defaultValue));
-            }
-            else {
-                plain.change(val);
-            }
-        }
+        const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
+        const { tempChecked, change } = useTempChecked(plain.checked);
 
         return {
             hyphenate,
@@ -133,7 +87,8 @@ export default defineComponent({
             formItemActualProps,
             contentActualProps,
             slotProps,
-            insetChange,
+            tempChecked,
+            change,
         };
     },
 });

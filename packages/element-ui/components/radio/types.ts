@@ -9,7 +9,7 @@ import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { Radio as ElRadio } from 'element-ui';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
-import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, ElObj2Props, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /**
@@ -29,12 +29,6 @@ const elRadioEmits = {
 /**
  * 单选框属性生成函数 - 泛型版本
  * 生成单选框组件所需的所有属性定义
- *
- * @template T 单选框数据类型
- * @template Query 查询参数类型
- * @template Option 选项类型
- * @template OptionQuery 选项查询类型
- * @returns 单选框属性定义对象
  */
 export function radioPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elRadioProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elRadioEmits>]>>;
@@ -42,19 +36,15 @@ export function radioPropsGeneric<T, Query extends Record<string, any>, Option, 
     return {
         ...{} as _Prop,
         ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<T, RadioSlotOption<T, Query, Option, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, RadioSlotOption<Query, OptionQuery>, Query, Option>,
         ...formItemProps as FormItemProps<Query, Option>,
-        /** 组件静态属性(与 formItem 或内置的属性冲突时, 可通过该属性传递) */
-        staticProps: { type: Object as PropType<StaticProps<_Prop>> },
-        /** 组件动态属性 */
-        dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         /** 按钮类型(radio|button), 默认 radio */
         type: { type: String as PropType<'radio' | 'button'> },
         /** 选中状态是否可以被取消 */
         cancelable: { type: Boolean as PropType<boolean>, default: undefined },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ComponentType<RadioSlotOption<T, Query, Option, OptionQuery>>;
+            default: ComponentType<RadioSlotOption<Query, OptionQuery>>;
         }>>, default: () => ({}) },
     } as const;
 }
@@ -63,26 +53,7 @@ export function radioPropsGeneric<T, Query extends Record<string, any>, Option, 
  * 单选框插槽配置项接口
  * 定义传递给插槽的属性和方法
  */
-export interface RadioSlotOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
-    /** 获取表单项属性的方法 */
-    getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
-    /** 获取单选框组件属性的方法 */
-    getItemProps: () => Partial<ExtractPropTypes<typeof elRadioProps>>;
-    /** 获取所有属性的方法 */
-    getProps: () => RadioProps<T, Query, Option, OptionQuery>;
-    /** 额外选项 */
-    extra: {
-        /** 当前绑定的值 */
-        value: T;
-        /** 可用选项列表 */
-        options: Option[];
-        /** 值变更处理函数 */
-        onChange: (value: T) => void;
-        /** 单选框类型 */
-        radioType: 'ElRadio' | 'ElRadioButton';
-    };
-    /** 组件扁平化数据对象 */
-    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
+export interface RadioSlotOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends CommonSlotsProps<Query, OptionQuery> {
 }
 
 /** 单选框组件内部使用的属性定义 */

@@ -9,7 +9,7 @@ import { emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { Rate as ElRate } from 'element-ui';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
-import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, ElObj2Props, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /**
@@ -29,12 +29,6 @@ const elRateEmits = {
 /**
  * 评分属性生成函数 - 泛型版本
  * 生成评分组件所需的所有属性定义
- *
- * @template T 评分数据类型
- * @template Query 查询参数类型
- * @template Option 选项类型
- * @template OptionQuery 选项查询类型
- * @returns 评分属性定义对象
  */
 export function ratePropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elRateProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elRateEmits>]>>;
@@ -42,12 +36,8 @@ export function ratePropsGeneric<T, Query extends Record<string, any>, Option, O
     return {
         ...{} as _Prop,
         ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<T, RateSlotOption<T, Query, Option, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, RateSlotOption<Query, OptionQuery>, Query, Option>,
         ...formItemProps as FormItemProps<Query, Option>,
-        /** 组件静态属性(与 formItem 或内置的属性冲突时, 可通过该属性传递) */
-        staticProps: { type: Object as PropType<StaticProps<_Prop>> },
-        /** 组件动态属性 */
-        dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         // /** 传递给组件的插槽 */
         // itemSlots: { type: Object as PropType<Partial<{
         // }>> },
@@ -58,24 +48,7 @@ export function ratePropsGeneric<T, Query extends Record<string, any>, Option, O
  * 评分插槽配置项接口
  * 定义传递给插槽的属性和方法
  */
-export interface RateSlotOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
-    /** 获取表单项属性的方法 */
-    getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
-    /** 获取评分组件属性的方法 */
-    getItemProps: () => Partial<ExtractPropTypes<typeof elRateProps>>;
-    /** 获取所有属性的方法 */
-    getProps: () => RateProps<T, Query, Option, OptionQuery>;
-    /** 额外选项 */
-    extraOptions: {
-        /** 当前绑定的值 */
-        value: T;
-        /** 可用选项列表 */
-        options: Option[];
-        /** 值变更处理函数 */
-        onChange: (value: T) => void;
-    };
-    /** 组件扁平化数据对象 */
-    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
+export interface RateSlotOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends CommonSlotsProps<Query, OptionQuery> {
 }
 
 /** 评分组件内部使用的属性定义 */

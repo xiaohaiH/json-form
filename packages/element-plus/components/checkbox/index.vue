@@ -40,7 +40,7 @@ import { ElCheckbox, ElCheckboxButton, ElCheckboxGroup, ElFormItem } from 'eleme
 import type { SlotsType } from 'vue';
 import { computed, defineComponent, ref } from 'vue';
 import { pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useCommonSetup } from '../use';
 import type { CheckboxSlots } from './types';
 import { checkboxEmitsPrivate as emits, checkboxPropsPrivate as props } from './types';
 
@@ -61,37 +61,8 @@ export default defineComponent({
     setup(props, ctx) {
         const checkboxType = computed(() => (props.type === 'button' ? 'ElCheckboxButton' : 'ElCheckbox'));
 
-        // 计算表单项静态属性
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-        // 计算表单项实际属性（合并静态和动态属性）
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
-        // 计算内容静态属性
-        const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-        // 计算内容实际属性（合并静态和动态属性）
-        const contentActualProps = computed(() => {
-            const { query, dynamicProps } = props;
-            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
-        });
-
         const plain = usePlain(props);
-        const slotProps = computed(() => ({
-            getFormItemProps: () => formItemActualProps.value,
-            getItemProps: () => contentActualProps.value,
-            getProps: () => props,
-            extraOptions: {
-                modelValue: plain.checked.value,
-                options: plain.finalOption.value,
-                onChange: plain.change,
-                checkboxType: checkboxType.value,
-            },
-            plain,
-        }));
+        const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
 
         return {
             hyphenate,
@@ -99,8 +70,8 @@ export default defineComponent({
             ...plain,
             formItemActualProps,
             contentActualProps,
-            checkboxType,
             slotProps,
+            checkboxType,
         };
     },
 });

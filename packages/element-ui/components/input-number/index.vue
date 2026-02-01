@@ -23,7 +23,7 @@
                 v-bind="contentActualProps"
                 :disabled="globalReadonly || globalDisabled || contentActualProps.disabled"
                 v-on="$listeners"
-                @input="debounceChange"
+                @input="change"
                 @keydown.enter="enterHandle"
             >
                 <!-- 动态插槽支持 - 目前被注释 -->
@@ -48,7 +48,7 @@ import { hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { FormItem as ElFormItem, InputNumber as ElInputNumber } from 'element-ui';
 import { computed, defineComponent, ref, watch } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useCommonSetup, useTempChecked } from '../use';
 import type { InputNumberSlots } from './types';
 import { inputNumberEmitsPrivate as emits, inputNumberPropsPrivate as props } from './types';
 
@@ -70,30 +70,9 @@ export default defineComponent({
     emits,
     // slots: Object as SlotsType<InputNumberSlots>,
     setup(props, ctx) {
-        // 计算表单项静态属性
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-
-        // 计算表单项实际属性（合并静态和动态属性）
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
-
-        // 计算内容静态属性
-        const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-
-        // 计算内容实际属性（合并静态和动态属性）
-        const contentActualProps = computed(() => {
-            const { query, dynamicProps } = props;
-            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
-        });
-
         const plain = usePlain(props);
-        const tempChecked = ref(plain.checked.value);
-        watch(plain.checked, (value) => tempChecked.value = value);
+        const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
+        const { tempChecked, changeSync } = useTempChecked(plain.checked);
 
         /**
          * 输入防抖处理函数
@@ -102,22 +81,15 @@ export default defineComponent({
          * @param {number|null|undefined} value - 输入的数字值
          */
         let timer = 0;
-        function debounceChange(value: number | null | undefined) {
+        function change(value: number | null | undefined) {
             if (value === tempChecked.value) return;
             const { debounceTime } = props;
             timer && clearTimeout(timer);
             tempChecked.value = value;
 
             debounceTime
-                ? timer = setTimeout(() => changeCallback(tempChecked.value), debounceTime) as unknown as number
-                : changeCallback(value);
-        }
-        /** 防止值改变失败时, 输入框与实际值不一致 */
-        function changeCallback(value: number | null | undefined) {
-            const _value = plain.checked.value;
-            plain.change(value);
-            // /** 当更新后的值与现有的相等时, 说明内部逻辑做特殊处理了(比如重置为默认值等操作) */
-            plain.checked.value === _value && (tempChecked.value = _value);
+                ? timer = setTimeout(() => changeSync(tempChecked.value), debounceTime) as unknown as number
+                : changeSync(value);
         }
 
         /**
@@ -133,28 +105,16 @@ export default defineComponent({
             plain.wrapper?.search();
         }
 
-        // 计算插槽属性
-        const slotProps = computed(() => ({
-            getFormItemProps: () => formItemActualProps.value,
-            getItemProps: () => contentActualProps.value,
-            getProps: () => props,
-            extraOptions: {
-                value: tempChecked.value === 0 ? 0 : (tempChecked.value as number) || undefined,
-                options: plain.finalOption.value,
-                onChange: debounceChange,
-            },
-            plain,
-        }));
 
         return {
             hyphenate,
             getNode,
             ...plain,
-            tempChecked,
             formItemActualProps,
             contentActualProps,
             slotProps,
-            debounceChange,
+            tempChecked,
+            change,
             enterHandle,
         };
     },

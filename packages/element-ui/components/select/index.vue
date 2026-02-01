@@ -7,10 +7,10 @@
         :prop="formItemActualProps.prop || field"
     >
         <template v-if="slots.before || $slots.before">
-            <component :is="getNode(slots.before || $slots.before, slotProps)" v-bind="slotProps" />
+            <component :is="getNode(slots.before || $slots.before, slotProps)" v-bind="slotProps" :filter-value="filterValue" :remote-method="remoteMethod" />
         </template>
         <template v-if="slots.default">
-            <component :is="getNode(slots.default, slotProps)" v-bind="slotProps" />
+            <component :is="getNode(slots.default, slotProps)" v-bind="slotProps" :filter-value="filterValue" :remote-method="remoteMethod" />
         </template>
         <slot v-else v-bind="slotProps">
             <ElSelect
@@ -48,18 +48,18 @@
                 </template>
 
                 <template v-if="itemSlots.prefix" #prefix>
-                    <component :is="getNode(itemSlots.prefix, slotProps)" v-bind="slotProps" />
+                    <component :is="getNode(itemSlots.prefix, slotProps)" v-bind="slotProps" :filter-value="filterValue" :remote-method="remoteMethod" />
                 </template>
                 <template v-if="itemSlots.empty" #empty>
-                    <component :is="getNode(itemSlots.empty, slotProps)" v-bind="slotProps" />
+                    <component :is="getNode(itemSlots.empty, slotProps)" v-bind="slotProps" :filter-value="filterValue" :remote-method="remoteMethod" />
                 </template>
                 <!-- <template v-for="(item, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">
-                    <component :is="getNode(item)" v-bind="slotProps" v-bind.prop="row" />
+                    <component :is="getNode(item)" v-bind="slotProps" :filter-value="filterValue" :remote-method="remoteMethod" v-bind.prop="row" />
                 </template> -->
             </ElSelect>
         </slot>
         <template v-if="slots.after || $slots.after">
-            <component :is="getNode(slots.after || $slots.after, slotProps)" v-bind="slotProps" />
+            <component :is="getNode(slots.after || $slots.after, slotProps)" v-bind="slotProps" :filter-value="filterValue" :remote-method="remoteMethod" />
         </template>
         <div v-if="slots.postfix || $slots.postfix" class="json-form-item__postfix">
             <component :is="getNode(slots.postfix || $slots.postfix)" />
@@ -72,7 +72,7 @@ import { hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { FormItem as ElFormItem, Option as ElOption, OptionGroup as ElOptionGroup, Select as ElSelect } from 'element-ui';
 import { computed, defineComponent, ref } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useCommonSetup } from '../use';
 import type { SelectSlots } from './types';
 import { selectEmitsPrivate as emits, selectPropsPrivate as props } from './types';
 
@@ -92,20 +92,8 @@ export default defineComponent({
     emits,
     // slots: Object as SlotsType<SelectSlots>,
     setup(props, ctx) {
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
-        const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-        const contentActualProps = computed(() => {
-            const { query, dynamicProps } = props;
-            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
-        });
         const plain = usePlain(props);
+        const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
         const filterValue = ref('');
         const customFilterMethod = (val: string) => {
             filterValue.value = val;
@@ -129,20 +117,6 @@ export default defineComponent({
                 return p;
             }, []);
         });
-        const slotProps = computed(() => ({
-            getFormItemProps: () => formItemActualProps.value,
-            getItemProps: () => contentActualProps.value,
-            getProps: () => props,
-            extraOptions: {
-                value: plain.checked.value,
-                options: plain.finalOption.value,
-                filterValue: filterValue.value,
-                filterMethod: props.filterMethod && customFilterMethod,
-                remoteMethod,
-                onChange: plain.change,
-            },
-            plain,
-        }));
 
         return {
             hyphenate,

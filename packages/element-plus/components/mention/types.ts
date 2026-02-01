@@ -3,7 +3,7 @@ import { emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { mentionEmits as elMentionEmits, mentionProps as elMentionProps } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /** 组件传参 - 私有 */
@@ -13,12 +13,8 @@ export function mentionPropsGeneric<T, Query extends Record<string, any>, Option
     return {
         ...{} as _Prop,
         ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<T, MentionSlotOption<T, Query, Option, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, MentionSlotOption<Query, OptionQuery>, Query, Option>,
         ...formItemProps as FormItemProps<Query, Option>,
-        /** 组件静态属性(与 formItem 或内置的属性冲突时, 可通过该属性传递) */
-        staticProps: { type: Object as PropType<StaticProps<_Prop>> },
-        /** 组件动态属性 */
-        dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         /** 是否实时触发搜索事件(当 wrapper.realtime 为 true 时, 可将该值设为 false 并设置抖动时间) */
         realtime: { type: Boolean as PropType<boolean>, default: true },
         /** 实时触发时防抖动的时间 */
@@ -26,28 +22,18 @@ export function mentionPropsGeneric<T, Query extends Record<string, any>, Option
         clearable: { type: Boolean as PropType<boolean>, default: true },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            label: ComponentType<MentionSlotOption<T, Query, Option, OptionQuery> & { item: Option; index: number }>;
-            loading: ComponentType<MentionSlotOption<T, Query, Option, OptionQuery>>;
-            header: ComponentType<MentionSlotOption<T, Query, Option, OptionQuery>>;
-            footer: ComponentType<MentionSlotOption<T, Query, Option, OptionQuery>>;
-            prefix: ComponentType<MentionSlotOption<T, Query, Option, OptionQuery>>;
-            suffix: ComponentType<MentionSlotOption<T, Query, Option, OptionQuery>>;
-            prepend: ComponentType<MentionSlotOption<T, Query, Option, OptionQuery>>;
-            append: ComponentType<MentionSlotOption<T, Query, Option, OptionQuery>>;
+            label: ComponentType<MentionSlotOption<Query, OptionQuery> & { item: Option; index: number }>;
+            loading: ComponentType<MentionSlotOption<Query, OptionQuery>>;
+            header: ComponentType<MentionSlotOption<Query, OptionQuery>>;
+            footer: ComponentType<MentionSlotOption<Query, OptionQuery>>;
+            prefix: ComponentType<MentionSlotOption<Query, OptionQuery>>;
+            suffix: ComponentType<MentionSlotOption<Query, OptionQuery>>;
+            prepend: ComponentType<MentionSlotOption<Query, OptionQuery>>;
+            append: ComponentType<MentionSlotOption<Query, OptionQuery>>;
         }>> },
     } as const;
 }
-export interface MentionSlotOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
-    getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
-    getItemProps: () => Partial<ExtractPublicPropTypes<typeof elMentionProps>>;
-    getProps: () => MentionProps<T, Query, Option, OptionQuery>;
-    extraOptions: {
-        modelValue: T;
-        options: Option[];
-        onChange: (value: T) => void;
-        onEnter: (ev: Event | KeyboardEvent) => void;
-    };
-    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
+export interface MentionSlotOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends CommonSlotsProps<Query, OptionQuery> {
 }
 /** 组件传参 - 私有 */
 export const mentionPropsPrivate = mentionPropsGeneric();

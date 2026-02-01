@@ -38,12 +38,12 @@
 </template>
 
 <script lang="ts">
-import { getNode, hyphenate, usePlain } from '@xiaohaih/json-form-core';
+import { getNode, hyphenate, useFlag, usePlain } from '@xiaohaih/json-form-core';
 import { ElFormItem, ElInputTag } from 'element-plus';
 import type { SlotsType } from 'vue';
 import { computed, defineComponent, nextTick, ref } from 'vue';
 import { pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useCommonSetup } from '../use';
 import type { InputTagSlots } from './types';
 import { inputTagEmitsPrivate as emits, inputTagPropsPrivate as props } from './types';
 
@@ -61,34 +61,10 @@ export default defineComponent({
     emits,
     slots: Object as SlotsType<InputTagSlots>,
     setup(props, ctx) {
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
-        const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-        const contentActualProps = computed(() => {
-            const { query, dynamicProps } = props;
-            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
-        });
         const plain = usePlain(props);
-        const slotProps = computed(() => ({
-            getFormItemProps: () => formItemActualProps.value,
-            getItemProps: () => contentActualProps.value,
-            getProps: () => props,
-            extraOptions: {
-                modelValue: plain.checked.value,
-                options: plain.finalOption.value,
-                onChange: plain.change,
-                onEnter: enterHandle,
-            },
-            plain,
-        }));
+        const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
 
-        let enterFlag = ref(false);
+        const { flag: enterFlag, updateFlag } = useFlag(false);
         /** 回车事件 */
         function enterHandle(ev: Event | KeyboardEvent) {
             // 1. 先触发 enter 事件
@@ -101,10 +77,7 @@ export default defineComponent({
         }
         /** 新增标签某项后触发的事件 */
         function tagAdd() {
-            enterFlag.value = true;
-            nextTick(() => {
-                enterFlag.value = false;
-            });
+            updateFlag();
         }
 
         return {
@@ -113,9 +86,9 @@ export default defineComponent({
             ...plain,
             formItemActualProps,
             contentActualProps,
+            slotProps,
             enterHandle,
             tagAdd,
-            slotProps,
         };
     },
 });

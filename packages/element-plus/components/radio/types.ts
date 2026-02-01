@@ -3,7 +3,7 @@ import { emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { radioEmits as elRadioEmits, radioProps as elRadioProps } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /** 组件传参 - 私有 */
@@ -13,12 +13,8 @@ export function radioPropsGeneric<T, Query extends Record<string, any>, Option, 
     return {
         ...{} as _Prop,
         ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<T, RadioSlotOption<T, Query, Option, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, RadioSlotOption<Query, OptionQuery>, Query, Option>,
         ...formItemProps as FormItemProps<Query, Option>,
-        /** 组件静态属性(与 formItem 或内置的属性冲突时, 可通过该属性传递) */
-        staticProps: { type: Object as PropType<StaticProps<_Prop>> },
-        /** 组件动态属性 */
-        dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         /**
          * 按钮类型(radio|button), 默认 radio
          * @deprecated element-plus 设计缺陷(单个 ElRadioButton 无法触发事件)
@@ -28,22 +24,12 @@ export function radioPropsGeneric<T, Query extends Record<string, any>, Option, 
         cancelable: { type: Boolean as PropType<boolean>, default: undefined },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ComponentType<RadioSlotOption<T, Query, Option, OptionQuery>>;
+            default: ComponentType<RadioSlotOption<Query, OptionQuery>>;
         }>> },
     } as const;
 }
 /** 插槽配置项 */
-export interface RadioSlotOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
-    getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
-    getItemProps: () => Partial<ExtractPublicPropTypes<typeof elRadioProps>>;
-    getProps: () => RadioProps<T, Query, Option, OptionQuery>;
-    extraOptions: {
-        modelValue: T;
-        options: Option[];
-        onChange: (value: T) => void;
-        radioType: 'ElRadioButton' | 'ElRadio';
-    };
-    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
+export interface RadioSlotOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends CommonSlotsProps<Query, OptionQuery> {
 }
 /** 组件传参 - 私有 */
 export const radioPropsPrivate = radioPropsGeneric();

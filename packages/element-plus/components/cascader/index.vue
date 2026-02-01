@@ -16,11 +16,11 @@
                 :filterable="filterable"
                 :clearable="clearable"
                 :options="(finalOption as any[])"
-                :model-value="(checked as string[])"
+                :model-value="tempChecked"
                 class="json-form-item__content"
                 v-bind="contentActualProps"
                 :disabled="globalReadonly || globalDisabled || contentActualProps.disabled"
-                @update:model-value="insetChange"
+                @update:model-value="change"
             >
                 <template v-for="(item, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">
                     <component :is="getNode(item)" v-bind="slotProps" v-bind.prop="row" />
@@ -40,9 +40,9 @@
 import { getNode, hyphenate, isEmptyValue, usePlain } from '@xiaohaih/json-form-core';
 import { ElCascader, ElFormItem } from 'element-plus';
 import type { SlotsType } from 'vue';
-import { computed, defineComponent, nextTick, reactive, toRefs } from 'vue';
+import { computed, defineComponent, nextTick, reactive, ref, toRefs, watch } from 'vue';
 import { pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useCommonSetup, useTempChecked } from '../use';
 import type { CascaderSlots } from './types';
 import { cascaderEmitsPrivate as emits, cascaderPropsPrivate as props } from './types';
 
@@ -60,45 +60,9 @@ export default defineComponent({
     emits,
     slots: Object as SlotsType<CascaderSlots>,
     setup(props, ctx) {
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
-        const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-        const contentActualProps = computed(() => {
-            const { query, dynamicProps } = props;
-            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
-        });
         const plain = usePlain(props);
-        const slotProps = computed(() => ({
-            getFormItemProps: () => formItemActualProps.value,
-            getItemProps: () => contentActualProps.value,
-            getProps: () => props,
-            extraOptions: {
-                modelValue: plain.checked.value,
-                options: plain.finalOption.value,
-                onChange: insetChange,
-            },
-            plain,
-        }));
-        /**
-         * 重写 change 事件
-         * 防止存在默认值时, element-plus 组件清空值时
-         * 内部马上重写会导致值更新了, ui 未更新
-         */
-        function insetChange(val: any) {
-            if (!isEmptyValue(props.defaultValue) && isEmptyValue(val)) {
-                (plain.checked as any).value = undefined;
-                nextTick(() => plain.change(props.defaultValue));
-            }
-            else {
-                plain.change(val);
-            }
-        }
+        const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
+        const { tempChecked, change } = useTempChecked(plain.checked);
 
         return {
             hyphenate,
@@ -107,7 +71,8 @@ export default defineComponent({
             formItemActualProps,
             contentActualProps,
             slotProps,
-            insetChange,
+            tempChecked,
+            change,
         };
     },
 });

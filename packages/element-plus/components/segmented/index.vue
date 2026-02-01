@@ -40,7 +40,7 @@ import { ElFormItem, ElSegmented } from 'element-plus';
 import type { SlotsType } from 'vue';
 import { computed, defineComponent, nextTick, ref } from 'vue';
 import { pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useCommonSetup } from '../use';
 import type { SegmentedSlots } from './types';
 import { segmentedEmitsPrivate as emits, segmentedPropsPrivate as props } from './types';
 
@@ -58,32 +58,8 @@ export default defineComponent({
     emits,
     slots: Object as SlotsType<SegmentedSlots>,
     setup(props, ctx) {
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
-        const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-        const contentActualProps = computed(() => {
-            const { query, dynamicProps } = props;
-            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
-        });
         const plain = usePlain(props);
-
-        const slotProps = computed(() => ({
-            getFormItemProps: () => formItemActualProps.value,
-            getItemProps: () => contentActualProps.value,
-            getProps: () => props,
-            extraOptions: {
-                modelValue: plain.checked.value,
-                options: plain.finalOption.value,
-                onChange: plain.change,
-            },
-            plain,
-        }));
+        const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
 
         return {
             hyphenate,

@@ -43,7 +43,7 @@ import { ElFormItem, ElRadio, ElRadioButton, ElRadioGroup, version } from 'eleme
 import type { SlotsType } from 'vue';
 import { computed, defineComponent, ref } from 'vue';
 import { pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useCommonSetup } from '../use';
 import type { RadioSlots } from './types';
 import { radioEmitsPrivate as emits, radioPropsPrivate as props } from './types';
 
@@ -68,38 +68,13 @@ export default defineComponent({
         const radioType = computed(() => (props.type === 'button' ? 'ElRadioButton' : 'ElRadio'));
         const eventName = computed(() => (props.cancelable ? 'click' : null));
 
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
-        const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-        const contentActualProps = computed(() => {
-            const { query, dynamicProps } = props;
-            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
-        });
         const plain = usePlain(props);
+        const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
 
         /** 单选框选中事件 - 处理可取消选中 */
         function customChange() {
             plain.change(plain.checked.value === contentActualProps.value.value ? '' : contentActualProps.value.value);
         }
-        const slotProps = computed(() => ({
-            getFormItemProps: () => formItemActualProps.value,
-            getItemProps: () => contentActualProps.value,
-            getProps: () => props,
-            extraOptions: {
-                modelValue: plain.checked.value,
-                options: plain.finalOption.value,
-                onChange: plain.change,
-                onCancelable: customChange,
-                radioType: radioType.value,
-            },
-            plain,
-        }));
 
         return {
             hyphenate,
@@ -107,11 +82,11 @@ export default defineComponent({
             ...plain,
             formItemActualProps,
             contentActualProps,
+            slotProps,
             radioType,
             eventName,
             realLabelProp: VALUE_KEY,
             customChange,
-            slotProps,
         };
     },
 });

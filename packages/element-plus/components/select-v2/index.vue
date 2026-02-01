@@ -6,12 +6,12 @@
         :prop="formItemActualProps.prop || field"
     >
         <template v-if="slots?.before || ($slots as SelectV2Slots).before">
-            <component :is="getNode(slots?.before || ($slots as SelectV2Slots).before)" v-bind="slotProps" />
+            <component :is="getNode(slots?.before || ($slots as SelectV2Slots).before)" v-bind="slotProps" :filter-value="filterValue" :remote-method="remoteMethod" />
         </template>
         <template v-if="slots?.default">
-            <component :is="getNode(slots.default)" v-bind="slotProps" />
+            <component :is="getNode(slots.default)" v-bind="slotProps" :filter-value="filterValue" :remote-method="remoteMethod" />
         </template>
-        <slot v-else v-bind="slotProps">
+        <slot v-else v-bind="slotProps" :filter-value="filterValue" :remote-method="remoteMethod">
             <ElSelectV2
                 :model-value="checked"
                 :options="(filterSource as any)"
@@ -26,12 +26,12 @@
                 @update:model-value="change"
             >
                 <template v-for="(item, slotName) of itemSlots" :key="slotName" #[hyphenate(slotName)]="row">
-                    <component :is="getNode(item)" v-bind="slotProps" v-bind.prop="row" />
+                    <component :is="getNode(item)" v-bind="slotProps" :filter-value="filterValue" :remote-method="remoteMethod" v-bind.prop="row" />
                 </template>
             </ElSelectV2>
         </slot>
         <template v-if="slots?.after || ($slots as SelectV2Slots).after">
-            <component :is="getNode(slots?.after || ($slots as SelectV2Slots).after)" v-bind="slotProps" />
+            <component :is="getNode(slots?.after || ($slots as SelectV2Slots).after)" v-bind="slotProps" :filter-value="filterValue" :remote-method="remoteMethod" />
         </template>
         <div v-if="slots?.postfix || ($slots as SelectV2Slots).postfix" class="json-form-item__postfix">
             <component :is="getNode(slots?.postfix || ($slots as SelectV2Slots).postfix)" />
@@ -46,7 +46,7 @@ import type ElSelectV2Type from 'element-plus/es/components/select-v2/src/select
 import type { SlotsType } from 'vue';
 import { computed, customRef, defineComponent, ref } from 'vue';
 import { pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useCommonSetup, useTempChecked } from '../use';
 import type { SelectV2Slots } from './types';
 import { selectV2EmitsPrivate as emits, selectV2PropsPrivate as props } from './types';
 
@@ -64,20 +64,8 @@ export default defineComponent({
     props,
     slots: Object as SlotsType<SelectV2Slots>,
     setup(props, ctx) {
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
-        const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-        const contentActualProps = computed(() => {
-            const { query, dynamicProps } = props;
-            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
-        });
         const plain = usePlain(props);
+        const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
 
         const filterValue = ref('');
         const customFilterMethod = (val: string) => {
@@ -102,20 +90,6 @@ export default defineComponent({
                 return p;
             }, []);
         });
-        const slotProps = computed(() => ({
-            getFormItemProps: () => formItemActualProps.value,
-            getItemProps: () => contentActualProps.value,
-            getProps: () => props,
-            extraOptions: {
-                modelValue: plain.checked.value,
-                options: filterSource.value,
-                filterValue: filterValue.value,
-                filterMethod: props.filterMethod && customFilterMethod,
-                remoteMethod,
-                onChange: plain.change,
-            },
-            plain,
-        }));
 
         return {
             hyphenate,
@@ -123,11 +97,11 @@ export default defineComponent({
             ...plain,
             formItemActualProps,
             contentActualProps,
+            slotProps,
             filterValue,
             customFilterMethod,
             remoteMethod,
             filterSource,
-            slotProps,
         };
     },
 });

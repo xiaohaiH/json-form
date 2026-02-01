@@ -44,7 +44,7 @@ import { hyphenate, usePlain } from '@xiaohaih/json-form-core';
 import { Checkbox as ElCheckbox, CheckboxButton as ElCheckboxButton, FormItem as ElFormItem } from 'element-ui';
 import { computed, defineComponent, ref } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useCommonSetup } from '../use';
 import type { CheckboxSlots } from './types';
 import { checkboxEmitsPrivate as emits, checkboxPropsPrivate as props } from './types';
 
@@ -62,33 +62,8 @@ export default defineComponent({
     props,
     setup(props, ctx) {
         const checkboxType = computed(() => (props.type === 'button' ? 'ElCheckboxButton' : 'ElCheckbox'));
-
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
-        const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-        const contentActualProps = computed(() => {
-            const { query, dynamicProps } = props;
-            return dynamicProps ? { ...dynamicProps({ query }), ...contentStaticProps.value } : contentStaticProps.value;
-        });
         const plain = usePlain(props);
-        const slotProps = computed(() => ({
-            getFormItemProps: () => formItemActualProps.value,
-            getItemProps: () => contentActualProps.value,
-            getProps: () => props,
-            extraOptions: {
-                value: plain.checked.value,
-                options: plain.finalOption.value,
-                onChange: plain.change,
-                checkboxType: checkboxType.value,
-            },
-            plain,
-        }));
+        const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
 
         return {
             hyphenate,

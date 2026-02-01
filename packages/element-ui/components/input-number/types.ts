@@ -10,7 +10,7 @@ import { emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { InputNumber as ElInputNumber } from 'element-ui';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
-import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, ElObj2Props, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /** 获取Element UI数字输入框属性定义，并添加label和placeholder属性 */
@@ -32,10 +32,6 @@ const elInputNumberEmits = {
  * 数字输入框属性生成函数 - 通用版本
  * 支持泛型配置，用于支持不同数据类型的数字输入框
  *
- * @template T 值类型
- * @template Query 查询参数类型
- * @template Option 选项类型
- * @template OptionQuery 选项查询参数类型
  * @returns 数字输入框属性配置对象
  */
 export function inputNumberPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
@@ -47,22 +43,18 @@ export function inputNumberPropsGeneric<T, Query extends Record<string, any>, Op
         /** 继承核心库的平台属性 */
         ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
         /** 继承通用属性 */
-        ...commonProps as CommonProps<T, InputNumberSlotOption<T, Query, Option, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, InputNumberSlotOption<Query, OptionQuery>, Query, Option>,
         /** 继承表单项属性 */
         ...formItemProps as FormItemProps<Query, Option>,
-        /** 组件静态属性(与 formItem 或内置的属性冲突时, 可通过该属性传递) */
-        staticProps: { type: Object as PropType<StaticProps<_Prop>> },
-        /** 组件动态属性，根据查询条件动态计算属性值 */
-        dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         /** 延迟触发抖动时长(单位 ms) */
         debounceTime: { type: Number as PropType<number>, default: undefined },
         // 以下为已注释的插槽配置，当前组件未启用
         // /** 传递给组件的插槽 */
         // itemSlots: { type: Object as PropType<Partial<{
-        //     prefix: ComponentType<InputNumberSlotOption<T, Query, Option, OptionQuery>>;
-        //     suffix: ComponentType<InputNumberSlotOption<T, Query, Option, OptionQuery>>;
-        //     decreaseIcon: ComponentType<InputNumberSlotOption<T, Query, Option, OptionQuery>>;
-        //     increaseIcon: ComponentType<InputNumberSlotOption<T, Query, Option, OptionQuery>>;
+        //     prefix: ComponentType<InputNumberSlotOption<Query, OptionQuery>>;
+        //     suffix: ComponentType<InputNumberSlotOption<Query, OptionQuery>>;
+        //     decreaseIcon: ComponentType<InputNumberSlotOption<Query, OptionQuery>>;
+        //     increaseIcon: ComponentType<InputNumberSlotOption<Query, OptionQuery>>;
         // }>>, default: () => ({}) },
     } as const;
 }
@@ -70,30 +62,8 @@ export function inputNumberPropsGeneric<T, Query extends Record<string, any>, Op
 /**
  * 数字输入框插槽配置项接口
  * 定义了插槽组件可用的属性和方法
- *
- * @template T 值类型
- * @template Query 查询参数类型
- * @template Option 选项类型
- * @template OptionQuery 选项查询参数类型
  */
-export interface InputNumberSlotOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
-    /** 获取表单项属性 */
-    getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
-    /** 获取数字输入框属性 */
-    getItemProps: () => Partial<ExtractPropTypes<typeof elInputNumberProps>>;
-    /** 获取所有组件属性 */
-    getProps: () => InputNumberProps<T, Query, Option, OptionQuery>;
-    /** 额外选项 */
-    extraOptions: {
-        /** 当前数值 */
-        value: T;
-        /** 选项列表 */
-        options: Option[];
-        /** 值变更处理函数 */
-        onChange: (value: T) => void;
-    };
-    /** 平台状态管理对象 */
-    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
+export interface InputNumberSlotOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends CommonSlotsProps<Query, OptionQuery> {
 }
 
 /** 组件属性配置 - 私有 */

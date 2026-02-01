@@ -238,11 +238,8 @@ interface BaseFieldConfig {
     options?: any[];
     getOptions?: (cb: (data: any) => void, query: Record<string, any>) => void;
 
-    // 静态属性（直接传递给 Element Plus 组件）
-    staticProps?: Record<string, any>;
-
-    // 动态属性（函数形式，返回组件属性）
-    dynamicProps?: (query: Record<string, any>) => Record<string, any>;
+    // 表单组件属性(直接传递给 Element Plus 组件), 与 FormItem Prop 冲突的属性
+    contentProps?: Record<string, any>;
 
     // 插槽配置
     slots?: Record<string, any>;
@@ -572,7 +569,7 @@ const formConfig = defineOption([
 ### 动态属性
 
 ```typescript
-const formConfig = defineOption([
+const formConfig = defineOption(({ query }) => [
     {
         field: 'email',
         t: 'input',
@@ -581,10 +578,8 @@ const formConfig = defineOption([
         // 静态属性
         clearable: true,
         // 动态属性，根据表单其他字段的值动态设置
-        dynamicProps: (query) => ({
-            disabled: !query.username,
-            placeholder: query.username ? '请输入邮箱' : '请先输入用户名',
-        }),
+        disabled: !query.username,
+        placeholder: query.username ? '请输入邮箱' : '请先输入用户名',
     },
 ]);
 ```

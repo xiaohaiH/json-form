@@ -47,7 +47,7 @@ import type { SlotsType } from 'vue';
 import { computed, defineComponent, nextTick, ref, watch } from 'vue';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 import { pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useCommonSetup, useContentActualProps, useFormItemProps } from '../use';
 import type { AutocompleteSlots } from './types';
 import { autocompleteEmitsPrivate as emits, autocompletePropsPrivate as props } from './types';
 
@@ -67,21 +67,9 @@ export default defineComponent({
     setup(props, ctx) {
         const autocompleteRef = ref<ComponentExposed<typeof ElAutocomplete>>();
 
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
-        const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-        const contentActualProps = computed(() => {
-            const { query, dynamicProps } = props;
-            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
-        });
         // @ts-expect-error 忽视类型复杂导致的报错
         const plain = usePlain(props);
+        const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
 
         // /** 重写数据源, 优先用传递的 */
         // const finalFetchSuggestions = computed(() => {
@@ -103,31 +91,19 @@ export default defineComponent({
             ctx.emit('select', item, { props, plain });
             props.blurOnSelected && autocompleteRef.value && nextTick(autocompleteRef.value.blur);
         }
-        const slotProps = computed(() => ({
-            getFormItemProps: () => formItemActualProps.value,
-            getItemProps: () => contentActualProps.value,
-            getProps: () => props,
-            extraOptions: {
-                modelValue: plain.checked.value,
-                options: plain.finalOption.value,
-                onChange: plain.change,
-                onEnter: enterHandle,
-            },
-            plain,
-        }));
 
         return {
             hyphenate,
             getNode,
             autocompleteRef,
             ...plain,
-            // finalFetchSuggestions,
-            filterCallback,
             formItemActualProps,
             contentActualProps,
+            slotProps,
+            // finalFetchSuggestions,
+            filterCallback,
             enterHandle,
             selectHandle,
-            slotProps,
         };
     },
 });

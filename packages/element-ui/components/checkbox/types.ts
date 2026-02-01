@@ -9,7 +9,7 @@ import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { Checkbox as ElCheckbox } from 'element-ui';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
-import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, ElObj2Props, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /**
@@ -42,17 +42,13 @@ export function checkboxPropsGeneric<T, Query extends Record<string, any>, Optio
     return {
         ...{} as _Prop,
         ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<T, CheckboxSlotOption<T, Query, Option, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, CheckboxSlotOption<Query, OptionQuery>, Query, Option>,
         ...formItemProps as FormItemProps<Query, Option>,
-        /** 组件静态属性(与 formItem 或内置的属性冲突时, 可通过该属性传递) */
-        staticProps: { type: Object as PropType<StaticProps<_Prop>> },
-        /** 组件动态属性 */
-        dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         /** 按钮类型(checkbox|button), 默认 checkbox */
         type: { type: String as PropType<'checkbox' | 'button'> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ComponentType<CheckboxSlotOption<T, Query, Option, OptionQuery>>;
+            default: ComponentType<CheckboxSlotOption<Query, OptionQuery>>;
         }>>, default: () => ({}) },
     } as const;
 }
@@ -61,26 +57,7 @@ export function checkboxPropsGeneric<T, Query extends Record<string, any>, Optio
  * 复选框插槽配置项接口
  * 定义传递给插槽的属性和方法
  */
-export interface CheckboxSlotOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
-    /** 获取表单项属性的方法 */
-    getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
-    /** 获取复选框组件属性的方法 */
-    getItemProps: () => Partial<ExtractPropTypes<typeof elCheckboxProps>>;
-    /** 获取所有属性的方法 */
-    getProps: () => CheckboxProps<T, Query, Option, OptionQuery>;
-    /** 额外选项 */
-    extraOptions: {
-        /** 当前绑定的值 */
-        value: T;
-        /** 可用选项列表 */
-        options: Option[];
-        /** 值变更处理函数 */
-        onChange: (value: T) => void;
-        /** 复选框类型（普通复选框或按钮样式） */
-        checkboxType: 'ElCheckboxButton' | 'ElCheckbox';
-    };
-    /** 组件扁平化数据对象 */
-    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
+export interface CheckboxSlotOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends CommonSlotsProps<Query, OptionQuery> {
 }
 
 /** 复选框组件内部使用的属性定义 */

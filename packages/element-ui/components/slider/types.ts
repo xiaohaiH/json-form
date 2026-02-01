@@ -10,7 +10,7 @@ import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { Slider as ElSlider } from 'element-ui';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
-import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, ElObj2Props, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /** 获取Element UI滑块组件属性定义 */
@@ -27,10 +27,6 @@ const elSliderEmits = {
  * 滑块组件属性生成函数 - 通用版本
  * 支持泛型配置，用于支持不同数据类型的滑块组件
  *
- * @template T 值类型
- * @template Query 查询参数类型
- * @template Option 选项类型
- * @template OptionQuery 选项查询参数类型
  * @returns 滑块组件属性配置对象
  */
 export function sliderPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
@@ -42,13 +38,9 @@ export function sliderPropsGeneric<T, Query extends Record<string, any>, Option,
         /** 继承核心库的平台属性 */
         ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
         /** 继承通用属性 */
-        ...commonProps as CommonProps<T, SliderSlotOption<T, Query, Option, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, SliderSlotOption<Query, OptionQuery>, Query, Option>,
         /** 继承表单项属性 */
         ...formItemProps as FormItemProps<Query, Option>,
-        /** 组件静态属性(与 formItem 或内置的属性冲突时, 可通过该属性传递) */
-        staticProps: { type: Object as PropType<StaticProps<_Prop>> },
-        /** 组件动态属性，根据查询条件动态计算属性值 */
-        dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         // /** 传递给组件的插槽 */
         // itemSlots: { type: Object as PropType<Partial<{
         // }>> },
@@ -59,29 +51,8 @@ export function sliderPropsGeneric<T, Query extends Record<string, any>, Option,
  * 滑块组件插槽配置项接口
  * 定义了插槽组件可用的属性和方法
  *
- * @template T 值类型
- * @template Query 查询参数类型
- * @template Option 选项类型
- * @template OptionQuery 选项查询参数类型
  */
-export interface SliderSlotOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
-    /** 获取表单项属性 */
-    getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
-    /** 获取滑块组件属性 */
-    getItemProps: () => Partial<ExtractPropTypes<typeof elSliderProps>>;
-    /** 获取所有组件属性 */
-    getProps: () => SliderProps<T, Query, Option, OptionQuery>;
-    /** 额外选项 */
-    extraOptions: {
-        /** 当前值 */
-        value: T;
-        /** 滑块选项数组 */
-        options: Option[];
-        /** 值变更处理函数 */
-        onChange: (value: T) => void;
-    };
-    /** 平台状态管理对象 */
-    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
+export interface SliderSlotOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends CommonSlotsProps<Query, OptionQuery> {
 }
 
 /** 组件属性配置 - 私有 */

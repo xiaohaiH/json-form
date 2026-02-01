@@ -12,7 +12,7 @@ import type { CascaderNode } from 'element-ui/types/cascader.d';
 import type { ElementUIComponent } from 'element-ui/types/component.d';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
-import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, ElObj2Props, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /**
@@ -41,11 +41,6 @@ const elCascaderEmits = {
 /**
  * 级联选择器属性生成函数 - 通用版本
  * 支持泛型配置，用于支持不同数据类型的级联选择器
- *
- * @template T 选中值类型
- * @template Query 查询参数类型
- * @template Option 选项类型
- * @template OptionQuery 选项查询参数类型
  * @returns 级联选择器属性配置对象
  */
 export function cascaderPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
@@ -56,13 +51,9 @@ export function cascaderPropsGeneric<T, Query extends Record<string, any>, Optio
         // 继承核心库的平台属性
         ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
         // 继承通用属性
-        ...commonProps as CommonProps<T, CascaderSlotOption<T, Query, Option, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, CascaderSlotOption<Query, OptionQuery>, Query, Option>,
         // 继承表单项属性
         ...formItemProps as FormItemProps<Query, Option>,
-        /** 组件静态属性(与 formItem 或内置的属性冲突时, 可通过该属性传递) */
-        staticProps: { type: Object as PropType<StaticProps<_Prop>> },
-        /** 组件动态属性，根据查询条件动态计算属性值 */
-        dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         /** 是否可过滤，支持搜索级联选项 */
         filterable: { type: Boolean as PropType<boolean>, default: true },
         /** 是否可清除，显示清除按钮 */
@@ -71,13 +62,13 @@ export function cascaderPropsGeneric<T, Query extends Record<string, any>, Optio
         itemSlots: {
             type: Object as PropType<Partial<{
                 /** 自定义备选项的内容，参数为 { node, data } */
-                default: ComponentType<CascaderSlotOption<T, Query, Option, OptionQuery> & { node: any; data: T }>;
+                default: ComponentType<CascaderSlotOption<Query, OptionQuery> & { node: any; data: T }>;
                 /** 无匹配选项时的内容 */
-                empty: ComponentType<CascaderSlotOption<T, Query, Option, OptionQuery>>;
+                empty: ComponentType<CascaderSlotOption<Query, OptionQuery>>;
                 /** 自定义前缀图标 */
-                prefix: ComponentType<CascaderSlotOption<T, Query, Option, OptionQuery>>;
+                prefix: ComponentType<CascaderSlotOption<Query, OptionQuery>>;
                 /** 自定义建议项，参数为 { item } */
-                suggestionItem: ComponentType<CascaderSlotOption<T, Query, Option, OptionQuery> & { item: CascaderNode<any, Option> }>;
+                suggestionItem: ComponentType<CascaderSlotOption<Query, OptionQuery> & { item: CascaderNode<any, Option> }>;
             }>>,
             default: () => ({}),
         },
@@ -87,29 +78,8 @@ export function cascaderPropsGeneric<T, Query extends Record<string, any>, Optio
 /**
  * 级联选择器插槽配置项接口
  * 定义了插槽组件可用的属性和方法
- *
- * @template T 选中值类型
- * @template Query 查询参数类型
- * @template Option 选项类型
- * @template OptionQuery 选项查询参数类型
  */
-export interface CascaderSlotOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
-    /** 获取表单项属性 */
-    getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
-    /** 获取级联选择器属性 */
-    getItemProps: () => Partial<ExtractPropTypes<typeof elCascaderProps>>;
-    /** 获取所有组件属性 */
-    getProps: () => CascaderProps<T, Query, Option, OptionQuery>;
-    extraOptions: {
-        /** 当前选中值 */
-        value: T;
-        /** 级联选择器选项数组 */
-        options: Option[];
-        /** 值变更处理函数 */
-        onChange: (value: T) => void;
-    };
-    /** 平台状态管理对象 */
-    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
+export interface CascaderSlotOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends CommonSlotsProps<Query, OptionQuery> {
 }
 
 /** 组件属性配置 - 私有 */

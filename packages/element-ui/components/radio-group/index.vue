@@ -23,6 +23,7 @@
                 v-bind="contentActualProps"
                 :disabled="globalReadonly || globalDisabled || contentActualProps.disabled"
                 @input="change"
+                v-on="$listeners"
             >
                 <!-- 遍历选项生成单选框 -->
                 <template v-for="item of finalOption">
@@ -63,7 +64,7 @@ import { FormItem as ElFormItem, Radio as ElRadio, RadioButton as ElRadioButton,
 import type { Ref } from 'vue-demi';
 import { computed, defineComponent, ref } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useCommonSetup } from '../use';
 import type { RadioGroupSlots } from './types';
 import { radioGroupEmitsPrivate as emits, radioGroupPropsPrivate as props } from './types';
 
@@ -89,33 +90,12 @@ export default defineComponent({
     setup(props, ctx) {
         // 根据type属性决定使用普通单选框还是按钮式单选框
         const radioType = computed(() => (props.type === 'button' ? 'ElRadioButton' : 'ElRadio'));
-
         // 根据cancelable属性决定是否监听点击事件实现可取消选择
         // 如果不可取消，则返回null（不监听事件）
         const eventName = computed(() => (props.cancelable ? 'click' : null));
 
-        // 计算表单项静态属性
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-
-        // 计算表单项实际属性（合并静态和动态属性）
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
-
-        // 计算内容静态属性
-        const contentStaticProps = computed(() => ({ ...ctx.attrs, ...props.staticProps }));
-
-        // 计算内容实际属性（合并静态和动态属性）
-        const contentActualProps = computed(() => {
-            const { query, dynamicProps } = props;
-            return dynamicProps ? { ...contentStaticProps.value, ...dynamicProps({ query }) } : contentStaticProps.value;
-        });
-
         const plain = usePlain(props);
+        const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
         // 重写声明, 防止报错
         const finalOption = plain.finalOption as Ref<any[]>;
 
@@ -133,32 +113,17 @@ export default defineComponent({
             val === '' && (document.activeElement as HTMLInputElement)?.blur?.();
         }
 
-        // 计算插槽属性
-        const slotProps = computed(() => ({
-            getFormItemProps: () => formItemActualProps.value,
-            getItemProps: () => contentActualProps.value,
-            getProps: () => props,
-            extraOptions: {
-                value: plain.checked.value,
-                options: plain.finalOption.value,
-                onChange: plain.change,
-                onCancelable: customChange,
-                radioType: radioType.value,
-            },
-            plain,
-        }));
-
         return {
             hyphenate,
             getNode,
-            radioType,
             ...plain,
-            finalOption,
             formItemActualProps,
             contentActualProps,
+            slotProps,
+            finalOption,
+            radioType,
             eventName,
             customChange,
-            slotProps,
         };
     },
 });

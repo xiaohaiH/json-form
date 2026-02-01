@@ -11,17 +11,13 @@ import { emits2props, plainProps } from '@xiaohaih/json-form-core';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
 // 导入共享类型和属性
-import type { CommonProps, CommonSlots, ComponentType, DynamicProps, ElObj2Props, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, ElObj2Props, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 /**
  * 自定义渲染属性生成函数 - 通用版本
  * 支持泛型配置，用于支持不同数据类型的自定义渲染
  *
- * @template T 值类型
- * @template Query 查询参数类型
- * @template Option 选项类型
- * @template OptionQuery 选项查询参数类型
  * @returns 自定义渲染属性配置对象
  */
 export function customRenderPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
@@ -29,7 +25,7 @@ export function customRenderPropsGeneric<T, Query extends Record<string, any>, O
         /** 继承核心库的平台属性 */
         ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
         /** 继承通用属性 */
-        ...commonProps as CommonProps<T, CustomRenderSlotOption<T, Query, Option, OptionQuery>, Query, Option>,
+        ...commonProps as Omit<CommonProps<{}, CustomRenderSlotOption<Query, OptionQuery>, Query, Option>, 'contentProps'>,
         /** 继承表单项属性 */
         ...formItemProps as FormItemProps<Query, Option>,
         /**
@@ -45,7 +41,7 @@ export function customRenderPropsGeneric<T, Query extends Record<string, any>, O
          * 该函数负责生成要渲染的内容
          */
         render: {
-            type: [Function, Object] as PropType<((option: CustomRenderSlotOption<T, Query, Option, OptionQuery>) => () => any) | Record<string, any>>,
+            type: [Function, Object] as PropType<((option: CustomRenderSlotOption<Query, OptionQuery>) => () => any) | Record<string, any>>,
             required: true,
         },
     } as const;
@@ -54,19 +50,10 @@ export function customRenderPropsGeneric<T, Query extends Record<string, any>, O
 /**
  * 自定义渲染插槽配置项接口
  * 定义了传递给自定义渲染函数的参数
- *
- * @template T 值类型
- * @template Query 查询参数类型
- * @template Option 选项类型
- * @template OptionQuery 选项查询参数类型
  */
-export interface CustomRenderSlotOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
+export interface CustomRenderSlotOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends CommonSlotsProps<Query, OptionQuery> {
     /** 获取表单项属性 */
-    getFormItemProps: () => ExtractPropTypes<FormItemProps<Query, Option>>;
-    /** 获取所有组件属性 */
-    getProps: () => CustomRenderProps<T, Query, Option, OptionQuery>;
-    /** 平台状态管理对象，提供数据操作能力 */
-    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
+    formItemProps: Record<string, any>;
 }
 
 /** 组件属性配置 - 私有 */

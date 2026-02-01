@@ -3,7 +3,7 @@ import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { ElAutocomplete } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 const elAutocompleteProps = ElAutocomplete.props as Obj2Props<ComponentProps<typeof ElAutocomplete>>;
@@ -24,7 +24,7 @@ export function autocompletePropsGeneric<T, Query extends Record<string, any>, O
     return {
         ...{} as _Prop,
         ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<T, AutocompleteSlotOption<T, Query, Option, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, AutocompleteSlotOption<Query, OptionQuery>, Query, Option>,
         ...formItemProps as FormItemProps<Query, Option>,
         /** 输入建议对象中用于显示的键名 */
         valueKey: { type: String as PropType<string>, default: 'value' },
@@ -39,22 +39,18 @@ export function autocompletePropsGeneric<T, Query extends Record<string, any>, O
         filterMethod: { type: Function as PropType<(value: string, item: any, valueKey: string) => boolean>, default: (value: string, item: any, valueKey: string) => item[valueKey] && item[valueKey].includes(value) },
         /** 在选中后, 使输入框失焦 */
         blurOnSelected: { type: Boolean, default: true },
-        /** 组件静态属性(与 formItem 或内置的属性冲突时, 可通过该属性传递) */
-        staticProps: { type: Object as PropType<StaticProps<_Prop>> },
-        /** 组件动态属性 */
-        dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         /** 是否显示清除按钮 @default true */
         clearable: { type: Boolean as PropType<boolean>, default: true },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            header: ComponentType<AutocompleteSlotOption<T, Query, Option, OptionQuery>>;
-            footer: ComponentType<AutocompleteSlotOption<T, Query, Option, OptionQuery>>;
-            default: ComponentType<AutocompleteSlotOption<T, Query, Option, OptionQuery> & { item: any }>;
-            prefix: ComponentType<AutocompleteSlotOption<T, Query, Option, OptionQuery>>;
-            suffix: ComponentType<AutocompleteSlotOption<T, Query, Option, OptionQuery>>;
-            prepend: ComponentType<AutocompleteSlotOption<T, Query, Option, OptionQuery>>;
-            append: ComponentType<AutocompleteSlotOption<T, Query, Option, OptionQuery>>;
-            loading: ComponentType<AutocompleteSlotOption<T, Query, Option, OptionQuery>>;
+            header: ComponentType<AutocompleteSlotOption<Query, OptionQuery>>;
+            footer: ComponentType<AutocompleteSlotOption<Query, OptionQuery>>;
+            default: ComponentType<AutocompleteSlotOption<Query, OptionQuery> & { item: any }>;
+            prefix: ComponentType<AutocompleteSlotOption<Query, OptionQuery>>;
+            suffix: ComponentType<AutocompleteSlotOption<Query, OptionQuery>>;
+            prepend: ComponentType<AutocompleteSlotOption<Query, OptionQuery>>;
+            append: ComponentType<AutocompleteSlotOption<Query, OptionQuery>>;
+            loading: ComponentType<AutocompleteSlotOption<Query, OptionQuery>>;
         }>> },
         /** 重写 select 方法 */
         onSelect: { type: [Function, Array] as PropType<(item: any, option: {
@@ -64,17 +60,7 @@ export function autocompletePropsGeneric<T, Query extends Record<string, any>, O
     } as const;
 }
 /** 插槽配置项 */
-export interface AutocompleteSlotOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
-    getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
-    getItemProps: () => Partial<ExtractPublicPropTypes<typeof elAutocompleteProps>>;
-    getProps: () => AutocompleteProps<T, Query, Option, OptionQuery>;
-    extraOptions: {
-        modelValue: T;
-        options: Option[];
-        onChange: (value: T) => void;
-        onEnter: (ev: Event | KeyboardEvent) => void;
-    };
-    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
+export interface AutocompleteSlotOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends CommonSlotsProps<Query, OptionQuery> {
 }
 /** 组件传参 - 私有 */
 export const autocompletePropsPrivate = autocompletePropsGeneric();

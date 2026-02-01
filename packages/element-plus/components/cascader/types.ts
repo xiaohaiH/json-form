@@ -4,7 +4,7 @@ import type { CascaderNode } from 'element-plus';
 import { ElCascader } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 const elCascaderProps = ElCascader.props as Obj2Props<ComponentProps<typeof ElCascader>>;
@@ -16,36 +16,23 @@ export function cascaderPropsGeneric<T, Query extends Record<string, any>, Optio
     return {
         ...{} as _Prop,
         ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<T, CascaderSlotOption<T, Query, Option, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, CascaderSlotOption<Query, OptionQuery>, Query, Option>,
         ...formItemProps as FormItemProps<Query, Option>,
-        /** 组件静态属性(与 formItem 或内置的属性冲突时, 可通过该属性传递) */
-        staticProps: { type: Object as PropType<StaticProps<_Prop>> },
-        /** 组件动态属性 */
-        dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         /** 是否可过滤 */
         filterable: { type: Boolean as PropType<boolean>, default: true },
         /** 是否可清除 */
         clearable: { type: Boolean as PropType<boolean>, default: true },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ComponentType<CascaderSlotOption<T, Query, Option, OptionQuery> & { node: any; data: T }>;
-            empty: ComponentType<CascaderSlotOption<T, Query, Option, OptionQuery>>;
-            prefix: ComponentType<CascaderSlotOption<T, Query, Option, OptionQuery>>;
-            suggestionItem: ComponentType<CascaderSlotOption<T, Query, Option, OptionQuery> & { item: CascaderNode }>;
+            default: ComponentType<CascaderSlotOption<Query, OptionQuery> & { node: any; data: T }>;
+            empty: ComponentType<CascaderSlotOption<Query, OptionQuery>>;
+            prefix: ComponentType<CascaderSlotOption<Query, OptionQuery>>;
+            suggestionItem: ComponentType<CascaderSlotOption<Query, OptionQuery> & { item: CascaderNode }>;
         }>> },
     } as const;
 }
 /** 插槽配置项 */
-export interface CascaderSlotOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
-    getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
-    getItemProps: () => Partial<ExtractPublicPropTypes<typeof elCascaderProps>>;
-    getProps: () => CascaderProps<T, Query, Option, OptionQuery>;
-    extraOptions: {
-        modelValue: T;
-        options: Option[];
-        onChange: (value: T) => void;
-    };
-    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
+export interface CascaderSlotOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends CommonSlotsProps<Query, OptionQuery> {
 }
 /** 组件传参 - 私有 */
 export const cascaderPropsPrivate = cascaderPropsGeneric();

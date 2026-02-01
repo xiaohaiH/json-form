@@ -19,7 +19,7 @@ import { getNode, hyphenate, noop, usePlain } from '@xiaohaih/json-form-core';
 import { ElFormItem } from 'element-plus';
 import { computed, defineComponent, markRaw, ref, watch } from 'vue';
 import { pick } from '../../src/utils';
-import { formItemPropKeys } from '../share';
+import { useFormItemProps } from '../use';
 import { customRenderEmitsPrivate as emits, customRenderPropsPrivate as props } from './types';
 
 /**
@@ -34,31 +34,28 @@ export default defineComponent({
     props,
     emits,
     setup(props, ctx) {
-        const formItemStaticProps = computed(() => {
-            const { formItemProps } = props;
-            return { ...pick(props, formItemPropKeys), ...formItemProps };
-        });
-        const formItemActualProps = computed(() => {
-            const { query, formItemDynamicProps } = props;
-            return formItemDynamicProps ? { ...formItemStaticProps.value, ...formItemDynamicProps({ query }) } : formItemStaticProps.value;
-        });
         const plain = usePlain(props);
-        const slotProps = {
-            getFormItemProps: () => formItemActualProps.value,
-            getProps: () => props,
+        const { formItemActualProps } = useFormItemProps(props, ctx);
+        const slotProps = computed(() => ({
+            formItemProps: formItemActualProps.value,
+            props,
             plain,
-        };
-        const customRender = typeof props.render === 'function' ? getNode(props.render(slotProps)) : props.render;
+        }));
+        const customRender = computed(() => {
+            return typeof props.render === 'function'
+                ? getNode(props.render(slotProps.value))
+                : props.render;
+        });
 
         return {
             hyphenate,
             getNode,
             ...plain,
-            /** 兼容低版本暴露给外部的函数 */
-            trigger: noop,
             formItemActualProps,
             slotProps,
             customRender,
+            /** @deprecated 兼容低版本暴露给外部的函数 */
+            trigger: noop,
         };
     },
 });
