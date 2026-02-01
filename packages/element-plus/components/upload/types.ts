@@ -4,12 +4,11 @@ import type { buttonProps, UploadFile, UploadHooks, UploadRequestOptions, Upload
 import { ElMessage, ElUpload } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { CommonProps, CommonSlots, ComponentType, DynamicProps, FormItemProps, StaticProps } from '../share';
+import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
 const elUploadProps = ElUpload.props as Obj2Props<ComponentProps<typeof ElUpload>>;
 const elUploadEmits = emits2obj(ElUpload.emits);
-
 
 let fileId = 1000;
 export const genFileId = () => Date.now() + ++fileId;
@@ -20,17 +19,12 @@ export function uploadPropsGeneric<T, Query extends Record<string, any>, Option,
     return {
         ...{} as _Prop,
         ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<T, UploadSlotOption<T, Query, Option, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, UploadSlotOption<Query, OptionQuery>, Query, Option>,
         ...formItemProps as FormItemProps<Query, Option>,
-        /** 组件静态属性(与 formItem 或内置的属性冲突时, 可通过该属性传递) */
-        staticProps: { type: Object as PropType<StaticProps<_Prop>> },
-        /** 组件动态属性 */
-        dynamicProps: { type: Function as PropType<DynamicProps<_Prop, Query, Option>> },
         /** 重声明该字段并做优化, 内部处理 success 和 promise 结果只执行一次 */
         httpRequest: {
             type: Function as PropType<(option: UploadRequestOptions) => Promise<unknown> | XMLHttpRequest | void>,
         },
-        beforeUpload: { type: Function as PropType<UploadHooks['beforeUpload']> },
         /** 上传按钮显示的文字 */
         buttonText: { type: String, default: '上传图片' },
         /** 上传按钮显示的文字 */
@@ -48,31 +42,29 @@ export function uploadPropsGeneric<T, Query extends Record<string, any>, Option,
             type: Function as PropType<(file: File) => void>,
             default: (file: File) => ElMessage.error(`不能重复上传文件(${file.name})`),
         },
+        /**
+         * 当 onExceed 未传, 且超过文件数量时进行的提示
+         * @param files 超出的文件集合
+         * @param override 是否覆盖上传
+         */
+        onExceedToast: {
+            type: Function as PropType<(files: File[], override: boolean | undefined) => void>,
+            default: (files: File[], override?: boolean) => ElMessage.error(override ? `文件数量超过限制, 已替换现有文件` : '上传失败, 文件数量超过限制'),
+        },
         /** 自动上传文件 - 需要与 element-plus 保持一致 */
         autoUpload: elUploadProps.autoUpload,
-        /** 是否开启覆盖上传 - 当 limit 为 1 时生效 */
+        /** 是否开启覆盖上传 */
         override: { type: Boolean as PropType<boolean> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            trigger: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery>>;
-            default: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery>>;
-            tip: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery>>;
-            file: ComponentType<UploadSlotOption<T, Query, Option, OptionQuery> & { file: UploadFile; index: number }>;
+            trigger: ComponentType<UploadSlotOption<Query, OptionQuery>>;
+            default: ComponentType<UploadSlotOption<Query, OptionQuery>>;
+            tip: ComponentType<UploadSlotOption<Query, OptionQuery>>;
+            file: ComponentType<UploadSlotOption<Query, OptionQuery> & { file: UploadFile; index: number }>;
         }>> },
     } as const;
 }
-export interface UploadSlotOption<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
-    getFormItemProps: () => Partial<FormItemProps<Query, Option>>;
-    getItemProps: () => Partial<ExtractPublicPropTypes<typeof elUploadProps>>;
-    getProps: () => UploadProps<T, Query, Option, OptionQuery>;
-    extraOptions: {
-        modelValue: T;
-        options: Option[];
-        onChange: (value: T) => void;
-        httpRequest: (option: UploadRequestOptions) => Promise<unknown> | XMLHttpRequest | void;
-        onExceed: (file: File[], fileList: UploadUserFile[]) => void;
-    };
-    plain: ReturnType<typeof usePlain<T, Query, Option, OptionQuery>>;
+export interface UploadSlotOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends CommonSlotsProps<Query, OptionQuery> {
 }
 /** 组件传参 - 私有 */
 export const uploadPropsPrivate = uploadPropsGeneric();
