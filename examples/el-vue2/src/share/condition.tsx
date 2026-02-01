@@ -46,7 +46,7 @@ export function conditionFactory() {
                 label: 'ra1(可取消)',
                 value: '哈哈哈',
                 // type: 'button',
-                staticProps: { label: '单选框' },
+                contentProps: { label: '单选框' },
                 cancelable: true,
                 initialValue: '哈哈哈',
             },
@@ -54,7 +54,7 @@ export function conditionFactory() {
                 t: 'radio',
                 label: 'ra2',
                 value: 'buxuan',
-                staticProps: { label: '单选框2' },
+                contentProps: { label: '单选框2' },
                 // type: 'button',
                 // initialValue: 'buxuan',
             },
@@ -73,9 +73,9 @@ export function conditionFactory() {
             check: {
                 t: 'checkbox',
                 label: 'check',
-                trueValue: '1',
-                falseValue: '2',
-                staticProps: { label: '是否提交' },
+                trueLabel: '1',
+                falseLabel: '2',
+                contentProps: { label: '是否提交' },
                 type: 'button',
                 defaultValue: '1',
             },
@@ -135,7 +135,8 @@ export function conditionFactory() {
                 placeholder: '请选择...',
                 // fields: ['cascader-a', 'cascader-b'],
                 props: { checkStrictly: true, emitPath: false },
-                defaultValue: ['2', '2-1'],
+                // defaultValue: ['2', '2-1'],
+                defaultValue: '2-1',
                 getOptions(cb, query, option) {
                     setTimeout(() => {
                         cb([

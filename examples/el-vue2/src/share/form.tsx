@@ -132,14 +132,14 @@ export function conditionFactory() {
                 t: 'upload',
                 field: '上传',
                 label: '上传',
-                staticProps: { class: 'flex' },
-                limit: 2,
-                multiple: true,
-                override: true,
+                contentProps: { class: 'flex' },
                 itemSlots: {
                     default: () => ({ render: (h: any) => <div>sss</div> }),
                     trigger: { render: (h: any) => <div>点我</div> },
                 },
+                limit: 2,
+                multiple: true,
+                override: true,
                 autoUpload: false,
             },
             {
@@ -157,9 +157,11 @@ export function conditionFactory() {
                     if (filterValue) return cb([{ value: `${filterValue}123`, id: `${filterValue}123` }, { value: `${filterValue}222`, id: `${filterValue}222` }]);
                     cb([{ value: 'a1', id: 'aa1' }, { value: 'b1', id: 'bb1' }, { value: 'cc2', id: 'bb2' }]);
                 },
-                // onSelect: (item: any, { props, plain }) => {
-                //     props.query.input1 = item.id;
-                // },
+                on: {
+                    select(item: any, { props, plain }: any) {
+                        props.query.input1 = item.id;
+                    },
+                },
             },
             {
                 t: 'color-picker',
@@ -382,7 +384,7 @@ export function conditionFactory() {
                 t: 'checkbox',
                 field: '多选框',
                 label: '多选框',
-                staticProps: { label: '男生' },
+                contentProps: { label: '男生' },
                 // type: 'button',
                 trueLabel: '1',
                 falseLabel: '2',
@@ -431,7 +433,7 @@ export function conditionFactory() {
                 field: 'radio1',
                 label: 'radio1',
                 value: '1',
-                staticProps: { label: '男生' },
+                contentProps: { label: '男生' },
                 // defaultValue: '1',
                 cancelable: true,
                 // itemSlots: {

@@ -4,7 +4,7 @@ import { defineComponent, markRaw, ref } from 'vue';
 
 export function conditionFactory() {
     return {
-        condition: defineOption([
+        condition: defineOption(({ query, formRef }) => [
             {
                 t: 'dynamic-group',
                 field: '布局组件',
@@ -81,12 +81,17 @@ export function conditionFactory() {
                 t: 'upload',
                 field: '上传',
                 label: '上传',
-                staticProps: { class: 'flex' },
+                contentProps: { class: 'flex' },
                 itemSlots: {
                     default: () => <div>sss</div>,
                     trigger: () => <div>点我</div>,
                 },
+                limit: 2,
+                multiple: true,
+                override: true,
+                // drag: true,
                 autoUpload: false,
+                // directory: true,
             },
             {
                 t: 'autocomplete',
@@ -391,7 +396,7 @@ export function conditionFactory() {
                 t: 'checkbox',
                 field: '多选框',
                 label: '多选框',
-                staticProps: { label: '男生' },
+                contentProps: { label: '男生' },
                 // type: 'button',
                 trueValue: '1',
                 falseValue: '2',
@@ -430,7 +435,7 @@ export function conditionFactory() {
                 field: 'radio1',
                 label: 'radio1',
                 value: '1',
-                staticProps: { label: '男生' },
+                contentProps: { label: '男生' },
                 // defaultValue: '1',
                 cancelable: true,
                 // type: 'button',
