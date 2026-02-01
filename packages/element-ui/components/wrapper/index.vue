@@ -1,7 +1,7 @@
 <template>
     <!-- eslint-disable vue/no-deprecated-dollar-listeners-api vue/no-v-for-template-key-on-child -->
     <!-- 表单容器组件，绑定属性和事件监听 -->
-    <HGroup v-bind="$attrs" ref="groupRef" :disabled="disabled" :config="config || datum" :model="query" :query="query" :tag="ElForm" v-on="$listeners">
+    <HGroup v-bind="$attrs" ref="groupRef" :disabled="disabled" :config="config || datum" :model="query" :query="query" :get-form-ref="getFormRef" :tag="ElForm" v-on="$listeners">
         <template v-if="$slots.prepend" #prepend>
             <slot name="prepend" v-bind="slotProps" />
         </template>
@@ -83,8 +83,12 @@ export default defineComponent({
             setTimeout(clearValidate);
         }
 
+        /** 获取表单实例 */
+        function getFormRef() {
+            return formRef.value;
+        }
         // 插槽属性，提供给子组件访问props和wrapper实例
-        const slotProps = { getProps: () => props, wrapper };
+        const slotProps = computed(() => ({ props, wrapper }));
 
         return {
             groupRef,
@@ -95,6 +99,7 @@ export default defineComponent({
             validateField,
             clearValidate,
             reset,
+            getFormRef,
             slotProps,
         };
     },

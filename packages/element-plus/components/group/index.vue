@@ -50,7 +50,7 @@ export default defineComponent({
         const finalConfig = computed(() => {
             const { config, parseConfig } = props;
             if (!parseConfig) return [];
-            return typeof config === 'function' ? config({ query: props.query, wrapper }) : config;
+            return typeof config === 'function' ? config({ query: props.query, wrapper, formRef: props.getFormRef?.() }) : config;
         });
         /** 对 group 组件特殊处理 */
         function getComponent2(name: string) {

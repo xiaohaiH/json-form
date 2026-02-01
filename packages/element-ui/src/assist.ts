@@ -1,4 +1,6 @@
 import type { CoreOption, getProvideValue } from '@xiaohaih/json-form-core';
+import type { Form as ElForm } from 'element-ui';
+import type { ComponentExposed } from 'vue-component-type-helpers';
 import type { ExtractPropTypes, PropType, Ref } from 'vue-demi';
 import { ref } from 'vue-demi';
 import type * as JSONFormTs from './interface';
@@ -33,6 +35,8 @@ export interface DefineOptionParams<Query extends Record<string, any>, Options e
     query: Query;
     /** 表单封装的一些参数 */
     wrapper: Pick<NonNullable<ReturnType<typeof getProvideValue<Query, Options>>>, 'disabled' | 'readonly' | 'options' | 'reset'> | undefined;
+    /** 表单实例 */
+    formRef: ComponentExposed<typeof ElForm> | undefined;
 }
 
 // /* 使用示例 - start

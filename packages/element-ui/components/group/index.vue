@@ -13,7 +13,7 @@
         <slot v-else-if="hasOwn($slots, 'default')" :config="finalConfig" :query="query" />
         <template v-else>
             <template v-for="(item, key) of finalConfig">
-                <component :is="getComponent2(item.t)" v-if="item" :key="item.field || key" v-bind="item" :field="item.as || item.field || key" :query="query" />
+                <component :is="getComponent2(item.t)" v-if="item" :key="item.field || key" v-bind="item" :field="item.as || item.field || key" :query="query" v-on="item.on" />
             </template>
         </template>
         <template v-if="$slots.append">
@@ -53,7 +53,7 @@ export default defineComponent({
         const finalConfig = computed(() => {
             const { config, parseConfig } = props;
             if (!parseConfig) return [];
-            return typeof config === 'function' ? config({ query: props.query, wrapper }) : config;
+            return typeof config === 'function' ? config({ query: props.query, wrapper, formRef: props.getFormRef?.() }) : config;
         });
         /** 对 group 组件特殊处理 */
         function getComponent2(name: string) {

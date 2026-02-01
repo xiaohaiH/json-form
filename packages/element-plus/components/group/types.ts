@@ -1,6 +1,6 @@
 import type { CamelCase, Obj2Props, PlainProps, usePlain } from '@xiaohaih/json-form-core';
 import { emits2props, plainProps } from '@xiaohaih/json-form-core';
-import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
+import type { Component, ExtractPublicPropTypes, Prop, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { ComponentType } from '../share';
 
@@ -29,6 +29,8 @@ export function groupPropsGeneric<T, Query extends Record<string, any>, Option, 
         slots: { type: Object as PropType<GroupSlots<T, Query, Option, OptionQuery>> },
         /** 组件额外的钩子() */
         hooks: { type: [Object] as PropType<GroupHookOption>, default: undefined },
+        /** 获取表单组件实例 */
+        getFormRef: { type: Function as PropType<() => any> },
     } as const;
 }
 /** 组件传参 - 私有 */

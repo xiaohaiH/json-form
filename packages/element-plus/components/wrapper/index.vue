@@ -1,5 +1,5 @@
 <template>
-    <HGroup v-bind="$attrs" ref="groupRef" :disabled="disabled" :config="config || datum" :model="query" :query="query" :tag="ElForm">
+    <HGroup v-bind="$attrs" ref="groupRef" :disabled="disabled" :config="config || datum" :model="query" :query="query" :get-form-ref="getFormRef" :tag="ElForm">
         <template v-if="$slots.prepend" #prepend>
             <slot name="prepend" v-bind="slotProps" />
         </template>
@@ -75,7 +75,11 @@ export default defineComponent({
             setTimeout(clearValidate);
         }
 
-        const slotProps = { getProps: () => props, wrapper };
+        /** 获取表单实例 */
+        function getFormRef() {
+            return formRef.value;
+        }
+        const slotProps = computed(() => ({ props, wrapper }));
 
         return {
             groupRef,
@@ -89,6 +93,7 @@ export default defineComponent({
             scrollToField,
             getField,
             reset,
+            getFormRef,
             slotProps,
         };
     },

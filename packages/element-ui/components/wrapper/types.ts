@@ -125,7 +125,7 @@ export interface FormSlots<T, Query extends Record<string, any>, Option, OptionQ
  */
 export interface FormSlotProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
     /** 获取表单属性的方法 */
-    getProps: () => ExtractPropTypes<ReturnType<typeof formPropsGeneric<any>>>;
+    props: ExtractPropTypes<ReturnType<typeof formPropsGeneric<any>>>;
     /** 表单包装器实例 */
-    plain: ReturnType<typeof useWrapper>;
+    wrapper: ReturnType<typeof useWrapper>;
 }

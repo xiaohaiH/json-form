@@ -122,8 +122,8 @@ export interface FormSlots<T> {
  */
 export interface FormSlotProps<T> {
     /** 获取表单属性的方法 */
-    getProps: () => ExtractPublicPropTypes<ReturnType<typeof formPropsGeneric<any>>>;
+    props: ExtractPublicPropTypes<ReturnType<typeof formPropsGeneric<any>>>;
     /** 表单包装器实例 */
-    plain: ReturnType<typeof useWrapper>;
+    wrapper: ReturnType<typeof useWrapper>;
 
 }

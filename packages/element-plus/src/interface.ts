@@ -1,4 +1,6 @@
 import type { CoreOption, GetOptions, ProvideValue } from '@xiaohaih/json-form-core';
+import type { ElForm } from 'element-plus';
+import type { ComponentExposed } from 'vue-component-type-helpers';
 import type {
     AutocompleteProps as PureAutocompleteProps,
     CascaderProps as PureCascaderProps,
@@ -130,7 +132,7 @@ export interface DynamicGroupProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureDynamicGroupProps<T, Query, Option, OptionQuery>, BuiltInField | 'config'>, RewriteOption<T, Query, Option, OptionQuery> {
+> extends Omit<PureDynamicGroupProps<T, Query, Option, OptionQuery>, BuiltInField | 'config' | 'getFormRef'>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'dynamic-group';
     /**
      * 渲染的子条件(重写该属性以补充声明)
@@ -143,10 +145,10 @@ export interface GroupProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureGroupProps<T, Query, Option, OptionQuery>, BuiltInField | 'config'>, RewriteOption<T, Query, Option, OptionQuery> {
+> extends Omit<PureGroupProps<T, Query, Option, OptionQuery>, BuiltInField | 'config' | 'getFormRef'>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'group';
     /** 渲染的子条件(重写该属性以补充声明) */
-    config?: MaybeFunction<[{ query: Query; wrapper?: ProvideValue }], JSONFormOption<T, Query, Option, OptionQuery>[] | Record<keyof Query, JSONFormOption<T, Query, Option, OptionQuery>>>;
+    config?: MaybeFunction<[{ query: Query; wrapper?: ProvideValue; formRef?: ComponentExposed<typeof ElForm> }], JSONFormOption<T, Query, Option, OptionQuery>[] | Record<keyof Query, JSONFormOption<T, Query, Option, OptionQuery>>>;
 }
 export interface InputNumberProps<
     T,

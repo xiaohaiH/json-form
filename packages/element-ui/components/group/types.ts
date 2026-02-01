@@ -26,9 +26,11 @@ export function groupPropsGeneric<T, Query extends Record<string, any>, Option, 
         /** 是否解析 config, false 直接返回空数组 - 配合 dynamic-group 使用 */
         parseConfig: { type: Boolean as PropType<boolean>, default: true },
         /** 传递给组件的插槽 */
-        slots: { type: Object as PropType<GroupSlots<T, Query, Option, OptionQuery>>, default: () => ({}) },
+        slots: { type: Object as PropType<GroupSlots<Query, OptionQuery>>, default: () => ({}) },
         /** 组件额外的钩子() */
         hooks: { type: [Object] as PropType<GroupHookOption>, default: undefined },
+        /** 获取表单组件实例 */
+        getFormRef: { type: Function as PropType<() => any> },
     } as const;
 }
 /** 组件传参 - 私有 */
@@ -48,7 +50,7 @@ export const groupEmitsPrivate = groupEmitsGeneric();
 export const groupEmits = groupEmitsPrivate;
 export type GroupEmits<T> = ReturnType<typeof groupEmitsGeneric<T>>;
 
-export interface GroupSlots<T = any, Query extends Record<string, any> = any, Option = any, OptionQuery extends Record<string, any> = any> {
+export interface GroupSlots<Query extends Record<string, any> = any, OptionQuery extends Record<string, any> = any> {
     /** 在表单项前渲染 */
     prepend?: ComponentType<{ query: Query }>;
     /** 自定义表单渲染逻辑 */
