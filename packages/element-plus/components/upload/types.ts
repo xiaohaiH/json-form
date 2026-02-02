@@ -10,7 +10,11 @@ import { commonProps, formItemProps } from '../share';
 const elUploadProps = ElUpload.props as Obj2Props<ComponentProps<typeof ElUpload>>;
 const elUploadEmits = emits2obj(ElUpload.emits);
 
-let fileId = 1000;
+/**
+ * 文件ID生成器, 用于生成唯一的文件标识符
+ * 人有生老三千疾, 唯有相思不可医
+ */
+let fileId = 3000;
 export const genFileId = () => Date.now() + ++fileId;
 /** 组件传参 - 私有 */
 export function uploadPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {

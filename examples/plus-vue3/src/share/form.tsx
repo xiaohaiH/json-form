@@ -78,6 +78,24 @@ export function conditionFactory() {
                 // ],
             },
             {
+                t: 'custom-render',
+                field: '自定义',
+                label: '自定义',
+                render({ plain }) {
+                    const checked = plain.checked as { value?: number };
+
+                    function onClick() {
+                        plain.change(checked.value ? checked.value + 1 : 1);
+                    }
+                    return () => (
+                        <div onClick={onClick}>
+                            自定义渲染
+                            {checked.value || 0}
+                        </div>
+                    );
+                },
+            },
+            {
                 t: 'upload',
                 field: '上传',
                 label: '上传',

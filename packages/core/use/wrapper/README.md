@@ -14,18 +14,18 @@
 
 基于 `wrapperPropsGeneric()` 定义：
 
-| 属性名                 | 类型                                                     | 默认值      | 必填 | 描述                                                    |
-| :--------------------- | :------------------------------------------------------- | :---------- | :--- | :------------------------------------------------------ |
-| realtime               | `boolean`                                                | `undefined` | 否   | 是否在数据发生变动后实时触发搜索事件（仅针对 backfill） |
-| backfill               | `Record<string, any>`                                    | -           | 否   | 回填信息                                                |
-| onBackfillChange       | `WrapperArrayable<onBackfillChange>`                     | -           | 否   | 回填信息发生变化时触发（仅针对 backfill）               |
+| 属性名            | 类型                                                     | 默认值      | 必填 | 描述                                                    |
+| :---------------- | :------------------------------------------------------- | :---------- | :--- | :------------------------------------------------------ |
+| realtime          | `boolean`                                                | `undefined` | 否   | 是否在数据发生变动后实时触发搜索事件（仅针对 backfill） |
+| backfill          | `Record<string, any>`                                    | -           | 否   | 回填信息                                                |
+| onBackfillChange  | `WrapperArrayable<onBackfillChange>`                     | -           | 否   | 回填信息发生变化时触发（仅针对 backfill）               |
 | model             | `Record<string, any>`                                    | -           | 否   | 表单形式的双向绑定值                                    |
-| shallowWatchModel | `boolean`                                                | `false`      | 否   | 是否浅监听 model, 批量赋值时启用以规避 depend 重置 |
-| validator              | `(query: Record<string, any>) => any \| Promise<any>`    | `undefined` | 否   | 自定义校验函数（内部校验通过后触发）                    |
-| toast                  | `(msg: string) => void`                                  | `undefined` | 否   | 校验失败时产生的提示                                    |
-| readonly               | `boolean`                                                | `undefined` | 否   | 表单是否只读                                            |
-| disabled               | `boolean`                                                | `undefined` | 否   | 表单是否禁用                                            |
-| onSearch               | `WrapperArrayable<(query: Record<string, any>) => void>` | -           | 否   | 搜索事件触发回调（仅针对 backfill）                     |
+| shallowWatchModel | `boolean`                                                | `false`     | 否   | 是否浅监听 model, 批量赋值时启用以规避 depend 重置      |
+| validator         | `(query: Record<string, any>) => any \| Promise<any>`    | `undefined` | 否   | 自定义校验函数（内部校验通过后触发）                    |
+| toast             | `(msg: string) => void`                                  | `undefined` | 否   | 校验失败时产生的提示                                    |
+| readonly          | `boolean`                                                | `undefined` | 否   | 表单是否只读                                            |
+| disabled          | `boolean`                                                | `undefined` | 否   | 表单是否禁用                                            |
+| onSearch          | `WrapperArrayable<(query: Record<string, any>) => void>` | -           | 否   | 搜索事件触发回调（仅针对 backfill）                     |
 
 #### 返回值 (Expose)
 
@@ -102,16 +102,15 @@ if (error) {
 
 `useWrapper` 通过 `provide` 向子组件注入以下接口：
 
-| 属性名                 | 类型                                              | 描述                        |
-| :--------------------- | :------------------------------------------------ | :-------------------------- |
-| realtime               | `Ref<boolean \| undefined>`                       | 是否实时触发搜索            |
-| readonly               | `Ref<boolean \| undefined>`                       | 表单只读状态                |
-| disabled               | `Ref<boolean \| undefined>`                       | 表单禁用状态                |
-| register               | `(config: CommonMethod) => () => void`            | 注册子组件, 返回注销函数    |
-| beforeUpdateQueryValue | `() => void`                                      | 更新 query 前调用, 暂停监听 |
-| afterUpdateQueryValue  | `() => void`                                      | 更新 query 后调用, 恢复监听 |
-| search                 | `() => Promise<string \| void> \| string \| void` | 触发搜索事件                |
-| options                | `Record<string, any[]>`                           | 所有子组件的数据源集合      |
+| 属性名   | 类型                                              | 描述                     |
+| :------- | :------------------------------------------------ | :----------------------- |
+| realtime | `Ref<boolean \| undefined>`                       | 是否实时触发搜索         |
+| readonly | `Ref<boolean \| undefined>`                       | 表单只读状态             |
+| disabled | `Ref<boolean \| undefined>`                       | 表单禁用状态             |
+| formRef  | `Ref<表单实例>`                                   | 表单实例                 |
+| register | `(config: CommonMethod) => () => void`            | 注册子组件, 返回注销函数 |
+| search   | `() => Promise<string \| void> \| string \| void` | 触发搜索事件             |
+| options  | `Record<string, any[]>`                           | 所有子组件的数据源集合   |
 
 #### 子组件注册机制
 

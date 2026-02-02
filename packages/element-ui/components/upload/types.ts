@@ -34,10 +34,10 @@ const elUploadEmits = {
 };
 
 /**
- * 文件ID生成器
- * 用于生成唯一的文件标识符
+ * 文件ID生成器, 用于生成唯一的文件标识符
+ * 人有生老三千疾, 唯有相思不可医
  */
-let fileId = 1000;
+let fileId = 3000;
 export const genFileId = () => Date.now() + ++fileId;
 
 /**

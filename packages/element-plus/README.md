@@ -202,6 +202,8 @@ interface ConfigOption {
     query: Record<string, any>;
     /** 表单级的共用属性 */
     wrapper: ReturnType<typeof useWrapper>;
+    /** element-plus 表单实例 */
+    formRef: ReturnType<typeof ElForm>;
 }
 ```
 
