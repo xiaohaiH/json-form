@@ -8,7 +8,7 @@ export const IS_COMPOSITION_VERSION = version.slice(0, 3) === '2.7';
 export const provideKey = 'json-form-wrapper';
 
 /** 容器注入值的类型 */
-export interface ProvideValue<Query extends Record<string, any> = Record<string, any>, Options extends Record<string, any> = Record<string, any>> {
+export interface ProvideValue<Query extends Record<string, any> = Record<string, any>, Options extends Record<string, any> = Record<string, any>, FormInstance = any> {
     /** 表单是否只读 */
     readonly?: Ref<boolean | undefined>;
     /** 表单是否禁用 */
@@ -17,6 +17,8 @@ export interface ProvideValue<Query extends Record<string, any> = Record<string,
      * 是否实时触发
      */
     realtime: Ref<boolean | undefined>;
+    /** 表单实例 */
+    formRef: FormInstance;
     /**
      * 子组件需主动注册组件, 否则不会生效
      * @param {CommonMethod} config 提供父组件校验, 重置等方法
@@ -24,9 +26,9 @@ export interface ProvideValue<Query extends Record<string, any> = Record<string,
      * @returns {() => void} 取消注册 - 默认会自动取消, 如果是异步任务内注册, 需自己手动取消
      */
     register: (config: CommonMethod) => () => void;
-    /** 子组件更新 query 前调用函数 */
+    /** 子组件更新 query 前调用函数(内部方法, 外部请勿调用, 随时可能会调整) */
     beforeUpdateQueryValue: () => void;
-    /** 子组件更新 query 后调用函数 */
+    /** 子组件更新 query 后调用函数(内部方法, 外部请勿调用, 随时可能会调整) */
     afterUpdateQueryValue: () => void;
     /**
      * 提供给组件内部的直接触发到外部的搜索事件
@@ -38,7 +40,7 @@ export interface ProvideValue<Query extends Record<string, any> = Record<string,
     options: Options;
 }
 /** 获取容器注入的值 */
-export function getProvideValue<Query extends Record<string, any> = Record<string, any>, Options extends Record<string, any> = Record<string, any>>(): ProvideValue<Query, Options> | undefined {
+export function getProvideValue<Query extends Record<string, any> = Record<string, any>, Options extends Record<string, any> = Record<string, any>, FormInstance = any>(): ProvideValue<Query, Options, FormInstance> | undefined {
     return inject(provideKey);
 }
 export function defineProvideValue<T extends ProvideValue>(option: T) {

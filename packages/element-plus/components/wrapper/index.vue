@@ -68,7 +68,9 @@ export default defineComponent({
         function getField(...args: Parameters<InstanceType<typeof ElForm>['getField']>) {
             return formRef.value!.getField(...args);
         }
-        const wrapper = useWrapper(props);
+        const wrapper = useWrapper(props, {
+            formRef,
+        });
         /** 重置 */
         function reset() {
             wrapper.reset();

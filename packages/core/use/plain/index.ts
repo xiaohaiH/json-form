@@ -147,8 +147,9 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
         },
         trySetDefaultValue(_query: Record<string, any>) {
             let defaultValue: any;
+            const value = getValueInObject(_query);
             // eslint-disable-next-line no-cond-assign
-            if (isEmptyValue(getValueInObject(_query)) && !isEmptyValue(defaultValue = getAppointProp('defaultValue'))) {
+            if ((isEmptyValue(value) || (isArray(value) && !value.length)) && !isEmptyValue(defaultValue = getAppointProp('defaultValue'))) {
                 setValueInObject(defaultValue, _query);
                 return true;
             }

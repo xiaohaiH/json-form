@@ -1,6 +1,7 @@
-import type { CoreOption, GetOptions, ProvideValue } from '@xiaohaih/json-form-core';
+import type { CoreOption, GetOptions, getProvideValue, usePlain } from '@xiaohaih/json-form-core';
 import type { Form as ElForm } from 'element-ui';
 import type { ComponentExposed } from 'vue-component-type-helpers';
+import type { Ref } from 'vue-demi';
 import type {
     AutocompleteProps as PureAutocompleteProps,
     CascaderProps as PureCascaderProps,
@@ -120,10 +121,10 @@ export interface DynamicGroupProps<
     Query extends Record<string, any>,
     Option,
     OptionQuery extends Record<string, any> = Record<string, any>,
-> extends Omit<PureDynamicGroupProps<T, Query, Option, OptionQuery>, BuiltInField | 'config' | 'getFormRef'>, RewriteOption<T, Query, Option, OptionQuery> {
+> extends Omit<PureDynamicGroupProps<T, Query, Option, OptionQuery>, BuiltInField | 'config'>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'dynamic-group';
     /** 渲染的子条件(重写该属性以补充声明) */
-    config?: MaybeFunction<[{ item: Record<string, any>; query: Query; index: number }], JSONFormOption<string, Query, Option, OptionQuery>[] | Record<keyof Query, JSONFormOption<string, Query, Option, OptionQuery>>>;
+    config?: MaybeFunction<[{ item: Record<string, any>; index: number; checked: Record<string, any>[]; query: Query; plain: ReturnType<typeof usePlain> }], JSONFormOption<string, Query, Option, OptionQuery>[] | Record<keyof Query, JSONFormOption<string, Query, Option, OptionQuery>>>;
 }
 export interface GroupProps<
     T,
@@ -133,8 +134,7 @@ export interface GroupProps<
 > extends Omit<PureGroupProps<T, Query, Option, OptionQuery>, BuiltInField | 'config' | 'getFormRef'>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'group';
     /** 渲染的子条件(重写该属性以补充声明) */
-    // ; formRef?: ComponentExposed<typeof ElForm>
-    config?: MaybeFunction<[{ query: Query; wrapper?: ProvideValue }], JSONFormOption<T, Query, Option, OptionQuery>[] | Record<keyof Query, JSONFormOption<T, Query, Option, OptionQuery>>>;
+    config?: MaybeFunction<[{ query: Query; wrapper?: ReturnType<typeof getProvideValue<Query, OptionQuery, Ref<ComponentExposed<typeof ElForm>>>> }], JSONFormOption<T, Query, Option, OptionQuery>[] | Record<keyof Query, JSONFormOption<T, Query, Option, OptionQuery>>>;
 }
 export interface InputNumberProps<
     T,

@@ -22,7 +22,8 @@ import type { wrapperProps } from './types';
 type WrapperProps = ExtractPropTypes<typeof wrapperProps>;
 
 /** 用来给 v2 版本做兼容 */
-interface Config {
+interface Config<T = any> {
+    formRef?: T;
     /** model 的字段 */
     modelField?: string;
     /** backfill 发生变化后的回调 */
@@ -32,7 +33,7 @@ interface Config {
 }
 
 /** 封装 wrapper 组件必备的信息(config 用来给 v2版本做兼容) */
-export function useWrapper(props: WrapperProps, config?: Config) {
+export function useWrapper<T>(props: WrapperProps, config?: Config<T>) {
     /** 兼容 v2版本的 value */
     const MODEL_VALUE = (config?.modelField || 'model') as 'model';
 
@@ -48,6 +49,7 @@ export function useWrapper(props: WrapperProps, config?: Config) {
         readonly: toRef(props, 'readonly', false),
         disabled: toRef(props, 'disabled', false),
         realtime: toRef(props, 'realtime', false),
+        formRef: config?.formRef,
         reset,
         register(compOption) {
             compOption.field && allFields.add(compOption.field);
