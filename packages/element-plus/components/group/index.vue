@@ -2,10 +2,10 @@
     <!-- eslint-disable-next-line vue/no-unused-refs -->
     <VirtualGroup ref="virtualGroupRef" :tag="tag">
         <template v-if="slots?.prepend || ($slots as GroupSlots).prepend">
-            <component :is="getNode(slots?.prepend || ($slots as GroupSlots).prepend)" :query="query" :checked="checked" />
+            <component :is="getNode(slots?.prepend || ($slots as GroupSlots).prepend)" :query="query" :wrapper="wrapper" />
         </template>
         <template v-if="slots?.default">
-            <component :is="slots.default" :config="finalConfig" :query="query" :checked="checked" />
+            <component :is="slots.default" :config="finalConfig" :query="query" :wrapper="wrapper" />
         </template>
         <slot v-else-if="$slots.default" :config="finalConfig" :query="query" />
         <template v-else>
@@ -14,7 +14,7 @@
             </template>
         </template>
         <template v-if="slots?.append || ($slots as GroupSlots).append">
-            <component :is="getNode(slots?.append || ($slots as GroupSlots).append)" :query="query" :checked="checked" />
+            <component :is="getNode(slots?.append || ($slots as GroupSlots).append)" :query="query" :wrapper="wrapper" />
         </template>
     </VirtualGroup>
 </template>
@@ -45,11 +45,9 @@ export default defineComponent({
         const tagRef = computed(() => virtualGroupRef.value?.tagRef);
         /** 容器注入值 */
         const wrapper = getProvideValue();
-        const checked = undefined;
         // const checked = computed(() => get<any>(props.query, props.field!));
         const finalConfig = computed(() => {
-            const { config, parseConfig } = props;
-            if (!parseConfig) return [];
+            const { config } = props;
             return typeof config === 'function' ? config({ query: props.query, wrapper, formRef: props.getFormRef?.() }) : config;
         });
         /** 对 group 组件特殊处理 */
@@ -64,7 +62,7 @@ export default defineComponent({
             getNode,
             virtualGroupRef,
             tagRef,
-            checked,
+            wrapper,
             finalConfig,
             getComponent2,
         };

@@ -1,4 +1,4 @@
-import type { CamelCase, Obj2Props, PlainProps, usePlain } from '@xiaohaih/json-form-core';
+import type { CamelCase, getProvideValue, Obj2Props, PlainProps, usePlain } from '@xiaohaih/json-form-core';
 import { emits2props, plainProps } from '@xiaohaih/json-form-core';
 import type { Component, ExtractPublicPropTypes, Prop, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
@@ -23,10 +23,8 @@ export function groupPropsGeneric<T, Query extends Record<string, any>, Option, 
         tag: { type: [Object, String, Array, Function] as PropType<any>, default: 'div' },
         /** 渲染的子条件 */
         config: { type: [Object, Array, Function] as PropType<any> },
-        /** 是否解析 config, false 直接返回空数组 - 配合 dynamic-group 使用 */
-        parseConfig: { type: Boolean as PropType<boolean>, default: true },
         /** 传递给组件的插槽 */
-        slots: { type: Object as PropType<GroupSlots<T, Query, Option, OptionQuery>> },
+        slots: { type: Object as PropType<GroupSlots<Query, OptionQuery>> },
         /** 组件额外的钩子() */
         hooks: { type: [Object] as PropType<GroupHookOption>, default: undefined },
         /** 获取表单组件实例 */
@@ -50,11 +48,11 @@ export const groupEmitsPrivate = groupEmitsGeneric();
 export const groupEmits = groupEmitsPrivate;
 export type GroupEmits<T> = ReturnType<typeof groupEmitsGeneric<T>>;
 
-export interface GroupSlots<T = any, Query extends Record<string, any> = any, Option = any, OptionQuery extends Record<string, any> = any> {
+export interface GroupSlots<Query extends Record<string, any> = any, OptionQuery extends Record<string, any> = any> {
     /** 在表单项前渲染 */
-    prepend?: ComponentType<{ query: Query }>;
+    prepend?: ComponentType<{ query: Query; wrapper: ReturnType<typeof getProvideValue> }>;
     /** 自定义表单渲染逻辑 */
-    default?: ComponentType<{ config: Record<string, any> | Record<string, any>[]; query: Query }>;
+    default?: ComponentType<{ config: Record<string, any> | Record<string, any>[]; query: Query; wrapper: ReturnType<typeof getProvideValue> }>;
     /** 在表单项后渲染 */
-    append?: ComponentType<{ query: Query }>;
+    append?: ComponentType<{ query: Query; wrapper: ReturnType<typeof getProvideValue> }>;
 }

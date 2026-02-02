@@ -2,13 +2,13 @@
     <!-- eslint-disable vue/no-deprecated-dollar-listeners-api vue/no-v-for-template-key-on-child -->
     <component v-bind="$attrs" :is="tag" ref="tagRef" v-on="$listeners">
         <template v-if="$slots.prepend">
-            <slot name="prepend" :query="query" :checked="checked" />
+            <slot name="prepend" :query="query" :wrapper="wrapper" />
         </template>
         <template v-else-if="slots.prepend">
-            <component :is="getNode(slots.prepend)" :query="query" :checked="checked" />
+            <component :is="getNode(slots.prepend)" :query="query" :wrapper="wrapper" />
         </template>
         <template v-if="slots.default">
-            <component :is="slots.default" :config="finalConfig" :query="query" :checked="checked" />
+            <component :is="slots.default" :config="finalConfig" :query="query" :wrapper="wrapper" />
         </template>
         <slot v-else-if="hasOwn($slots, 'default')" :config="finalConfig" :query="query" />
         <template v-else>
@@ -17,10 +17,10 @@
             </template>
         </template>
         <template v-if="$slots.append">
-            <slot name="append" :query="query" :checked="checked" />
+            <slot name="append" :query="query" :wrapper="wrapper" />
         </template>
         <template v-else-if="slots.append">
-            <component :is="getNode(slots.append)" :query="query" :checked="checked" />
+            <component :is="getNode(slots.append)" :query="query" :wrapper="wrapper" />
         </template>
     </component>
 </template>
@@ -48,11 +48,9 @@ export default defineComponent({
         const tagRef = ref<Record<string, any> | undefined>();
         /** 容器注入值 */
         const wrapper = getProvideValue();
-        const checked = undefined;
         // const checked = computed(() => get<any>(props.query, props.field!));
         const finalConfig = computed(() => {
-            const { config, parseConfig } = props;
-            if (!parseConfig) return [];
+            const { config } = props;
             return typeof config === 'function' ? config({ query: props.query, wrapper, formRef: props.getFormRef?.() }) : config;
         });
         /** 对 group 组件特殊处理 */
@@ -67,7 +65,7 @@ export default defineComponent({
             hasOwn,
             getNode,
             tagRef,
-            checked,
+            wrapper,
             finalConfig,
             getComponent2,
         };
