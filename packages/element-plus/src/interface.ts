@@ -148,7 +148,8 @@ export interface GroupProps<
 > extends Omit<PureGroupProps<T, Query, Option, OptionQuery>, BuiltInField | 'config' | 'getFormRef'>, RewriteOption<T, Query, Option, OptionQuery> {
     t: 'group';
     /** 渲染的子条件(重写该属性以补充声明) */
-    config?: MaybeFunction<[{ query: Query; wrapper?: ProvideValue; formRef?: ComponentExposed<typeof ElForm> }], JSONFormOption<T, Query, Option, OptionQuery>[] | Record<keyof Query, JSONFormOption<T, Query, Option, OptionQuery>>>;
+    // ; formRef?: ComponentExposed<typeof ElForm>
+    config?: MaybeFunction<[{ query: Query; wrapper?: ProvideValue; }], JSONFormOption<T, Query, Option, OptionQuery>[] | Record<keyof Query, JSONFormOption<T, Query, Option, OptionQuery>>>;
 }
 export interface InputNumberProps<
     T,
