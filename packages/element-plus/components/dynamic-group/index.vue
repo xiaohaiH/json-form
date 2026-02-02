@@ -1,32 +1,33 @@
 <template>
-    <HGroup ref="dynamicGroupRef" :config="config" :query="query" :tag="tag" :field="field" :hooks="hooks" :slots="slots" :parse-config="false">
-        <template v-if="($slots as DynamicGroupSlots).prepend" #prepend>
-            <slot :query="query" name="prepend" />
+    <VirtualGroup ref="virtualGroupRef" :tag="tag">
+        <template v-if="slots?.prepend || ($slots as DynamicGroupSlots).prepend" #prepend>
+            <slot :query="query" :checked="plain.checked.value" :plain="plain" name="prepend" />
         </template>
-        <template v-if="($slots as DynamicGroupSlots).append" #append>
-            <slot :query="query" name="append" />
+        <template v-if="slots?.append || ($slots as DynamicGroupSlots).append" #append>
+            <slot :query="query" :checked="plain.checked.value" :plain="plain" name="append" />
         </template>
         <template #default>
             <template v-for="(opt, idx) of finalConfig" :key="opt.uniqueValue">
                 <div v-bind="itemProps">
-                    <component :is="itemSlots.prepend" :query="query" :checked="checked!" :index="idx" />
+                    <component :is="itemSlots.prepend" :query="query" :checked="plain.checked.value" :index="idx" :plain="plain" />
                     <template v-for="(item) of opt.options" :key="`${field}.${idx}.${item.field}`">
-                        <component :is="getComponent2(item.t)!" v-if="item" v-bind="item" :unique-value="opt.uniqueValue" :field="`${field}.${idx}.${item.field}`" :query="query" :parent-query="checked![idx]" />
+                        <component :is="getComponent2(item.t)!" v-if="item" v-bind="item" :unique-value="opt.uniqueValue" :field="`${field}.${idx}.${item.field}`" :query="query" :parent-query="plain.checked.value[idx]" />
                     </template>
-                    <component :is="itemSlots.append" :query="query" :checked="checked!" :index="idx" />
+                    <component :is="itemSlots.append" :query="query" :checked="plain.checked.value" :index="idx" :plain="plain" />
                 </div>
             </template>
         </template>
-    </HGroup>
+    </VirtualGroup>
 </template>
 
 <script lang="tsx">
 import type { PlainProps } from '@xiaohaih/json-form-core';
 import { defineCommonMethod, get, getNode, getProvideValue, hyphenate, isPlainObject, set, usePlain } from '@xiaohaih/json-form-core';
-import type { ExtractPublicPropTypes, SlotsType } from 'vue';
+import type { ExtractPublicPropTypes, Ref, SlotsType } from 'vue';
 import { computed, defineComponent, inject, markRaw, ref, watch } from 'vue';
 import { pick } from '../../src/utils';
 import { getComponent, HGroup } from '../group/index';
+import VirtualGroup from '../group/virtual-group.vue';
 import type { DynamicGroupSlots } from './types';
 import { dynamicGroupEmitsPrivate as emits, dynamicGroupPropsPrivate as props } from './types';
 
@@ -40,14 +41,17 @@ let globalId = 0;
 export default defineComponent({
     name: 'HDynamicGroup',
     components: {
-        HGroup,
+        VirtualGroup,
     },
     props,
     emits,
     slots: Object as SlotsType<DynamicGroupSlots>,
     setup(props, ctx) {
-        const dynamicGroupRef = ref<Record<string, any> | undefined>();
-        const checked = computed(() => get<Record<string, any>[] | undefined>(props.query, props.field!));
+        const virtualGroupRef = ref<Record<string, any> | undefined>();
+        const tagRef = computed(() => virtualGroupRef.value?.tagRef);
+        const plain = usePlain(props);
+        const checked = plain.checked as Ref<Record<string, any>[] | undefined>;
+
         // /** watch 版本的配置项, watch 自带旧值记录, 方便做优化 */
         // const finalConfig = ref<{ uniqueValue: string | number; options: Option[] }[]>([]);
         // watch(
@@ -87,7 +91,7 @@ export default defineComponent({
             const isFunc = typeof config === 'function';
             const arr = !isFunc && coverObjOption2Arr<Option[]>(config);
             const { uniqueKey } = props;
-            const result = value.map((o, i) => ({ uniqueValue: uniqueKey ? o[uniqueKey] : getId(o, i), options: isFunc ? coverObjOption2Arr<Option[]>(config({ item: o, index: i, query: props.query })) : arr as Option[] }));
+            const result = value.map((o, i) => ({ uniqueValue: uniqueKey ? o[uniqueKey] : getId(o, i), options: isFunc ? coverObjOption2Arr<Option[]>(config({ item: o, index: i, checked: value, query: props.query, plain })) : arr as Option[] }));
             // eslint-disable-next-line vue/no-side-effects-in-computed-properties
             configSnapshot.configUniqueValue = result.map((r) => r.uniqueValue);
             // eslint-disable-next-line vue/no-side-effects-in-computed-properties
@@ -106,57 +110,16 @@ export default defineComponent({
             return (isPlainObject(opt) ? Object.entries(opt).map(([key, value]) => ({ ...value, field: key })) : opt) as unknown as T;
         }
 
-        /** 容器注入值 */
-        const wrapper = getProvideValue();
-        const option = defineCommonMethod({
-            reset(this: void, query?: Record<string, any>) {
-                set(query || props.query, props.field!, getDef());
-            },
-            get validator() {
-                return props.validator;
-            },
-            onBackfillChange: (backfill, oldBackfill, isChange) => {
-                // isChange && props.hooks?.backfillChange?.(backfill, oldBackfill);
-            },
-            trySetDefaultValue(_query: Record<string, any>) {
-                // 存在默认值时
-                // 如果值为空, 直接赋默认值
-                // 如果值长度为空则读取默认值, 且在默认值长度为真时赋值
-                const { defaultValue } = props;
-                if (!defaultValue) return false;
-                const val = get<any[] | undefined>(_query, props.field!);
-                let def;
-                if (!val) {
-                    def = getDef();
-                }
-                else if (!val.length) {
-                    const r = getDef();
-                    r!.length && (def = r);
-                }
-                if (def) {
-                    set(_query, props.field!, def);
-                    return true;
-                }
-                return false;
-            },
-        });
-        wrapper?.register(option);
-        /** 获取默认值 */
-        function getDef() {
-            const { defaultValue } = props;
-            return typeof defaultValue === 'function' ? defaultValue() : defaultValue;
-        }
         function getComponent2(name: string) {
             return name === 'dynamic-group' ? 'HDynamicGroup' : name === 'group' ? HGroup : getComponent(name);
         }
 
         return {
-            wrapper,
-            option,
             hyphenate,
             getNode,
-            dynamicGroupRef,
-            checked,
+            virtualGroupRef,
+            tagRef,
+            plain,
             finalConfig,
             getComponent2,
         };

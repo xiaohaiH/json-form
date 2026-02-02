@@ -1,24 +1,30 @@
 <template>
     <!-- eslint-disable vue/no-deprecated-dollar-listeners-api vue/no-v-for-template-key-on-child -->
-    <HGroup ref="dynamicGroupRef" :config="config" :query="query" :tag="tag" :field="field" :hooks="hooks" :slots="slots" :parse-config="false" v-bind="$attrs" v-on="$listeners">
+    <component :is="tag" ref="tagRef" v-on="$listeners">
         <template v-if="$slots.prepend" #prepend>
-            <slot :query="query" name="prepend" />
+            <slot :query="query" name="prepend" :plain="plain" />
+        </template>
+        <template v-else-if="slots.prepend" #prepend>
+            <component :is="getNode(slots.prepend)" :query="query" :plain="plain" />
         </template>
         <template v-if="$slots.append" #append>
-            <slot :query="query" name="append" />
+            <slot :query="query" name="append" :plain="plain" />
+        </template>
+        <template v-else-if="slots.append" #append>
+            <component :is="getNode(slots.append)" :query="query" :plain="plain" />
         </template>
         <template #default>
             <template v-for="(opt, idx) of finalConfig">
                 <div :key="opt.uniqueValue" v-bind="itemProps">
-                    <component :is="itemSlots.prepend" :query="query" :checked="checked" :index="idx" />
+                    <component :is="itemSlots.prepend" :query="query" :checked="plain.checked.value" :index="idx" :plain="plain" />
                     <template v-for="(item) of opt.options">
-                        <component :is="getComponent2(item.t)" v-if="item" :key="`${field}.${idx}.${item.field}`" v-bind="item" :unique-value="opt.uniqueValue" :field="`${field}.${idx}.${item.field}`" :query="query" :parent-query="checked[idx]" v-on="item.on" />
+                        <component :is="getComponent2(item.t)" v-if="item" :key="`${field}.${idx}.${item.field}`" v-bind="item" :unique-value="opt.uniqueValue" :field="`${field}.${idx}.${item.field}`" :query="query" :parent-query="plain.checked.value[idx]" v-on="item.on" />
                     </template>
-                    <component :is="itemSlots.append" :query="query" :checked="checked" :index="idx" />
+                    <component :is="itemSlots.append" :query="query" :checked="plain.checked.value" :index="idx" :plain="plain" />
                 </div>
             </template>
         </template>
-    </HGroup>
+    </component>
 </template>
 
 <script lang="tsx">
@@ -44,14 +50,15 @@ let globalId = 0;
 export default defineComponent({
     name: 'HDynamicGroup',
     components: {
-        HGroup,
     },
     props,
     emits,
     // slots: Object as SlotsType<DynamicGroupSlots>,
     setup(props, ctx) {
-        const dynamicGroupRef = ref<Record<string, any> | undefined>();
-        const checked = computed(() => get<Record<string, any>[] | undefined>(props.query, props.field!));
+        const tagRef = ref<Record<string, any> | undefined>();
+        const plain = usePlain(props);
+        const checked = plain.checked as Ref<Record<string, any>[] | undefined>;
+
         // /** watch 版本的配置项, watch 自带旧值记录, 方便做优化 */
         // const finalConfig = ref<{ uniqueValue: string | number; options: Option[] }[]>([]);
         // watch(
@@ -91,7 +98,7 @@ export default defineComponent({
             const isFunc = typeof config === 'function';
             const arr = !isFunc && coverObjOption2Arr<Option[]>(config);
             const { uniqueKey } = props;
-            const result = value.map((o, i) => ({ uniqueValue: uniqueKey ? o[uniqueKey] : getId(o, i), options: isFunc ? coverObjOption2Arr<Option[]>(config({ item: o, index: i, query: props.query })) : arr as Option[] }));
+            const result = value.map((o, i) => ({ uniqueValue: uniqueKey ? o[uniqueKey] : getId(o, i), options: isFunc ? coverObjOption2Arr<Option[]>(config({ item: o, index: i, checked: value, query: props.query, plain })) : arr as Option[] }));
             configSnapshot.configUniqueValue = result.map((r) => r.uniqueValue);
             configSnapshot.checkedValue = [...value];
             return result;
@@ -107,58 +114,15 @@ export default defineComponent({
         function coverObjOption2Arr<T>(opt: any): T {
             return (isPlainObject(opt) ? Object.entries(opt).map(([key, value]) => ({ ...value, field: key })) : opt) as unknown as T;
         }
-
-        /** 容器注入值 */
-        const wrapper = getProvideValue();
-        const option = defineCommonMethod({
-            reset(this: void, query?: Record<string, any>) {
-                set(query || props.query, props.field!, getDef(), vueSet);
-            },
-            get validator() {
-                return props.validator;
-            },
-            onBackfillChange: (backfill, oldBackfill, isChange) => {
-                // isChange && props.hooks?.backfillChange?.(backfill, oldBackfill);
-            },
-            trySetDefaultValue(_query: Record<string, any>) {
-                // 存在默认值时
-                // 如果值为空, 直接赋默认值
-                // 如果值长度为空则读取默认值, 且在默认值长度为真时赋值
-                const { defaultValue } = props;
-                if (!defaultValue) return false;
-                const val = get<any[] | undefined>(_query, props.field!);
-                let def;
-                if (!val) {
-                    def = getDef();
-                }
-                else if (!val.length) {
-                    const r = getDef();
-                    r!.length && (def = r);
-                }
-                if (def) {
-                    set(_query, props.field!, def, vueSet);
-                    return true;
-                }
-                return false;
-            },
-        });
-        wrapper?.register(option);
-        /** 获取默认值 */
-        function getDef() {
-            const { defaultValue } = props;
-            return typeof defaultValue === 'function' ? defaultValue() : defaultValue;
-        }
         function getComponent2(name: string) {
             return name === 'dynamic-group' ? 'HDynamicGroup' : name === 'group' ? HGroup : getComponent(name);
         }
 
         return {
-            wrapper,
-            option,
             hyphenate,
             getNode,
-            dynamicGroupRef,
-            checked: checked as unknown as Ref<NonNullable<typeof checked.value>>,
+            tagRef,
+            plain,
             finalConfig,
             getComponent2,
         };
