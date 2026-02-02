@@ -1,0 +1,1 @@
+import{d as r,o as s,c}from"./framework.DgY8oKvN.js";const o=["src"],m=r({__name:"iframe",props:{src:{}},setup(e){return(a,n)=>(s(),c("iframe",{class:"w-full h-400px",src:e.src,frameborder:"0"},null,8,o))}});export{m as _};
