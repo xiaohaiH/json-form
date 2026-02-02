@@ -1,5 +1,16 @@
 # @xiaohaih/json-form-el
 
+## 0.2.4
+
+### Patch Changes
+
+- 1. 修复设置默认值时, 数组算空值, 保持与 checked.value 一样的逻辑
+- 2. wrapper 增加 fromRef 的注入
+- 3. 调整 dynamic-group 的逻辑, 使其更符合真实场景
+- 4. 调整 group 插槽的参数
+- Updated dependencies
+  - @xiaohaih/json-form-core@0.2.4
+
 ## 0.2.3
 
 ### Patch Changes

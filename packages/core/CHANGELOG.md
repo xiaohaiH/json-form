@@ -1,5 +1,12 @@
 # @xiaohaih/json-form-core
 
+## 0.2.4
+
+### Patch Changes
+
+- 1. 修复设置默认值时, 数组算空值, 保持与 checked.value 一样的逻辑
+- 2. wrapper 增加 fromRef 的注入
+
 ## 0.2.3
 
 ### Patch Changes
