@@ -1,5 +1,16 @@
 # @xiaohaih/json-form-el
 
+## 0.2.3
+
+### Patch Changes
+
+- 1. defineOption 增加返回函数(暴露了 query, wrapper, formRef 供配置项使用)
+- 2. 支持事件的传入(通过 on 属性传)
+- 3. 插槽声明全部进行了调整
+- 4. 删除 dynamicProps, staticProps 等属性
+- Updated dependencies
+  - @xiaohaih/json-form-core@0.2.3
+
 ## 0.2.2
 
 ### Patch Changes

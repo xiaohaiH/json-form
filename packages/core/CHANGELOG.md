@@ -1,5 +1,11 @@
 # @xiaohaih/json-form-core
 
+## 0.2.3
+
+### Patch Changes
+
+- 调整注入方法的导出
+
 ## 0.2.2
 
 ### Patch Changes

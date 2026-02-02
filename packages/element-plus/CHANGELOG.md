@@ -1,5 +1,16 @@
 # @xiaohaih/json-form-plus
 
+## 0.2.3
+
+### Patch Changes
+
+- 1. defineOption 增加返回函数(暴露了 query, wrapper, formRef 供配置项使用)
+- 2. 对 upload 上传的文件进行拦截, 并复制 plus 内拖拽的逻辑自行实现
+- 3. 插槽声明全部进行了调整
+- 4. 删除 dynamicProps, staticProps 等属性
+- Updated dependencies
+  - @xiaohaih/json-form-core@0.2.3
+
 ## 0.2.2
 
 ### Patch Changes

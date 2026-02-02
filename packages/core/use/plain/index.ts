@@ -257,7 +257,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                 // 依赖为单个值时, 直接比较值是否一致
                 if (typeof _dependFields === 'string' && _val !== __val) return;
                 // 依赖为多个值时, 遍历比较值是否一致
-                else if (_val.length === __val?.length && _val.every((o, i) => o === __val[i])) return;
+                else if (_val.length === __val?.length && (_val as any[]).every((o, i) => o === __val[i])) return;
                 // 异步触发回调, 某些场景得先清空值, 再清空数据源
                 // 否则会导致数据源来回切换时, 其选中状态未被消除
                 nextTick(getOption.bind(null, 'depend'));
