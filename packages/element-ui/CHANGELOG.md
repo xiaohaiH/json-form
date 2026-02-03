@@ -1,5 +1,13 @@
 # @xiaohaih/json-form-el
 
+## 0.2.5
+
+### Patch Changes
+
+- 修复动态表单重置时, 父级提供的 defaultValue 被子级覆盖, 并增加相应的测试代码
+- Updated dependencies
+  - @xiaohaih/json-form-core@0.2.5
+
 ## 0.2.4
 
 ### Patch Changes
