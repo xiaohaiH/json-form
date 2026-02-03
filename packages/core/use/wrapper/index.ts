@@ -239,7 +239,10 @@ export function useWrapper<T>(props: WrapperProps, config?: Config<T>) {
      * @param {object} [target] 重置后默认值(初始值)所挂载的对象 - 默认取 query
      */
     function reset(target?: Record<string, any>) {
-        child.forEach((v) => v.reset(target));
+        // 逆序重置
+        // 动态表单是父级先渲染, 子级后渲染, 如果正序重置会导致
+        // 父级先重置返回新的数据, 旧的子级后重置时会污染新渲染的数据
+        child.forEach((v, i, r) => r[r.length - 1 - i].reset(target));
     }
     /** 自定义校验条件的值并弹出提示 */
     function validateToast(): Promise<any> | any {

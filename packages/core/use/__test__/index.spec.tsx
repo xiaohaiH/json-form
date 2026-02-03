@@ -106,7 +106,7 @@ const PlainComponent = defineComponent({
         // });
 
         const configIsArr = computed(() => Array.isArray(props.config) || typeof props.config === 'function');
-        const r = configIsArr.value ? ({} as unknown as ReturnType<typeof usePlain>) : usePlain(props);
+        const r = (configIsArr.value || !props.config) ? usePlain(props) : ({} as unknown as ReturnType<typeof usePlain>);
         const queryValue = computed(() => get<any[]>(props.query, props.field));
 
         const options222 = computed(() => {
@@ -1620,6 +1620,35 @@ describe('usePlain-useWrapper组合测试', () => {
                 mockModel.value['重置后的值'] = '777';
                 expect(wrapperComp.refObj['重置后的值'].checked).toBe('777');
                 expect(mockModel.value['重置后的值']).toEqual('777');
+
+                await nextTick();
+                wrapper.unmount();
+            });
+
+            it('动态表单重置时, 如果存在默认值, 子级卸载时不应重置默认值的数据', async () => {
+                const searchSpy = vi.fn();
+                const mockModel = ref<Record<string, any>>({ });
+                const mockOptions = ref<Record<string, PlainOption>>({
+                    任务集: {
+                        config: [
+                            { field: '任务名称' },
+                            { field: '4s', defaultValue: 'ssss' },
+                        ],
+                        defaultValue: () => [{ 任务名称: '很纠结啊' }],
+                    },
+                });
+                const wrapper = genWrapperComponent({ mockOptions, mockModel, searchSpy });
+                const wrapperComp = wrapper.vm.wrapperRef;
+
+                // 测试基本值
+                expect(wrapperComp).toBeDefined();
+                expect(mockModel.value).toEqual({ 任务集: [{ '任务名称': '很纠结啊', '4s': 'ssss' }] });
+                wrapperComp.reset();
+                await nextTick();
+                expect(mockModel.value).toEqual({ 任务集: [{ '任务名称': '很纠结啊', '4s': 'ssss' }] });
+                wrapperComp.reset();
+                await nextTick();
+                expect(mockModel.value).toEqual({ 任务集: [{ '任务名称': '很纠结啊', '4s': 'ssss' }] });
 
                 await nextTick();
                 wrapper.unmount();
