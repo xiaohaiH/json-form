@@ -1,28 +1,26 @@
 <template>
     <!-- eslint-disable vue/no-deprecated-dollar-listeners-api vue/no-v-for-template-key-on-child -->
     <component :is="tag" ref="tagRef" v-on="$listeners">
-        <template v-if="$slots.prepend" #prepend>
-            <slot :query="query" name="prepend" :plain="plain" />
+        <template v-if="$slots.prepend">
+            <slot name="prepend" :query="query" :checked="plain.checked.value" :plain="plain" />
         </template>
-        <template v-else-if="slots.prepend" #prepend>
-            <component :is="getNode(slots.prepend)" :query="query" :plain="plain" />
+        <template v-else-if="slots.prepend">
+            <component :is="getNode(slots.prepend)" :query="query" :checked="plain.checked.value" :plain="plain" />
         </template>
-        <template v-if="$slots.append" #append>
-            <slot :query="query" name="append" :plain="plain" />
+        <template v-for="(opt, idx) of finalConfig">
+            <div :key="opt.uniqueValue" v-bind="itemProps">
+                <component :is="itemSlots.prepend" :query="query" :checked="plain.checked.value" :index="idx" :plain="plain" />
+                <template v-for="(item) of opt.options">
+                    <component :is="getComponent2(item.t)" v-if="item" :key="`${field}.${idx}.${item.field || item[REWRITE_FIELD_KEY]}`" v-bind="item" :unique-value="opt.uniqueValue" :field="`${field}.${idx}.${item.field || item[REWRITE_FIELD_KEY]}`" :query="query" :parent-query="plain.checked.value[idx]" v-on="item.on" />
+                </template>
+                <component :is="itemSlots.append" :query="query" :checked="plain.checked.value" :index="idx" :plain="plain" />
+            </div>
         </template>
-        <template v-else-if="slots.append" #append>
-            <component :is="getNode(slots.append)" :query="query" :plain="plain" />
+        <template v-if="$slots.append">
+            <slot name="append" :query="query" :checked="plain.checked.value" :plain="plain" />
         </template>
-        <template #default>
-            <template v-for="(opt, idx) of finalConfig">
-                <div :key="opt.uniqueValue" v-bind="itemProps">
-                    <component :is="itemSlots.prepend" :query="query" :checked="plain.checked.value" :index="idx" :plain="plain" />
-                    <template v-for="(item) of opt.options">
-                        <component :is="getComponent2(item.t)" v-if="item" :key="`${field}.${idx}.${item.field}`" v-bind="item" :unique-value="opt.uniqueValue" :field="`${field}.${idx}.${item.field}`" :query="query" :parent-query="plain.checked.value[idx]" v-on="item.on" />
-                    </template>
-                    <component :is="itemSlots.append" :query="query" :checked="plain.checked.value" :index="idx" :plain="plain" />
-                </div>
-            </template>
+        <template v-else-if="slots.append">
+            <component :is="getNode(slots.append)" :query="query" :checked="plain.checked.value" :plain="plain" />
         </template>
     </component>
 </template>
@@ -39,10 +37,13 @@ import { dynamicGroupEmitsPrivate as emits, dynamicGroupPropsPrivate as props } 
 
 type Option = Omit<ExtractPropTypes<PlainProps<any, Record<string, any>, any>>, 'query'> & {
     t: string;
+    [REWRITE_FIELD_KEY]: string;
     on?: Record<string, any>;
 };
 
 let globalId = 0;
+/** 当 field 不存在, 但 fields 存在时, 合并 fields 到对象上的 key */
+const REWRITE_FIELD_KEY = '__field__' as const;
 
 /**
  * @file 自定义组件 - 动态删减组件(对应动态表单)
@@ -112,7 +113,16 @@ export default defineComponent({
         }
         /** 将对象形式的配置项转为数组 */
         function coverObjOption2Arr<T>(opt: any): T {
-            return (isPlainObject(opt) ? Object.entries(opt).map(([key, value]) => ({ ...value, field: key })) : opt) as unknown as T;
+            if (isPlainObject(opt)) {
+                const r: any[] = [];
+                Object.entries(opt).forEach(([key, value]) => {
+                    value.field = key;
+                    r.push(value);
+                });
+                return r as unknown as T;
+            }
+            opt.forEach((o: any) => !o.field && o.fields && (o[REWRITE_FIELD_KEY] = o.fields.join(',')));
+            return opt as unknown as T;
         }
         function getComponent2(name: string) {
             return name === 'dynamic-group' ? 'HDynamicGroup' : name === 'group' ? HGroup : getComponent(name);
@@ -121,6 +131,7 @@ export default defineComponent({
         return {
             hyphenate,
             getNode,
+            REWRITE_FIELD_KEY,
             tagRef,
             plain,
             finalConfig,

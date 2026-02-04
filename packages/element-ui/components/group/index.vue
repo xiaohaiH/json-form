@@ -13,7 +13,7 @@
         <slot v-else-if="hasOwn($slots, 'default')" :config="finalConfig" :query="query" />
         <template v-else>
             <template v-for="(item, key) of finalConfig">
-                <component :is="getComponent2(item.t)" v-if="item" :key="item.field || key" v-bind="item" :field="item.as || item.field || key" :query="query" v-on="item.on" />
+                <component :is="getComponent2(item.t)" v-if="item" :key="item.as || item.field || item[REWRITE_FIELD_KEY] || key" v-bind="item" :field="item.as || item.field || item[REWRITE_FIELD_KEY] || key" :query="query" v-on="item.on" />
             </template>
         </template>
         <template v-if="$slots.append">
@@ -26,13 +26,16 @@
 </template>
 
 <script lang="tsx">
-import { get, getProvideValue, hasOwn, hyphenate, usePlain } from '@xiaohaih/json-form-core';
+import { get, getProvideValue, hasOwn, hyphenate, isPlainObject, usePlain } from '@xiaohaih/json-form-core';
 // import type { SlotsType } from 'vue';
 import { computed, defineComponent, markRaw, ref, watch } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
 import { getComponent } from './assist';
 import type { GroupSlots } from './types';
 import { groupEmitsPrivate as emits, groupPropsPrivate as props } from './types';
+
+/** 当 field 不存在, 但 fields 存在时, 合并 fields 到对象上的 key */
+const REWRITE_FIELD_KEY = '__field__' as const;
 
 /**
  * @file 自定义组件 - 支持多列渲染
@@ -51,8 +54,24 @@ export default defineComponent({
         // const checked = computed(() => get<any>(props.query, props.field!));
         const finalConfig = computed(() => {
             const { config } = props;
-            return typeof config === 'function' ? config({ query: props.query, wrapper, formRef: props.getFormRef?.() }) : config;
+            // 如果函数且提供了 formRef 时, formRef 获取失败时不渲染
+            // 防止重复渲染一次导致 getOptions 重复请求
+            if (typeof config === 'function' && props.getFormRef && !props.getFormRef?.()) return [];
+            return typeof config === 'function' ? coverObjOption2Arr<any[]>(config({ query: props.query, wrapper, formRef: props.getFormRef?.() })) : coverObjOption2Arr<any[]>(config);
         });
+        /** 将对象形式的配置项转为数组 */
+        function coverObjOption2Arr<T>(opt: any): T {
+            if (isPlainObject(opt)) {
+                const r: any[] = [];
+                Object.entries(opt).forEach(([key, value]) => {
+                    value.field = key;
+                    r.push(value);
+                });
+                return r as unknown as T;
+            }
+            opt.forEach((o: any) => !o.field && o.fields && (o[REWRITE_FIELD_KEY] = o.fields.join(',')));
+            return opt as unknown as T;
+        }
         /** 对 group 组件特殊处理 */
         function getComponent2(name: string) {
             return name === 'group' ? 'HGroup' : getComponent(name);
@@ -62,8 +81,9 @@ export default defineComponent({
 
         return {
             hyphenate,
-            hasOwn,
             getNode,
+            hasOwn,
+            REWRITE_FIELD_KEY,
             tagRef,
             wrapper,
             finalConfig,

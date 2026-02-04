@@ -144,6 +144,7 @@ const PlainComponent = defineComponent({
             /** 记录每行数据的值集合 */
             checkedValue: [] as any[],
         };
+        const REWRITE_FIELD_KEY = '__field__';
         /** 计算属性版本的 config 配置项(防止生成的配置项中用了响应式变量, 不在计算属性中生成无法捕捉到) */
         const options = computed(() => {
             const { config } = props;
@@ -167,13 +168,23 @@ const PlainComponent = defineComponent({
         }
         /** 将对象形式的配置项转为数组 */
         function coverObjOption2Arr<T>(opt: any): T {
-            return (isPlainObject(opt) ? Object.entries(opt).map(([key, value]) => ({ ...value, field: key })) : opt) as unknown as T;
+            if (isPlainObject(opt)) {
+                const r: any[] = [];
+                Object.entries(opt).forEach(([key, value]) => {
+                    value.field = key;
+                    r.push(value);
+                });
+                return r as unknown as T;
+            }
+            opt.forEach((o: any) => !o.field && o.fields && (o[REWRITE_FIELD_KEY] = o.fields.join(',')));
+            return opt as unknown as T;
         }
 
         const expose = {
             ...r,
             configIsArr,
             queryValue,
+            REWRITE_FIELD_KEY,
             options,
             options222,
         };

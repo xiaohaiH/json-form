@@ -1,21 +1,19 @@
 <template>
     <VirtualGroup ref="virtualGroupRef" :tag="tag">
-        <template v-if="slots?.prepend || ($slots as DynamicGroupSlots).prepend" #prepend>
-            <slot :query="query" :checked="plain.checked.value" :plain="plain" name="prepend" />
+        <template v-if="slots?.prepend || ($slots as DynamicGroupSlots).prepend">
+            <component :is="getNode(slots?.prepend || ($slots as DynamicGroupSlots).prepend)" :query="query" :checked="plain.checked.value" :plain="plain" />
         </template>
-        <template v-if="slots?.append || ($slots as DynamicGroupSlots).append" #append>
-            <slot :query="query" :checked="plain.checked.value" :plain="plain" name="append" />
+        <template v-for="(opt, idx) of finalConfig" :key="opt.uniqueValue">
+            <div v-bind="itemProps">
+                <component :is="itemSlots.prepend" :query="query" :checked="plain.checked.value" :index="idx" :plain="plain" />
+                <template v-for="(item) of opt.options" :key="`${field}.${idx}.${item.field || item[REWRITE_FIELD_KEY]}`">
+                    <component :is="getComponent2(item.t)!" v-if="item" v-bind="item" :unique-value="opt.uniqueValue" :field="`${field}.${idx}.${item.field || item[REWRITE_FIELD_KEY]}`" :query="query" :parent-query="plain.checked.value[idx]" />
+                </template>
+                <component :is="itemSlots.append" :query="query" :checked="plain.checked.value" :index="idx" :plain="plain" />
+            </div>
         </template>
-        <template #default>
-            <template v-for="(opt, idx) of finalConfig" :key="opt.uniqueValue">
-                <div v-bind="itemProps">
-                    <component :is="itemSlots.prepend" :query="query" :checked="plain.checked.value" :index="idx" :plain="plain" />
-                    <template v-for="(item) of opt.options" :key="`${field}.${idx}.${item.field}`">
-                        <component :is="getComponent2(item.t)!" v-if="item" v-bind="item" :unique-value="opt.uniqueValue" :field="`${field}.${idx}.${item.field}`" :query="query" :parent-query="plain.checked.value[idx]" />
-                    </template>
-                    <component :is="itemSlots.append" :query="query" :checked="plain.checked.value" :index="idx" :plain="plain" />
-                </div>
-            </template>
+        <template v-if="slots?.append || ($slots as DynamicGroupSlots).append">
+            <component :is="getNode(slots?.append || ($slots as DynamicGroupSlots).append)" :query="query" :checked="plain.checked.value" :plain="plain" />
         </template>
     </VirtualGroup>
 </template>
@@ -31,9 +29,11 @@ import VirtualGroup from '../group/virtual-group.vue';
 import type { DynamicGroupSlots } from './types';
 import { dynamicGroupEmitsPrivate as emits, dynamicGroupPropsPrivate as props } from './types';
 
-type Option = Omit<ExtractPublicPropTypes<PlainProps<any, Record<string, any>, any>>, 'query'> & { t: string };
+type Option = Omit<ExtractPublicPropTypes<PlainProps<any, Record<string, any>, any>>, 'query'> & { t: string; [REWRITE_FIELD_KEY]: string };
 
 let globalId = 0;
+/** 当 field 不存在, 但 fields 存在时, 合并 fields 到对象上的 key */
+const REWRITE_FIELD_KEY = '__field__' as const;
 
 /**
  * @file 自定义组件 - 动态删减组件(对应动态表单)
@@ -107,7 +107,16 @@ export default defineComponent({
         }
         /** 将对象形式的配置项转为数组 */
         function coverObjOption2Arr<T>(opt: any): T {
-            return (isPlainObject(opt) ? Object.entries(opt).map(([key, value]) => ({ ...value, field: key })) : opt) as unknown as T;
+            if (isPlainObject(opt)) {
+                const r: any[] = [];
+                Object.entries(opt).forEach(([key, value]) => {
+                    value.field = key;
+                    r.push(value);
+                });
+                return r as unknown as T;
+            }
+            opt.forEach((o: any) => !o.field && o.fields && (o[REWRITE_FIELD_KEY] = o.fields.join(',')));
+            return opt as unknown as T;
         }
 
         function getComponent2(name: string) {
@@ -117,6 +126,7 @@ export default defineComponent({
         return {
             hyphenate,
             getNode,
+            REWRITE_FIELD_KEY,
             virtualGroupRef,
             tagRef,
             plain,
