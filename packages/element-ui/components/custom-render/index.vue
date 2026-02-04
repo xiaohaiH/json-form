@@ -5,7 +5,7 @@
     <!-- 当需要包装在表单项中时渲染 -->
     <ElFormItem
         v-if="renderFormItem && !insetHide"
-        :class="`json-form-item json-form-item--custom-render json-form-item--${field} json-form-item--${!!slots.postfix}`"
+        :class="`json-form-item json-form-item--custom-render json-form-item--${field}`"
         v-bind="formItemActualProps"
         :prop="formItemActualProps.prop || field"
     >

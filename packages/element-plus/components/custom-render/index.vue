@@ -2,7 +2,7 @@
     <template v-if="renderFormItem">
         <ElFormItem
             v-if="!insetHide"
-            :class="`json-form-item json-form-item--custom-render json-form-item--${field} json-form-item--${!!slots?.postfix}`"
+            :class="`json-form-item json-form-item--custom-render json-form-item--${field}`"
             v-bind="formItemActualProps"
             :prop="formItemActualProps.prop || field"
         >
