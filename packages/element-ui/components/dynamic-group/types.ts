@@ -7,10 +7,10 @@ import { groupProps } from '../group/index';
 import type { ComponentType } from '../share';
 
 /** 组件传参 - 私有 */
-export function dynamicGroupPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function dynamicGroupPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     return {
         ...{} as unknown as Record<'class' | 'style', { type: PropType<string | Record<string, any> | any[]> }>,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
         /** 当前组件类型(防止被继承, 主动声明) */
         t: { type: String },
         /** 渲染的标签 */
@@ -48,7 +48,7 @@ export const dynamicGroupPropsPrivate = dynamicGroupPropsGeneric();
 /** 组件传参 - 外部调用 */
 
 export const dynamicGroupProps = dynamicGroupPropsPrivate;
-export type DynamicGroupProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof dynamicGroupPropsGeneric<T, Query, Option, OptionQuery>>>>;
+export type DynamicGroupProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof dynamicGroupPropsGeneric<Query, OptionQuery>>>>;
 
 /** 组件事件 - 私有 */
 export function dynamicGroupEmitsGeneric<T>() {

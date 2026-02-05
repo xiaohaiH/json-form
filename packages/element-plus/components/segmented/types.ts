@@ -7,17 +7,17 @@ import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormIte
 import { commonProps, formItemProps } from '../share';
 
 /** 组件传参 - 私有 */
-export function segmentedPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any> = Record<string, any>>() {
+export function segmentedPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elSegmentedProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elSegmentedEmits>]>>;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, SegmentedSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, SegmentedSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ComponentType<SegmentedSlotOption<Query, OptionQuery> & { item: Option}>;
+            default: ComponentType<SegmentedSlotOption<Query, OptionQuery> & { item: any }>;
         }>> },
     } as const;
 }
@@ -31,7 +31,7 @@ export const segmentedProps = emits2props({
     ...elSegmentedProps,
     ...segmentedPropsPrivate,
 }, elSegmentedEmits);
-export type SegmentedProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof segmentedPropsGeneric<T, Query, Option, OptionQuery>>>;
+export type SegmentedProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof segmentedPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function segmentedEmitsGeneric<T>() {

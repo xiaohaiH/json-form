@@ -34,14 +34,14 @@ const elInputEmits = {
  * 输入框属性生成函数 - 泛型版本
  * 生成输入框组件所需的所有属性定义
  */
-export function inputPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any> = Record<string, any>>() {
+export function inputPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elInputProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elInputEmits>]>>;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, InputSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, InputSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 延迟触发抖动时长(单位 ms) */
         debounceTime: { type: Number as PropType<number>, default: undefined },
         /** 是否显示清除按钮 @default true */
@@ -83,7 +83,7 @@ export const inputProps = emits2props({
  * 输入框属性类型定义
  * 用于输入框组件属性的类型检查和提示
  */
-export type InputProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof inputPropsGeneric<T, Query, Option, OptionQuery>>>>;
+export type InputProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof inputPropsGeneric<Query, OptionQuery>>>>;
 
 /**
  * 输入框事件生成函数 - 泛型版本

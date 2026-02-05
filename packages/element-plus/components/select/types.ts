@@ -10,14 +10,14 @@ const elSelectProps = ElSelect.props as Obj2Props<ComponentProps<typeof ElSelect
 const elSelectEmits = emits2obj(ElSelect.emits);
 
 /** 组件传参 - 私有 */
-export function selectPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function selectPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elSelectProps;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, SelectSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, SelectSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 是否将选项进行分组 */
         group: { type: Boolean as PropType<boolean>, default: undefined },
         /** 存在分组时的子级键 @default children */
@@ -33,7 +33,7 @@ export function selectPropsGeneric<T, Query extends Record<string, any>, Option,
         /** 是否可清除 */
         clearable: { type: Boolean as PropType<boolean>, default: true },
         /** 过滤方法 */
-        filterMethod: { type: Function as unknown as PropType<(val: string, option: T) => boolean> },
+        filterMethod: { type: Function as unknown as PropType<(val: string, option: any) => boolean> },
         /** 选项禁用字段 */
         disabledKey: { type: String as PropType<string>, default: 'disabled' },
         /** 传递给组件的插槽 */
@@ -45,7 +45,7 @@ export function selectPropsGeneric<T, Query extends Record<string, any>, Option,
             tag: ComponentType<SelectSlotOption<Query, OptionQuery>>;
             loading: ComponentType<SelectSlotOption<Query, OptionQuery>>;
             label: ComponentType<SelectSlotOption<Query, OptionQuery>>;
-            option: ComponentType<{ item: Option; disabled?: boolean; parent?: Option }>;
+            option: ComponentType<{ item: any; disabled?: boolean; parent?: any }>;
         }>> },
     } as const;
 }
@@ -62,7 +62,7 @@ export const selectProps = emits2props({
     ...elSelectProps,
     ...selectPropsPrivate,
 });
-export type SelectProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof selectPropsGeneric<T, Query, Option, OptionQuery>>>;
+export type SelectProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof selectPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function selectEmitsGeneric<T>() {

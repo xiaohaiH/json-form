@@ -11,20 +11,20 @@ const elSelectV2Props = ElSelectV2.props as Obj2Props<ComponentProps<typeof ElSe
 const elSelectV2Emits = emits2obj(ElSelectV2.emits);
 
 /** 组件传参 - 私有 */
-export function selectV2PropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function selectV2PropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elSelectV2Props & ReturnType<typeof emits2props<null, [NonNullable<typeof elSelectV2Emits>]>>;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, SelectV2SlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, SelectV2SlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 是否可过滤 */
         filterable: { type: Boolean as PropType<boolean>, default: true },
         /** 是否可清除 */
         clearable: { type: Boolean as PropType<boolean>, default: true },
         /** 过滤方法 */
-        filterMethod: { type: Function as unknown as PropType<(val: string, option: T) => boolean> },
+        filterMethod: { type: Function as unknown as PropType<(val: string, option: any[]) => boolean> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
             default: ComponentType<SelectV2SlotOption<Query, OptionQuery>>;
@@ -51,7 +51,7 @@ export const selectV2Props = emits2props({
     ...elSelectV2Props,
     ...selectV2PropsPrivate,
 });
-export type SelectV2Props<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof selectV2PropsGeneric<T, Query, Option, OptionQuery>>>;
+export type SelectV2Props<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof selectV2PropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function selectV2EmitsGeneric<T>() {

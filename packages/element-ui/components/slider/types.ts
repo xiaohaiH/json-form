@@ -29,18 +29,18 @@ const elSliderEmits = {
  *
  * @returns 滑块组件属性配置对象
  */
-export function sliderPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function sliderPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elSliderProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elSliderEmits>]>>;
 
     return {
         /** 继承Element UI滑块组件属性 */
         ...{} as _Prop,
         /** 继承核心库的平台属性 */
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
         /** 继承通用属性 */
-        ...commonProps as CommonProps<_Prop, SliderSlotOption<Query, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, SliderSlotOption<Query, OptionQuery>, Query, OptionQuery>,
         /** 继承表单项属性 */
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         // /** 传递给组件的插槽 */
         // itemSlots: { type: Object as PropType<Partial<{
         // }>> },
@@ -68,7 +68,7 @@ export const sliderProps = emits2props({
  * 滑块组件属性类型
  * 提供类型推断支持
  */
-export type SliderProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof sliderPropsGeneric<T, Query, Option, OptionQuery>>>>;
+export type SliderProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof sliderPropsGeneric<Query, OptionQuery>>>>;
 
 /**
  * 滑块组件事件生成函数 - 通用版本

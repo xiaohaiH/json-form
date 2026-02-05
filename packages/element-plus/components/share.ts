@@ -23,7 +23,7 @@ export interface SlotQuery {
 }
 
 /** 公共属性 - 泛型 */
-export function commonPropsGeneric<ContentProps, SlotProps, Query extends Record<string, any>, Option = Record<string, any>>() {
+export function commonPropsGeneric<ContentProps, SlotProps, Query extends Record<string, any>, OptionQuery = Record<string, any>>() {
     return {
         /**
          * @deprecated 表单项动态属性 - 下个版本删除
@@ -56,12 +56,12 @@ export function commonPropsGeneric<ContentProps, SlotProps, Query extends Record
 }
 /** 公共属性 */
 export const commonProps = commonPropsGeneric();
-export type CommonProps<ContentProps, SlotProps, Query extends Record<string, any>, Option> = ReturnType<typeof commonPropsGeneric<ContentProps, SlotProps, Query, Option>>;
+export type CommonProps<ContentProps, SlotProps, Query extends Record<string, any>, OptionQuery> = ReturnType<typeof commonPropsGeneric<ContentProps, SlotProps, Query, OptionQuery>>;
 
 const elFormItemProps = ElFormItem.props as unknown as Obj2Props<ComponentProps<typeof ElFormItem>>;
 
 /** 表单属性 - 泛型 */
-export function formItemPropsGeneric<Query extends Record<string, any>, Option>() {
+export function formItemPropsGeneric<Query extends Record<string, any>, OptionQuery>() {
     const { prop, ...itemProps } = elFormItemProps;
     return {
         ...itemProps,
@@ -72,7 +72,7 @@ export function formItemPropsGeneric<Query extends Record<string, any>, Option>(
 }
 /** 表单属性 */
 export const formItemProps = formItemPropsGeneric();
-export type FormItemProps<Query extends Record<string, any>, Option> = ReturnType<typeof formItemPropsGeneric<Query, Option>>;
+export type FormItemProps<Query extends Record<string, any>, OptionQuery> = ReturnType<typeof formItemPropsGeneric<Query, OptionQuery>>;
 export const formItemPropKeys = Object.keys(formItemProps);
 
 export interface CommonSlots<T> {
@@ -90,7 +90,7 @@ export interface CommonSlotsProps<Query extends Record<string, any>, Options ext
     // formItemProps: Partial<ExtracedPropTypes<typeof formItemProps>>;
     // contentProps: Record<string, any>;
     props: Record<string, any>;
-    plain: ReturnType<typeof usePlain<any, Query, any, Options>>;
+    plain: ReturnType<typeof usePlain<Query, Options>>;
 }
 
 /** 支持的组件格式 */

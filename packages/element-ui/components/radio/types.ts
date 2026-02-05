@@ -30,14 +30,14 @@ const elRadioEmits = {
  * 单选框属性生成函数 - 泛型版本
  * 生成单选框组件所需的所有属性定义
  */
-export function radioPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function radioPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elRadioProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elRadioEmits>]>>;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, RadioSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, RadioSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 按钮类型(radio|button), 默认 radio */
         type: { type: String as PropType<'radio' | 'button'> },
         /** 选中状态是否可以被取消 */
@@ -66,13 +66,13 @@ export const radioPropsPrivate = radioPropsGeneric();
 export const radioProps = emits2props({
     ...elRadioProps,
     ...radioPropsPrivate,
-}, elRadioEmits) as typeof radioPropsPrivate;
+}, elRadioEmits);
 
 /**
  * 单选框属性类型定义
  * 用于单选框组件属性的类型检查和提示
  */
-export type RadioProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof radioPropsGeneric<T, Query, Option, OptionQuery>>>>;
+export type RadioProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof radioPropsGeneric<Query, OptionQuery>>>>;
 
 /**
  * 单选框事件生成函数 - 泛型版本

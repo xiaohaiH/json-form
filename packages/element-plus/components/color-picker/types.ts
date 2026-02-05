@@ -10,14 +10,14 @@ const elColorPickerProps = ElColorPicker.props as Obj2Props<ComponentProps<typeo
 const elColorPickerEmits = emits2obj(ElColorPicker.emits);
 
 /** 组件传参 - 私有 */
-export function colorPickerPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function colorPickerPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elColorPickerProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elColorPickerEmits>]>>;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, ColorPickerSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, ColorPickerSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 监听触发值改变的事件 @default change */
         changeName: { type: String, default: 'change'},
         /** 传递给组件的插槽 */
@@ -35,7 +35,7 @@ export const colorPickerProps = emits2props({
     ...elColorPickerProps,
     ...colorPickerPropsPrivate,
 }, elColorPickerEmits) as typeof colorPickerPropsPrivate;
-export type ColorPickerProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof colorPickerPropsGeneric<T, Query, Option, OptionQuery>>>;
+export type ColorPickerProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof colorPickerPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function colorPickerEmitsGeneric<T>() {

@@ -6,11 +6,11 @@ import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormIte
 import { commonProps, formItemProps } from '../share';
 
 /** 组件传参 - 私有 */
-export function customRenderPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function customRenderPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     return {
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as Omit<CommonProps<{}, CustomRenderSlotOption<Query, OptionQuery>, Query, Option>, 'contentProps'>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as Omit<CommonProps<{}, CustomRenderSlotOption<Query, OptionQuery>, Query, OptionQuery>, 'contentProps'>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 是否渲染 form-item @default true */
         renderFormItem: { type: Boolean as PropType<boolean>, default: true },
         /** 渲染节点 */
@@ -29,7 +29,7 @@ export const customRenderPropsPrivate = customRenderPropsGeneric();
 /** 组件传参 - 外部调用 */
 
 export const customRenderProps = customRenderPropsPrivate;
-export type CustomRenderProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof customRenderPropsGeneric<T, Query, Option, OptionQuery>>>;
+export type CustomRenderProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof customRenderPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function customRenderEmitsGeneric<T>() {

@@ -32,9 +32,9 @@
 | defaultValue                 | `T \| (option: { query: Query }) => T`             | `undefined` | 否   | 默认值，当字段为空值时使用                                              |
 | defaultValueConflictCallback | `(value: any, checked: Ref<any>) => void`          | `noop`      | 否   | 重置时当前值与默认值/初始值相同时, 自定义赋值逻辑(默认不改变)           |
 | options                      | `Option[]`                                         | `[]`        | 否   | 静态数据源                                                              |
-| getOptions                   | `GetOptions<T, Query, Option, OptionQuery>`        | -           | 否   | 动态获取数据源的函数                                                    |
+| getOptions                   | `GetOptions<Query, OptionQuery>`        | -           | 否   | 动态获取数据源的函数                                                    |
 | uniqueValue                  | `string \| number`                                 | -           | 否   | 唯一值标识（根据数组值动态生成的组件中使用）                                            |
-| hooks                        | `HookOption<T, Query, Option, OptionQuery>`        | `undefined` | 否   | 生命周期钩子选项                                                        |
+| hooks                        | `HookOption<Query, OptionQuery>`        | `undefined` | 否   | 生命周期钩子选项                                                        |
 
 #### 返回值 (Expose)
 

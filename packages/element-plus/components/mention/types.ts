@@ -7,14 +7,14 @@ import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormIte
 import { commonProps, formItemProps } from '../share';
 
 /** 组件传参 - 私有 */
-export function mentionPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function mentionPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elMentionProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elMentionEmits>]>>;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, MentionSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, MentionSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 是否实时触发搜索事件(当 wrapper.realtime 为 true 时, 可将该值设为 false 并设置抖动时间) */
         realtime: { type: Boolean as PropType<boolean>, default: true },
         /** 实时触发时防抖动的时间 */
@@ -22,7 +22,7 @@ export function mentionPropsGeneric<T, Query extends Record<string, any>, Option
         clearable: { type: Boolean as PropType<boolean>, default: true },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            label: ComponentType<MentionSlotOption<Query, OptionQuery> & { item: Option; index: number }>;
+            label: ComponentType<MentionSlotOption<Query, OptionQuery> & { item: any; index: number }>;
             loading: ComponentType<MentionSlotOption<Query, OptionQuery>>;
             header: ComponentType<MentionSlotOption<Query, OptionQuery>>;
             footer: ComponentType<MentionSlotOption<Query, OptionQuery>>;
@@ -43,7 +43,7 @@ export const mentionProps = emits2props({
     ...elMentionProps,
     ...mentionPropsPrivate,
 }, elMentionEmits);
-export type MentionProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof mentionPropsGeneric<T, Query, Option, OptionQuery>>>;
+export type MentionProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof mentionPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function mentionEmitsGeneric<T>() {

@@ -7,14 +7,14 @@ import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormIte
 import { commonProps, formItemProps } from '../share';
 
 /** 组件传参 - 私有 */
-export function inputPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any> = Record<string, any>>() {
+export function inputPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elInputProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elInputEmits>]>>;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, InputSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, InputSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 延迟触发抖动时长(单位 ms) */
         debounceTime: { type: Number as PropType<number>, default: undefined },
         /** 是否显示清除按钮 @default true */
@@ -38,7 +38,7 @@ export const inputProps = emits2props({
     ...elInputProps,
     ...inputPropsPrivate,
 }, elInputEmits);
-export type InputProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof inputPropsGeneric<T, Query, Option, OptionQuery>>>;
+export type InputProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof inputPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function inputEmitsGeneric<T>() {

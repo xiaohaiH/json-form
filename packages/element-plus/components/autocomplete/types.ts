@@ -12,20 +12,20 @@ const elAutocompleteEmits = emits2obj(ElAutocomplete.emits);
 /** 重写指定事件 */
 const rewriteOn = {
     select: (item: any, option: {
-        props: Omit<AutocompleteProps<any, any, any, any>, 'onSelect'>;
-        plain: ReturnType<typeof usePlain<any, any, any, any>>;
+        props: Omit<AutocompleteProps<any, any>, 'onSelect'>;
+        plain: ReturnType<typeof usePlain<any, any>>;
     }) => true,
 };
 
 /** 组件传参 - 私有 */
-export function autocompletePropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any> = Record<string, any>>() {
+export function autocompletePropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elAutocompleteProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elAutocompleteEmits>]>>;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, AutocompleteSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, AutocompleteSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 输入建议对象中用于显示的键名 */
         valueKey: { type: String as PropType<string>, default: 'value' },
         // /**
@@ -55,7 +55,7 @@ export function autocompletePropsGeneric<T, Query extends Record<string, any>, O
         /** 重写 select 方法 */
         onSelect: { type: [Function, Array] as PropType<(item: any, option: {
             props: { query: Record<string, any>; [index: string]: any };
-            plain: ReturnType<typeof usePlain<any, any, any, any>>;
+            plain: ReturnType<typeof usePlain<Query, OptionQuery>>;
         }) => void> },
     } as const;
 }
@@ -69,7 +69,7 @@ export const autocompleteProps = emits2props({
     ...elAutocompleteProps,
     ...autocompletePropsPrivate,
 }, elAutocompleteEmits);
-export type AutocompleteProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof autocompletePropsGeneric<T, Query, Option, OptionQuery>>>;
+export type AutocompleteProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof autocompletePropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function autocompleteEmitsGeneric<T>() {

@@ -10,14 +10,14 @@ const elDatePickerProps = ElDatePicker.props as Obj2Props<ComponentProps<typeof 
 const elDatePickerEmits = emits2obj(ElDatePicker.emits);
 
 /** 组件传参 - 私有 */
-export function datePickerPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function datePickerPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elDatePickerProps;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, DatePickerSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, DatePickerSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 监听触发值改变的事件 @default update:modelValue */
         changeName: { type: String, default: 'update:modelValue' },
         /** 日期格式化的类型 */
@@ -44,7 +44,7 @@ export const datePickerProps = emits2props({
     ...elDatePickerProps,
     ...datePickerPropsPrivate,
 }) as typeof datePickerPropsPrivate;
-export type DatePickerProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof datePickerPropsGeneric<T, Query, Option, OptionQuery>>>;
+export type DatePickerProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof datePickerPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function datePickerEmitsGeneric<T>() {

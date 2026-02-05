@@ -104,7 +104,7 @@ export default defineComponent({
         // 兼容低版本, 不对 form 做处理
         // const formDisabled = useFormDisabled();
         const formDisabled = false;
-        
+
         const plain = usePlain(props);
         const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
 
@@ -120,7 +120,7 @@ export default defineComponent({
             if (!val || contentActualProps.value.remote) return plain.finalOption.value;
             // 如果是分组数据, 只过滤实际选项
             const { groupChildrenKey: key, group } = props;
-            return plain.finalOption.value.reduce<any[]>((p, v: any) => {
+            return (plain.finalOption.value as any[]).reduce<any[]>((p, v: any) => {
                 if (group && v[key]) {
                     const r = v[key].filter(props.filterMethod!.bind(null, val));
                     r.length && p.push({ ...v, [key]: r });

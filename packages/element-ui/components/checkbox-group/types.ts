@@ -30,18 +30,18 @@ const elCheckboxEmits = elCheckboxGroupEmits;
  * 支持泛型配置，用于支持不同数据类型的复选框组
  * @returns 复选框组属性配置对象
  */
-export function checkboxGroupPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function checkboxGroupPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elCheckboxGroupProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elCheckboxGroupEmits>]>>;
 
     return {
         // 继承Element UI复选框组属性
         ...{} as _Prop,
         // 继承核心库的平台属性
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
         // 继承通用属性
-        ...commonProps as CommonProps<_Prop, CheckboxGroupSlotOption<Query, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, CheckboxGroupSlotOption<Query, OptionQuery>, Query, OptionQuery>,
         // 继承表单项属性
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 展示的字段名，用于从选项对象中获取显示文本 */
         labelKey: { type: String as PropType<string>, default: 'label' },
         /** 提交的字段名，用于从选项对象中获取值 */
@@ -54,7 +54,7 @@ export function checkboxGroupPropsGeneric<T, Query extends Record<string, any>, 
         itemProps: { type: Object as PropType<Partial<ExtractPropTypes<ReturnType<typeof emits2props<typeof elCheckboxProps, [NonNullable<typeof elCheckboxEmits>]>>>>> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ComponentType<CheckboxGroupSlotOption<Query, OptionQuery> & { option: Option; labelKey: string; valueKey: string; disabledKey: string }>;
+            default: ComponentType<CheckboxGroupSlotOption<Query, OptionQuery> & { option: any; labelKey: string; valueKey: string; disabledKey: string }>;
         }>>, default: () => ({}) },
     } as const;
 }
@@ -73,13 +73,13 @@ export const checkboxGroupPropsPrivate = checkboxGroupPropsGeneric();
 export const checkboxGroupProps = emits2props({
     ...elCheckboxGroupProps,
     ...checkboxGroupPropsPrivate,
-}, elCheckboxGroupEmits) as typeof checkboxGroupPropsPrivate;
+}, elCheckboxGroupEmits);
 
 /**
  * 复选框组属性类型
  * 提供类型推断支持
  */
-export type CheckboxGroupProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof checkboxGroupPropsGeneric<T, Query, Option, OptionQuery>>>>;
+export type CheckboxGroupProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof checkboxGroupPropsGeneric<Query, OptionQuery>>>>;
 
 /**
  * 复选框组事件生成函数 - 通用版本

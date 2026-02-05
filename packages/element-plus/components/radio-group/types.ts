@@ -8,14 +8,14 @@ import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormIte
 import { commonProps, formItemProps } from '../share';
 
 /** 组件传参 - 私有 */
-export function radioGroupPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function radioGroupPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elRadioGroupProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elRadioGroupEmits>]>>;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, RadioGroupSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, RadioGroupSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 展示的字段 */
         labelKey: { type: String as PropType<string>, default: 'label' },
         /** 提交的字段 */
@@ -30,7 +30,7 @@ export function radioGroupPropsGeneric<T, Query extends Record<string, any>, Opt
         itemProps: { type: Object as PropType<Partial<ExtractPublicPropTypes<ReturnType<typeof emits2props<typeof elRadioProps, [NonNullable<typeof elRadioEmits>]>>>>> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ComponentType<RadioGroupSlotOption<Query, OptionQuery> & { option: Option; labelKey: string; valueKey: string; disabledKey: string }>;
+            default: ComponentType<RadioGroupSlotOption<Query, OptionQuery> & { option: any; labelKey: string; valueKey: string; disabledKey: string }>;
         }>> },
     } as const;
 }
@@ -44,8 +44,8 @@ export const radioGroupPropsPrivate = radioGroupPropsGeneric();
 export const radioGroupProps = emits2props({
     ...elRadioGroupProps,
     ...radioGroupPropsPrivate,
-}, elRadioGroupEmits) as typeof radioGroupPropsPrivate;
-export type RadioGroupProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof radioGroupPropsGeneric<T, Query, Option, OptionQuery>>>;
+}, elRadioGroupEmits);
+export type RadioGroupProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof radioGroupPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function radioGroupEmitsGeneric<T>() {

@@ -29,18 +29,18 @@ const elSwitchEmits = {
  *
  * @returns 开关组件属性配置对象
  */
-export function switchPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function switchPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elSwitchProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elSwitchEmits>]>>;
 
     return {
         /** 继承Element UI开关组件属性 */
         ...{} as _Prop,
         /** 继承核心库的平台属性 */
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
         /** 继承通用属性 */
-        ...commonProps as CommonProps<_Prop, SwitchSlotOption<Query, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, SwitchSlotOption<Query, OptionQuery>, Query, OptionQuery>,
         /** 继承表单项属性 */
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         // /** 传递给组件的插槽 */
         // itemSlots: { type: Object as PropType<Partial<{
         // }>> },
@@ -68,7 +68,7 @@ export const switchProps = emits2props({
  * 开关组件属性类型
  * 提供类型推断支持
  */
-export type SwitchProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof switchPropsGeneric<T, Query, Option, OptionQuery>>>>;
+export type SwitchProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof switchPropsGeneric<Query, OptionQuery>>>>;
 
 /**
  * 开关组件事件生成函数 - 通用版本

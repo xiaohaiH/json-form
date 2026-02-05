@@ -50,14 +50,14 @@ export const genFileId = () => Date.now() + ++fileId;
  * @template OptionQuery 选项查询类型
  * @returns 上传属性定义对象
  */
-export function uploadPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function uploadPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elUploadProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elUploadEmits>]>>;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, UploadSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, UploadSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 重声明该字段并做优化, 内部处理 success 和 promise 结果只执行一次 */
         httpRequest: {
             type: Function as PropType<(option: UploadRequestOptions) => Promise<unknown> | XMLHttpRequest | void>,
@@ -136,7 +136,7 @@ export const uploadProps = emits2props({
  * 上传属性类型定义
  * 用于上传组件属性的类型检查和提示
  */
-export type UploadProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof uploadPropsGeneric<T, Query, Option, OptionQuery>>>>;
+export type UploadProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof uploadPropsGeneric<Query, OptionQuery>>>>;
 
 /**
  * 上传事件生成函数 - 泛型版本

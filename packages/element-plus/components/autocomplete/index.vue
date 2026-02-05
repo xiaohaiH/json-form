@@ -80,7 +80,7 @@ export default defineComponent({
         function filterCallback(val: string, callback: (data: any[]) => void) {
             props.remoteFilter
                 ? plain.getOptions('other', { filterValue: val, callback })
-                : callback(val ? plain.finalOption.value.filter((data) => props.filterMethod(val, data, props.valueKey)) : plain.finalOption.value);
+                : callback(val ? plain.finalOption.value.filter((data: any) => props.filterMethod(val, data, props.valueKey)) : plain.finalOption.value);
         }
         /** 回车事件 */
         function enterHandle(ev: Event | KeyboardEvent) {

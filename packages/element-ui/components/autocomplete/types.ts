@@ -17,14 +17,14 @@ const elAutocompleteEmits = {
 };
 
 /** 组件传参 - 私有 */
-export function autocompletePropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any> = Record<string, any>>() {
+export function autocompletePropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elAutocompleteProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elAutocompleteEmits>]>>;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, AutocompleteSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, AutocompleteSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 输入建议对象中用于显示的键名 */
         valueKey: { type: String as PropType<string>, default: 'value' },
         // /**
@@ -61,7 +61,7 @@ export const autocompleteProps = emits2props({
     ...elAutocompleteProps,
     ...autocompletePropsPrivate,
 }, elAutocompleteEmits);
-export type AutocompleteProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof autocompletePropsGeneric<T, Query, Option, OptionQuery>>>>;
+export type AutocompleteProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof autocompletePropsGeneric<Query, OptionQuery>>>>;
 
 /** 组件事件 - 私有 */
 export function autocompleteEmitsGeneric<T>() {
@@ -71,7 +71,7 @@ export function autocompleteEmitsGeneric<T>() {
         select: (item: any, option: {
             props: Record<string, any>;
             // props: AutocompleteProps<T, any, any, any>;
-            plain: ReturnType<typeof usePlain<T, any, any, any>>;
+            plain: ReturnType<typeof usePlain<any, any>>;
         }) => true,
     };
 }

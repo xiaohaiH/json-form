@@ -30,18 +30,18 @@ const elRadioEmits = elRadioGroupEmits;
  * 支持泛型配置，用于支持不同数据类型的单选框组
  * @returns 单选框组属性配置对象
  */
-export function radioGroupPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function radioGroupPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elRadioGroupProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elRadioGroupEmits>]>>;
 
     return {
         /** 继承Element UI单选框组属性 */
         ...{} as _Prop,
         /** 继承核心库的平台属性 */
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
         /** 继承通用属性 */
-        ...commonProps as CommonProps<_Prop, RadioGroupSlotOption<Query, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, RadioGroupSlotOption<Query, OptionQuery>, Query, OptionQuery>,
         /** 继承表单项属性 */
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 展示的字段名，用于从选项对象中获取显示文本 */
         labelKey: { type: String as PropType<string>, default: 'label' },
         /** 提交的字段名，用于从选项对象中获取值 */
@@ -60,7 +60,7 @@ export function radioGroupPropsGeneric<T, Query extends Record<string, any>, Opt
         itemProps: { type: Object as PropType<Partial<ExtractPropTypes<ReturnType<typeof emits2props<typeof elRadioProps, [NonNullable<typeof elRadioEmits>]>>>>> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ComponentType<RadioGroupSlotOption<Query, OptionQuery> & { option: Option; labelKey: string; valueKey: string; disabledKey: string }>;
+            default: ComponentType<RadioGroupSlotOption<Query, OptionQuery> & { option: any; labelKey: string; valueKey: string; disabledKey: string }>;
         }>>, default: () => ({}) },
     } as const;
 }
@@ -79,13 +79,13 @@ export const radioGroupPropsPrivate = radioGroupPropsGeneric();
 export const radioGroupProps = emits2props({
     ...elRadioGroupProps,
     ...radioGroupPropsPrivate,
-}, elRadioGroupEmits) as typeof radioGroupPropsPrivate;
+}, elRadioGroupEmits);
 
 /**
  * 单选框组属性类型
  * 提供类型推断支持
  */
-export type RadioGroupProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof radioGroupPropsGeneric<T, Query, Option, OptionQuery>>>>;
+export type RadioGroupProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof radioGroupPropsGeneric<Query, OptionQuery>>>>;
 
 /**
  * 单选框组事件生成函数 - 通用版本

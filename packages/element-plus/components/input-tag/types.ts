@@ -7,14 +7,14 @@ import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormIte
 import { commonProps, formItemProps } from '../share';
 
 /** 组件传参 - 私有 */
-export function inputTagPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any> = Record<string, any>>() {
+export function inputTagPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elInputTagProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elInputTagEmits>]>>;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, InputTagSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, InputTagSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 是否显示清除按钮 @default true */
         clearable: { type: Boolean as PropType<boolean>, default: true },
         /** 传递给组件的插槽 */
@@ -35,7 +35,7 @@ export const inputTagProps = emits2props({
     ...elInputTagProps,
     ...inputTagPropsPrivate,
 }, elInputTagEmits);
-export type InputTagProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof inputTagPropsGeneric<T, Query, Option, OptionQuery>>>;
+export type InputTagProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof inputTagPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function inputTagEmitsGeneric<T>() {

@@ -336,14 +336,14 @@ export interface DefineOptionParams<Query extends Record<string, any>, Options e
 // -----------------------------
 // */
 // // import type { ExtractPublicPropTypes, PropType } from 'vue';
-// function inputPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+// function inputPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
 //     return {
 //         /** 数据源 */
 //         options: { type: [Array, Object] as PropType<Option> },
 //         getOptions: { type: Function as PropType<(cb: (data: Option) => void, optionQuery: OptionQuery) => void> },
 //     };
 // }
-// interface S<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> extends ExtractPublicPropTypes<ReturnType<typeof inputPropsGeneric<T, Query, Option, OptionQuery>>> {
+// interface S<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends ExtractPublicPropTypes<ReturnType<typeof inputPropsGeneric<T, Query, Option, OptionQuery>>> {
 //     t: 'input';
 // }
 

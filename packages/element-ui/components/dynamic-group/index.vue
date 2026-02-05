@@ -35,7 +35,7 @@ import { getComponent, HGroup } from '../group/index';
 import type { DynamicGroupSlots } from './types';
 import { dynamicGroupEmitsPrivate as emits, dynamicGroupPropsPrivate as props } from './types';
 
-type Option = Omit<ExtractPropTypes<PlainProps<any, Record<string, any>, any>>, 'query'> & {
+type Option = Omit<ExtractPropTypes<PlainProps<Record<string, any>, Record<string, any>>>, 'query'> & {
     t: string;
     [REWRITE_FIELD_KEY]: string;
     on?: Record<string, any>;

@@ -35,14 +35,14 @@ const elSelectEmits = {
  * 选择器属性生成函数 - 泛型版本
  * 生成选择器组件所需的所有属性定义
  */
-export function selectPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function selectPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elSelectProps;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, SelectSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, SelectSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 是否将选项进行分组 */
         group: { type: Boolean as PropType<boolean>, default: undefined },
         /** 存在分组时的子级键 @default children */
@@ -58,7 +58,7 @@ export function selectPropsGeneric<T, Query extends Record<string, any>, Option,
         /** 是否可清除 */
         clearable: { type: Boolean as PropType<boolean>, default: true },
         /** 过滤方法 */
-        filterMethod: { type: Function as unknown as PropType<(val: string, option: T) => boolean> },
+        filterMethod: { type: Function as unknown as PropType<(val: string, option: any) => boolean> },
         /** 选项禁用字段 */
         disabledKey: { type: String as PropType<string>, default: 'disabled' },
         /** 传递给组件的插槽 */
@@ -99,7 +99,7 @@ export const selectProps = emits2props({
  * 选择器属性类型定义
  * 用于选择器组件属性的类型检查和提示
  */
-export type SelectProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof selectPropsGeneric<T, Query, Option, OptionQuery>>>>;
+export type SelectProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof selectPropsGeneric<Query, OptionQuery>>>>;
 
 /**
  * 选择器事件生成函数 - 泛型版本

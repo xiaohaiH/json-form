@@ -20,14 +20,14 @@ import { commonProps, formItemProps } from '../share';
  *
  * @returns 自定义渲染属性配置对象
  */
-export function customRenderPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function customRenderPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     return {
         /** 继承核心库的平台属性 */
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
         /** 继承通用属性 */
-        ...commonProps as Omit<CommonProps<{}, CustomRenderSlotOption<Query, OptionQuery>, Query, Option>, 'contentProps'>,
+        ...commonProps as Omit<CommonProps<{}, CustomRenderSlotOption<Query, OptionQuery>, Query, OptionQuery>, 'contentProps'>,
         /** 继承表单项属性 */
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /**
          * 是否渲染为表单项
          * 当设置为true时，自定义内容会被包装在表单项容器中
@@ -66,7 +66,7 @@ export const customRenderProps = customRenderPropsPrivate;
  * 自定义渲染属性类型
  * 提供类型推断支持
  */
-export type CustomRenderProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof customRenderPropsGeneric<T, Query, Option, OptionQuery>>>>;
+export type CustomRenderProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof customRenderPropsGeneric<Query, OptionQuery>>>>;
 
 /**
  * 自定义渲染事件生成函数 - 通用版本

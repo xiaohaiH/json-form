@@ -10,14 +10,14 @@ const elTimeSelectProps = ElTimeSelect.props as Obj2Props<ComponentProps<typeof 
 const elTimeSelectEmits = emits2obj(ElTimeSelect.emits);
 
 /** 组件传参 - 私有 */
-export function timeSelectPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function timeSelectPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elTimeSelectProps;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, TimeSelectSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, TimeSelectSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
         }>> },
@@ -34,7 +34,7 @@ export const timeSelectProps = emits2props({
     ...elTimeSelectProps,
     ...timeSelectPropsPrivate,
 }) as typeof timeSelectPropsPrivate;
-export type TimeSelectProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof timeSelectPropsGeneric<T, Query, Option, OptionQuery>>>;
+export type TimeSelectProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof timeSelectPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function timeSelectEmitsGeneric<T>() {

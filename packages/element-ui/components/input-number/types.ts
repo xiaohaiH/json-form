@@ -34,18 +34,18 @@ const elInputNumberEmits = {
  *
  * @returns 数字输入框属性配置对象
  */
-export function inputNumberPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function inputNumberPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elInputNumberProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elInputNumberEmits>]>>;
 
     return {
         /** 继承Element UI数字输入框属性 */
         ...{} as _Prop,
         /** 继承核心库的平台属性 */
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
         /** 继承通用属性 */
-        ...commonProps as CommonProps<_Prop, InputNumberSlotOption<Query, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, InputNumberSlotOption<Query, OptionQuery>, Query, OptionQuery>,
         /** 继承表单项属性 */
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 延迟触发抖动时长(单位 ms) */
         debounceTime: { type: Number as PropType<number>, default: undefined },
         // 以下为已注释的插槽配置，当前组件未启用
@@ -79,7 +79,7 @@ export const inputNumberProps = emits2props({
  * 数字输入框属性类型
  * 提供类型推断支持
  */
-export type InputNumberProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof inputNumberPropsGeneric<T, Query, Option, OptionQuery>>>>;
+export type InputNumberProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof inputNumberPropsGeneric<Query, OptionQuery>>>>;
 
 /**
  * 数字输入框事件生成函数 - 通用版本

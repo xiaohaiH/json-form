@@ -10,14 +10,14 @@ const elSliderProps = ElSlider.props as Obj2Props<ComponentProps<typeof ElSlider
 const elSliderEmits = emits2obj(ElSlider.emits);
 
 /** 组件传参 - 私有 */
-export function sliderPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function sliderPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elSliderProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elSliderEmits>]>>;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, SliderSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, SliderSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
         }>> },
@@ -33,7 +33,7 @@ export const sliderProps = emits2props({
     ...elSliderProps,
     ...sliderPropsPrivate,
 }) as typeof sliderPropsPrivate;
-export type SliderProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof sliderPropsGeneric<T, Query, Option, OptionQuery>>>;
+export type SliderProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof sliderPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function sliderEmitsGeneric<T>() {

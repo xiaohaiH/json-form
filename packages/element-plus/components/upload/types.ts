@@ -17,14 +17,14 @@ const elUploadEmits = emits2obj(ElUpload.emits);
 let fileId = 3000;
 export const genFileId = () => Date.now() + ++fileId;
 /** 组件传参 - 私有 */
-export function uploadPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function uploadPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elUploadProps; // & ReturnType<typeof emits2props<null, [NonNullable<typeof ElUpload.emits>]>>;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, UploadSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, UploadSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 重声明该字段并做优化, 内部处理 success 和 promise 结果只执行一次 */
         httpRequest: {
             type: Function as PropType<(option: UploadRequestOptions) => Promise<unknown> | XMLHttpRequest | void>,
@@ -77,7 +77,7 @@ export const uploadProps = emits2props({
     ...elUploadProps,
     ...uploadPropsPrivate,
 });
-export type UploadProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof uploadPropsGeneric<T, Query, Option, OptionQuery>>>;
+export type UploadProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof uploadPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function uploadEmitsGeneric<T>() {

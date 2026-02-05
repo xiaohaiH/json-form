@@ -29,18 +29,18 @@ const elColorPickerEmits = {
  * 支持泛型配置，用于支持不同数据类型的颜色选择器
  * @returns 颜色选择器属性配置对象
  */
-export function colorPickerPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function colorPickerPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elColorPickerProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elColorPickerEmits>]>>;
 
     return {
         /** 继承Element UI颜色选择器属性 */
         ...{} as _Prop,
         /** 继承核心库的平台属性 */
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
         /** 继承通用属性 */
-        ...commonProps as CommonProps<_Prop, ColorPickerSlotOption<Query, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, ColorPickerSlotOption<Query, OptionQuery>, Query, OptionQuery>,
         /** 继承表单项属性 */
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 监听触发值改变的事件 @default change */
         changeName: { type: String, default: 'change' },
         /** 传递给颜色选择器组件的插槽 */
@@ -70,7 +70,7 @@ export const colorPickerProps = emits2props({
  * 颜色选择器属性类型
  * 提供类型推断支持
  */
-export type ColorPickerProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof colorPickerPropsGeneric<T, Query, Option, OptionQuery>>>>;
+export type ColorPickerProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof colorPickerPropsGeneric<Query, OptionQuery>>>>;
 
 /**
  * 颜色选择器事件生成函数 - 通用版本

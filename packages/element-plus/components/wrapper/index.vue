@@ -43,7 +43,7 @@ export default defineComponent({
     inheritAttrs: false,
     props,
     emits,
-    slots: Object as SlotsType<FormSlots<any>>,
+    slots: Object as SlotsType<FormSlots<any, any>>,
     setup(props, { emit }) {
         const groupRef = ref<ComponentExposed<typeof HGroup>>();
         const formRef = computed(() => groupRef.value?.tagRef as ComponentExposed<typeof ElForm> | undefined);

@@ -18,21 +18,21 @@ import { defineCommonMethod, getProvideValue } from '../constant';
 import type { HookOption, plainProps, PlainProps } from './types';
 
 /** 外部需传递的 props */
-type _PlainProps<T, Query, Option, OptionQuery> = ExtractPropTypes<PlainProps<T, any, Option, any>>;
+type _PlainProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPropTypes<PlainProps<Query, OptionQuery>>;
 
 type ValueType = string | number | boolean | null | undefined | Record<string, any> | any[];
 
 type MaybeRef<T> = T | Ref<T>;
 
 /** 封装扁平组件必备的信息 */
-export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = Record<string, any>>(props: MaybeRef<_PlainProps<T, Query, Option, OptionQuery>>) {
+export function usePlain<Query extends Record<string, any> = Record<string, any>, OptionQuery extends Record<string, any> = Record<string, any>>(props: MaybeRef<_PlainProps<Query, OptionQuery>>) {
     /** 初始 props */
     const initialProps = unref(props);
     /** 字段信息 */
     const fieldInfo = computed(() => {
         const { fields, field } = unref(props);
         const _field = (fields || field) as string | string[];
-        const isFieldPath = ((fields && fields[0] as string) || field!).includes('.');
+        const isFieldPath = ((fields && fields[0]) || field!).includes('.');
         const getValueFunc = isFieldPath ? get : (target: Record<string, any>, key: string) => target[key];
         const setValueFunc = isFieldPath ? vueSet : (target: Record<string, any>, key: string, value: any) => set(target, key, value);
         // const getValue = isFieldPath ? (target: Record<string, any>, path: string) => fields!.map((k) => getValueFunc(target, k as string)).filter(isNotEmptyValue) : getValueFunc;
@@ -55,14 +55,14 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
     function getValueInObject(query: Record<string, any>) {
         const { fields } = unref(props);
         const { field, getValueFunc } = fieldInfo.value;
-        return fields ? fields.map((k) => getValueFunc(query, k as string)).filter(isNotEmptyValue) : getValueFunc(query, field as string);
+        return fields ? fields.map((k) => getValueFunc(query, k)).filter(isNotEmptyValue) : getValueFunc(query, field as string);
     }
     function setValueInObject(value: any, query: Record<string, any>) {
         // 去除空值, 后续如要加上, 应加在 wrapper 上
         // 而不是 plain props 中
         const { fields } = unref(props);
         const { field, setValueFunc } = fieldInfo.value;
-        fields ? fields.forEach((o, i) => setValueFunc(query, o as string, value?.[i])) : setValueFunc(query, field as string, value);
+        fields ? fields.forEach((o, i) => setValueFunc(query, o, value?.[i])) : setValueFunc(query, field as string, value);
         // const { fields, emptyValue } = unref(props);
         // const { field, setValueFunc } = fieldInfo.value;
         // fields ? fields.forEach((o, i) => setValueFunc(query, o as string, emptyToValue(value?.[i], emptyValue))) : setValueFunc(query, field as string, emptyToValue(value, emptyValue));
@@ -70,7 +70,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
     }
     /** 获取 query 中该字段的值 */
     function getValueInQuery() {
-        return getValueInObject(unref(props).query);
+        return getValueInObject(unref(props).query as Query);
     }
     /** 设置 query 中该字段的值 */
     function setValueInQuery(value: any) {
@@ -82,7 +82,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
         const result = (isEmptyValue(value) || (isArray(value) && !value.length)) && !isEmptyValue(defaultValue = getAppointProp('defaultValue'))
             ? defaultValue
             : value;
-        result === _value ? unref(props).defaultValueConflictCallback(result, checked) : setValueInObject(result, unref(props).query);
+        result === _value ? unref(props).defaultValueConflictCallback(result, checked) : setValueInObject(result, unref(props).query as Query);
         return true;
     }
 
@@ -104,14 +104,14 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
     /** 初始是否存在回填值 */
     const initialBackfillValue = initialProps.fields?.length
         // 防止回填值不存在时产生一个空数组(undefined[])
-        ? emptyArr2Undef(getValueInObject(initialProps.query)) as ValueType[]
-        : getValueInObject(initialProps.query) as ValueType;
+        ? emptyArr2Undef(getValueInObject(initialProps.query as Query)) as ValueType[]
+        : getValueInObject(initialProps.query as Query) as ValueType;
     /** 不存在回填值且存在默认值或初始值时更新父级中的值 */
     // 此处只需要获取初始值, 如果初始值不符合要求, 自动会获取默认值
     (initialBackfillValue === undefined || initialBackfillValue === null) && (initialProps.defaultValue !== undefined || initialProps.initialValue !== undefined) && setValueInQuery(getAppointProp('initialValue'));
 
     /** 远程获取的数据源 */
-    const remoteOption = ref<Option[]>([]) as Ref<Option[]>;
+    const remoteOption = ref<any[]>([]);
     const loading = ref(false);
     /** 渲染的数据源(远程数据源 > 本地数据源) */
     const finalOption = computed(() => (remoteOption.value.length ? remoteOption.value : unref(props).options));
@@ -120,7 +120,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
     );
     const insetHide = computed(() => {
         const _props = unref(props);
-        return typeof _props.hide === 'boolean' ? _props.hide : _props.hide?.({ query: _props.query }) || false;
+        return typeof _props.hide === 'boolean' ? _props.hide : _props.hide?.({ query: _props.query as Query }) || false;
     });
 
     const option = defineCommonMethod({
@@ -136,7 +136,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
         },
         get validator() {
             const _props = unref(props);
-            return _props.validator;
+            return _props.validator as any;
         },
         onBackfillChange: (backfill, oldBackfill, isChange) => {
             isChange && unref(props).hooks?.backfillChange?.(backfill, oldBackfill, { plain: expose, props: unref(props) });
@@ -162,7 +162,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
         unwatchs.forEach((v) => v());
         const { field } = fieldInfo.value;
         const { query, parentQuery } = unref(props);
-        typeof field === 'string' ? removeAttr(field, query, parentQuery) : field.forEach((k) => removeAttr(k, query, parentQuery));
+        typeof field === 'string' ? removeAttr(field, query as Query, parentQuery) : field.forEach((k) => removeAttr(k, query as Query, parentQuery));
     });
     /** 获取指定路径的父级对象, 方便删除属性 */
     function removeAttr(path: string, obj: Record<string, any>, obj2?: Record<string, any>) {
@@ -223,7 +223,7 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                 // 导致引用发生变化, 所以需要做值比较
                 // 判断新的 value 与旧 value 是否一致, 一致则不更新
                 if (typeof _dependFields === 'string' ? _dependValues === __dependValues : (_dependValues as any[]).every((o, i) => o === (__dependValues as any[])[i])) return;
-                if (allowDependChangeValue.value && (typeof _props.resetByDependValueChange === 'boolean' ? _props.resetByDependValueChange : _props.resetByDependValueChange(_props.query))) {
+                if (allowDependChangeValue.value && (typeof _props.resetByDependValueChange === 'boolean' ? _props.resetByDependValueChange : _props.resetByDependValueChange(_props.query as Query))) {
                     change(undefined);
                 }
 
@@ -284,11 +284,11 @@ export function usePlain<T, Query, Option = Record<string, any>, OptionQuery = R
                 remoteOption.value = (data) || [];
                 loading.value = false;
             },
-            _props.query || {},
+            (_props.query as Query) || {},
             {
                 trigger,
                 ...option,
-                options: toRaw(wrapper?.options) || {},
+                options: (toRaw(wrapper?.options) as OptionQuery) || {},
                 changeInitialValue(value) {
                     coverProps.value.initialValue = value;
                     return this;

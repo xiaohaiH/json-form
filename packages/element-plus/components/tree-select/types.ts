@@ -12,14 +12,14 @@ import { commonProps, formItemProps } from '../share';
 const elSelectProps = ElTreeSelect.props as Obj2Props<ComponentProps<typeof ElSelect> & ComponentProps<typeof ElTree>>;
 
 /** 组件传参 - 私有 */
-export function treeSelectPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function treeSelectPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = Obj2Props<TreeComponentProps> & typeof elSelectProps & ReturnType<typeof emits2props<null, [NonNullable<typeof ElTree.emits>]>>;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, TreeSelectSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, TreeSelectSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 是否可过滤 */
         filterable: { type: Boolean as PropType<boolean>, default: true },
         /** 是否可清除 */
@@ -49,7 +49,7 @@ export const treeSelectProps = emits2props({
     ...ElTree.props as {},
     ...treeSelectPropsPrivate,
 }) as typeof treeSelectPropsPrivate;
-export type TreeSelectProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof treeSelectPropsGeneric<T, Query, Option, OptionQuery>>>;
+export type TreeSelectProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof treeSelectPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function treeSelectEmitsGeneric<T>() {

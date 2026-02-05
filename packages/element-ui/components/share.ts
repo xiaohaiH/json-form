@@ -77,7 +77,7 @@ const elFormItemProps = (ElFormItem as any).props as ElObj2Props<ElFormItem>;
  * 用于生成表单项的属性配置
  * @returns 表单项属性对象
  */
-export function formItemPropsGeneric<Query extends Record<string, any>, Option>() {
+export function formItemPropsGeneric<Query extends Record<string, any>, OptionQuery>() {
     const { prop, ...itemProps } = elFormItemProps;
     return {
         ...itemProps,
@@ -89,7 +89,7 @@ export function formItemPropsGeneric<Query extends Record<string, any>, Option>(
 /** 表单项属性对象实例 */
 export const formItemProps = formItemPropsGeneric();
 /** 表单项属性类型定义 */
-export type FormItemProps<Query extends Record<string, any>, Option> = ReturnType<typeof formItemPropsGeneric<Query, Option>>;
+export type FormItemProps<Query extends Record<string, any>, OptionQuery> = ReturnType<typeof formItemPropsGeneric<Query, OptionQuery>>;
 /** 表单项属性键名数组，排除特定属性 */
 export const formItemPropKeys = Object.keys(formItemProps);
 
@@ -112,7 +112,7 @@ export interface CommonSlotsProps<Query extends Record<string, any>, Options ext
     // formItemProps: Partial<ExtracedPropTypes<typeof formItemProps>>;
     // contentProps: Record<string, any>;
     props: Record<string, any>;
-    plain: ReturnType<typeof usePlain<any, Query, any, Options>>;
+    plain: ReturnType<typeof usePlain<Query, Options>>;
 }
 
 /**

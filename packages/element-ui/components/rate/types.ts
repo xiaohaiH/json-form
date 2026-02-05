@@ -30,14 +30,14 @@ const elRateEmits = {
  * 评分属性生成函数 - 泛型版本
  * 生成评分组件所需的所有属性定义
  */
-export function ratePropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function ratePropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elRateProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elRateEmits>]>>;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, RateSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, RateSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         // /** 传递给组件的插槽 */
         // itemSlots: { type: Object as PropType<Partial<{
         // }>> },
@@ -67,7 +67,7 @@ export const rateProps = emits2props({
  * 评分属性类型定义
  * 用于评分组件属性的类型检查和提示
  */
-export type RateProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof ratePropsGeneric<T, Query, Option, OptionQuery>>>>;
+export type RateProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof ratePropsGeneric<Query, OptionQuery>>>>;
 
 /**
  * 评分事件生成函数 - 泛型版本

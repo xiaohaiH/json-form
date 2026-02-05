@@ -79,7 +79,7 @@ export default defineComponent({
             if (!val || contentActualProps.value.remote) return plain.finalOption.value;
             // 如果是分组数据, 只过滤实际选项
             const key = contentActualProps.value.props?.options || 'options';
-            return plain.finalOption.value.reduce<any[]>((p, v: any) => {
+            return (plain.finalOption.value as any[]).reduce<any[]>((p, v: any) => {
                 if (v[key]) {
                     const r = v[key].filter(props.filterMethod!.bind(null, val));
                     r.length && p.push({ ...v, [key]: r });

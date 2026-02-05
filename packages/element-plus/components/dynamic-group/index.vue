@@ -29,7 +29,7 @@ import VirtualGroup from '../group/virtual-group.vue';
 import type { DynamicGroupSlots } from './types';
 import { dynamicGroupEmitsPrivate as emits, dynamicGroupPropsPrivate as props } from './types';
 
-type Option = Omit<ExtractPublicPropTypes<PlainProps<any, Record<string, any>, any>>, 'query'> & { t: string; [REWRITE_FIELD_KEY]: string };
+type Option = Omit<ExtractPublicPropTypes<PlainProps<Record<string, any>, Record<string, any>>>, 'query'> & { t: string; [REWRITE_FIELD_KEY]: string };
 
 let globalId = 0;
 /** 当 field 不存在, 但 fields 存在时, 合并 fields 到对象上的 key */

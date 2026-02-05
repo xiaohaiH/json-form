@@ -9,7 +9,7 @@
  */
 import type { CamelCase, WrapperProps as CoreWrapperProps, Obj2Props, useWrapper, WrapperArrayable } from '@xiaohaih/json-form-core';
 import { wrapperProps as coreWrapperProps, emits2obj, emits2props } from '@xiaohaih/json-form-core';
-import { Form as ElForm, Message as ElMessage } from 'element-ui';
+import { Form as ElForm, Message as ElMessage, Option } from 'element-ui';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
 import type { defineOption } from '../../src/assist';
@@ -112,20 +112,20 @@ export type FormEmits<T> = ReturnType<typeof formEmitsGeneric<T>>;
  * 表单插槽接口
  * 定义表单组件支持的所有插槽
  */
-export interface FormSlots<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
+export interface FormSlots<Query extends Record<string, any>, OptionQuery extends Partial<Record<keyof Query, any>>> {
     /** 前置插槽 - 在表单项之前 */
-    prepend?: ComponentType<FormSlotProps<T, Query, Option, OptionQuery>>;
+    prepend?: ComponentType<FormSlotProps<Query, OptionQuery>>;
     /** 默认插槽 - 在表单项之后 */
-    default?: ComponentType<FormSlotProps<T, Query, Option, OptionQuery>>;
+    default?: ComponentType<FormSlotProps<Query, OptionQuery>>;
 }
 
 /**
  * 表单插槽属性接口
  * 定义传递给插槽的属性和方法
  */
-export interface FormSlotProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> {
+export interface FormSlotProps<Query extends Record<string, any>, OptionQuery extends Partial<Record<keyof Query, any>>> {
     /** 获取表单属性的方法 */
-    props: ExtractPropTypes<ReturnType<typeof formPropsGeneric<any>>>;
+    props: ExtractPropTypes<ReturnType<typeof formPropsGeneric<Query, OptionQuery>>>;
     /** 表单包装器实例 */
     wrapper: ReturnType<typeof useWrapper>;
 }

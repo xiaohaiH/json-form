@@ -109,21 +109,20 @@ export type FormEmits<T> = ReturnType<typeof formEmitsGeneric<T>>;
  * 表单插槽接口
  * 定义表单组件支持的所有插槽
  */
-export interface FormSlots<T> {
+export interface FormSlots<Query extends Record<string, any>, OptionQuery extends Partial<Record<keyof Query, any>>> {
     /** 前置插槽 - 在表单项之前 */
-    prepend?: ComponentType<FormSlotProps<T>>;
+    prepend?: ComponentType<FormSlotProps<Query, OptionQuery>>;
     /** 默认插槽 - 在表单项之后 */
-    default?: ComponentType<FormSlotProps<T>>;
+    default?: ComponentType<FormSlotProps<Query, OptionQuery>>;
 }
 
 /**
  * 表单插槽属性接口
  * 定义传递给插槽的属性和方法
  */
-export interface FormSlotProps<T> {
+export interface FormSlotProps<Query extends Record<string, any>, OptionQuery extends Partial<Record<keyof Query, any>>> {
     /** 获取表单属性的方法 */
-    props: ExtractPublicPropTypes<ReturnType<typeof formPropsGeneric<any>>>;
+    props: ExtractPublicPropTypes<ReturnType<typeof formPropsGeneric<Query, OptionQuery>>>;
     /** 表单包装器实例 */
     wrapper: ReturnType<typeof useWrapper>;
-
 }

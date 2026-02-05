@@ -10,14 +10,14 @@ const elCheckboxProps = ElCheckbox.props as Obj2Props<ComponentProps<typeof ElCh
 const elCheckboxEmits = emits2obj(ElCheckbox.emits);
 
 /** 组件传参 - 私有 */
-export function checkboxPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function checkboxPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elCheckboxProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elCheckboxEmits>]>>;
 
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, CheckboxSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, CheckboxSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 按钮类型(checkbox|button), 默认 checkbox */
         type: { type: String as PropType<'checkbox' | 'button'> },
         /** 传递给组件的插槽 */
@@ -36,7 +36,7 @@ export const checkboxProps = emits2props({
     ...elCheckboxProps,
     ...checkboxPropsPrivate,
 }, elCheckboxEmits) as typeof checkboxPropsPrivate;
-export type CheckboxProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof checkboxPropsGeneric<T, Query, Option, OptionQuery>>>;
+export type CheckboxProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof checkboxPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function checkboxEmitsGeneric<T>() {

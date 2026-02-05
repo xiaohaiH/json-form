@@ -11,20 +11,20 @@ const elCascaderProps = ElCascader.props as Obj2Props<ComponentProps<typeof ElCa
 const elCascaderEmits = emits2obj(ElCascader.emits);
 
 /** 组件传参 - 私有 */
-export function cascaderPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function cascaderPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elCascaderProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elCascaderEmits>]>>;
     return {
         ...{} as _Prop,
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
-        ...commonProps as CommonProps<_Prop, CascaderSlotOption<Query, OptionQuery>, Query, Option>,
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
+        ...commonProps as CommonProps<_Prop, CascaderSlotOption<Query, OptionQuery>, Query, OptionQuery>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 是否可过滤 */
         filterable: { type: Boolean as PropType<boolean>, default: true },
         /** 是否可清除 */
         clearable: { type: Boolean as PropType<boolean>, default: true },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
-            default: ComponentType<CascaderSlotOption<Query, OptionQuery> & { node: any; data: T }>;
+            default: ComponentType<CascaderSlotOption<Query, OptionQuery> & { node: any; data: any }>;
             empty: ComponentType<CascaderSlotOption<Query, OptionQuery>>;
             prefix: ComponentType<CascaderSlotOption<Query, OptionQuery>>;
             suggestionItem: ComponentType<CascaderSlotOption<Query, OptionQuery> & { item: CascaderNode }>;
@@ -41,7 +41,7 @@ export const cascaderProps = emits2props({
     ...elCascaderProps,
     ...cascaderPropsPrivate,
 }, elCascaderEmits);
-export type CascaderProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof cascaderPropsGeneric<T, Query, Option, OptionQuery>>>;
+export type CascaderProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof cascaderPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function cascaderEmitsGeneric<T>() {

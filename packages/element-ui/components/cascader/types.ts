@@ -43,17 +43,17 @@ const elCascaderEmits = {
  * 支持泛型配置，用于支持不同数据类型的级联选择器
  * @returns 级联选择器属性配置对象
  */
-export function cascaderPropsGeneric<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>>() {
+export function cascaderPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
     type _Prop = typeof elCascaderProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elCascaderEmits>]>>;
     return {
         // 继承Element UI级联选择器属性
         ...{} as _Prop,
         // 继承核心库的平台属性
-        ...plainProps as PlainProps<T, Query, Option, OptionQuery>,
+        ...plainProps as PlainProps<Query, OptionQuery>,
         // 继承通用属性
-        ...commonProps as CommonProps<_Prop, CascaderSlotOption<Query, OptionQuery>, Query, Option>,
+        ...commonProps as CommonProps<_Prop, CascaderSlotOption<Query, OptionQuery>, Query, OptionQuery>,
         // 继承表单项属性
-        ...formItemProps as FormItemProps<Query, Option>,
+        ...formItemProps as FormItemProps<Query, OptionQuery>,
         /** 是否可过滤，支持搜索级联选项 */
         filterable: { type: Boolean as PropType<boolean>, default: true },
         /** 是否可清除，显示清除按钮 */
@@ -62,13 +62,13 @@ export function cascaderPropsGeneric<T, Query extends Record<string, any>, Optio
         itemSlots: {
             type: Object as PropType<Partial<{
                 /** 自定义备选项的内容，参数为 { node, data } */
-                default: ComponentType<CascaderSlotOption<Query, OptionQuery> & { node: any; data: T }>;
+                default: ComponentType<CascaderSlotOption<Query, OptionQuery> & { node: any; data: any }>;
                 /** 无匹配选项时的内容 */
                 empty: ComponentType<CascaderSlotOption<Query, OptionQuery>>;
                 /** 自定义前缀图标 */
                 prefix: ComponentType<CascaderSlotOption<Query, OptionQuery>>;
                 /** 自定义建议项，参数为 { item } */
-                suggestionItem: ComponentType<CascaderSlotOption<Query, OptionQuery> & { item: CascaderNode<any, Option> }>;
+                suggestionItem: ComponentType<CascaderSlotOption<Query, OptionQuery> & { item: CascaderNode<any, any> }>;
             }>>,
             default: () => ({}),
         },
@@ -95,7 +95,7 @@ export const cascaderProps = emits2props({
  * 级联选择器属性类型
  * 提供类型推断支持
  */
-export type CascaderProps<T, Query extends Record<string, any>, Option, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof cascaderPropsGeneric<T, Query, Option, OptionQuery>>>>;
+export type CascaderProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = Partial<ExtractPropTypes<ReturnType<typeof cascaderPropsGeneric<Query, OptionQuery>>>>;
 
 /**
  * 级联选择器事件生成函数 - 通用版本
