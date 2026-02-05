@@ -1,5 +1,14 @@
 # @xiaohaih/json-form-plus
 
+## 0.2.6
+
+### Patch Changes
+
+- 1. 修复 defineOption 为函数时, getOptions 重复请求
+- 2. 修复 dynamic-group 插槽未渲染
+- Updated dependencies
+  - @xiaohaih/json-form-core@0.2.6
+
 ## 0.2.5
 
 ### Patch Changes
