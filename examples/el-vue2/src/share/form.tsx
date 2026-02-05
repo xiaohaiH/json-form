@@ -159,7 +159,7 @@ export function conditionFactory() {
                 },
                 on: {
                     select(item: any, { props, plain }: any) {
-                        props.query.input1 = item.id;
+                        set(props.query, 'input1', item.id);
                     },
                 },
             },
