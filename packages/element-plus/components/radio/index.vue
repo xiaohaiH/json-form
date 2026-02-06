@@ -1,9 +1,9 @@
 <template>
     <ElFormItem
-        v-if="!insetHide"
+        v-if="!hide"
         :class="`json-form-item json-form-item--radio json-form-item--${field} json-form-item--${!!slots?.postfix}`"
         v-bind="formItemActualProps"
-        :prop="formItemActualProps.prop || field"
+        :prop="prop || field"
     >
         <template v-if="slots?.before || ($slots as RadioSlots).before">
             <component :is="getNode(slots?.before || ($slots as RadioSlots).before)" v-bind="slotProps" />

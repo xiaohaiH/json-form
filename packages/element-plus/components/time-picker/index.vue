@@ -1,9 +1,9 @@
 <template>
     <ElFormItem
-        v-if="!insetHide"
+        v-if="!hide"
         :class="`json-form-item json-form-item--time-picker json-form-item--${field} json-form-item--${!!slots?.postfix}`"
         v-bind="formItemActualProps"
-        :prop="formItemActualProps.prop || field"
+        :prop="prop || field"
     >
         <template v-if="slots?.before || ($slots as TimePickerSlots).before">
             <component :is="getNode(slots?.before || ($slots as TimePickerSlots).before)" v-bind="slotProps" />

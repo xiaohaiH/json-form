@@ -4,10 +4,10 @@
 
     <!-- 当需要包装在表单项中时渲染 -->
     <ElFormItem
-        v-if="renderFormItem && !insetHide"
+        v-if="renderFormItem && !hide"
         :class="`json-form-item json-form-item--custom-render json-form-item--${field}`"
         v-bind="formItemActualProps"
-        :prop="formItemActualProps.prop || field"
+        :prop="prop || field"
     >
         <!-- 渲染自定义内容 -->
         <component :is="customRender" v-bind="slotProps" />

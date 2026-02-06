@@ -5,7 +5,7 @@
         v-if="!hide"
         :class="`json-form-item json-form-item--checkbox-group json-form-item--${field} json-form-item--${!!slots.postfix}`"
         v-bind="formItemActualProps"
-        :prop="formItemActualProps.prop || field"
+        :prop="prop || field"
     >
         <!-- 表单项前置内容插槽 -->
         <template v-if="slots.before || $slots.before">

@@ -30,8 +30,6 @@ export function plainPropsGeneric<Query extends Record<string, any>, OptionQuery
          * 但是根据引用会找到 query[field][1] 的值, 导致操作错误的对象
          */
         parentQuery: { type: Object as PropType<Record<string, any>> },
-        /** 是否隐藏 -> 如果是函数, 需传递依赖项, 可根据依赖项动态隐藏 */
-        hide: { type: [Boolean, Function] as PropType<boolean | ((option: { query: Query }) => boolean)> },
         /** 是否依赖其它字段 */
         depend: { type: Boolean as PropType<boolean>, default: undefined },
         /** 依赖字段发生变化后是否重置值 */

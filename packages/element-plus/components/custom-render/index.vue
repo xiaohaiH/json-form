@@ -1,10 +1,10 @@
 <template>
     <template v-if="renderFormItem">
         <ElFormItem
-            v-if="!insetHide"
+            v-if="!hide"
             :class="`json-form-item json-form-item--custom-render json-form-item--${field}`"
             v-bind="formItemActualProps"
-            :prop="formItemActualProps.prop || field"
+            :prop="prop || field"
         >
             <component :is="customRender" v-bind="slotProps" />
         </ElFormItem>

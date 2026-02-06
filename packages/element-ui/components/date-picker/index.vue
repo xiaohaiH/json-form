@@ -2,10 +2,10 @@
     <!-- eslint-disable vue/no-deprecated-dollar-listeners-api vue/no-v-for-template-key-on-child -->
     <!-- 表单项容器 -->
     <ElFormItem
-        v-if="!insetHide"
+        v-if="!hide"
         :class="`json-form-item json-form-item--datepicker json-form-item--${field} json-form-item--${!!slots.postfix}`"
         v-bind="formItemActualProps"
-        :prop="formItemActualProps.prop || field"
+        :prop="prop || field"
     >
         <!-- 前置内容插槽 -->
         <template v-if="slots.before || $slots.before">

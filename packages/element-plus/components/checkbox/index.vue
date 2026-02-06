@@ -3,7 +3,7 @@
         v-if="!hide"
         :class="`json-form-item json-form-item--checkbox json-form-item--${field} json-form-item--${!!slots?.postfix}`"
         v-bind="formItemActualProps"
-        :prop="formItemActualProps.prop || field"
+        :prop="prop || field"
     >
         <template v-if="slots?.before || ($slots as CheckboxSlots).before">
             <component :is="getNode(slots?.before || ($slots as CheckboxSlots).before)" v-bind="slotProps" />

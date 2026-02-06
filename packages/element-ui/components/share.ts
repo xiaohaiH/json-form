@@ -47,6 +47,8 @@ export function commonPropsGeneric<ContentProps, SlotProps, Query extends Record
         dynamicProps: { type: Function as PropType<(opt: Record<'query', any>) => Record<string, any>> },
         /** 传递给表单元素的属性 - 在与 FormItem props 冲突时使用 */
         contentProps: { type: Object as PropType<Partial<ExtractPropTypes<ContentProps> & Record<'class' | 'style', any>>> },
+        /** 是否隐藏表单项 */
+        hide: { type: Boolean as PropType<boolean>, default: undefined },
         /** 传递给表单元素的事件 */
         on: { type: Object as PropType<Record<string, any>> },
         /** @deprecated 字段别名(优先级高于条件对象的 key) - 下个版本删除 */

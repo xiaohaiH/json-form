@@ -118,10 +118,6 @@ export function usePlain<Query extends Record<string, any> = Record<string, any>
     unwatchs.push(
         watch(finalOption, (value) => wrapper && (wrapper.options[unref(props).field!] = value), { immediate: true }),
     );
-    const insetHide = computed(() => {
-        const _props = unref(props);
-        return typeof _props.hide === 'boolean' ? _props.hide : _props.hide?.({ query: _props.query as Query }) || false;
-    });
 
     const option = defineCommonMethod({
         get field() {
@@ -348,8 +344,6 @@ export function usePlain<Query extends Record<string, any> = Record<string, any>
         remoteOption,
         /** 获取最终渲染的数据源 */
         finalOption,
-        /** 是否隐藏 */
-        insetHide,
         /** 更新值并触发搜索事件(为实时搜索时, 会触发搜索事件) */
         change,
         /** 搜索事件(直接触发搜索事件, 不受实时搜索影响) */

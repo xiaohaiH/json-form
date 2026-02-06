@@ -1,9 +1,9 @@
 <template>
     <ElFormItem
-        v-if="!insetHide"
+        v-if="!hide"
         :class="`json-form-item json-form-item--select-v2 json-form-item--${field} json-form-item--${!!slots?.postfix}`"
         v-bind="formItemActualProps"
-        :prop="formItemActualProps.prop || field"
+        :prop="prop || field"
     >
         <template v-if="slots?.before || ($slots as SelectV2Slots).before">
             <component :is="getNode(slots?.before || ($slots as SelectV2Slots).before)" v-bind="slotProps" :filter-value="filterValue" :remote-method="remoteMethod" />
