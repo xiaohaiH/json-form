@@ -4,7 +4,7 @@
             <component :is="getNode(slots?.prepend || ($slots as DynamicGroupSlots).prepend)" :query="query" :checked="plain.checked.value" :plain="plain" />
         </template>
         <template v-for="(opt, idx) of finalConfig" :key="opt.uniqueValue">
-            <div v-bind="itemProps">
+            <div v-bind="contentProps">
                 <component :is="itemSlots.prepend" :query="query" :checked="plain.checked.value" :index="idx" :plain="plain" />
                 <template v-for="(item) of opt.options" :key="`${field}.${idx}.${item.field || item[REWRITE_FIELD_KEY]}`">
                     <component :is="getComponent2(item.t)!" v-if="item" v-bind="item" :unique-value="opt.uniqueValue" :field="`${field}.${idx}.${item.field || item[REWRITE_FIELD_KEY]}`" :query="query" :parent-query="plain.checked.value[idx]" />

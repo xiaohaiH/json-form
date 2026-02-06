@@ -30,7 +30,7 @@ export function dynamicGroupPropsGeneric<Query extends Record<string, any>, Opti
          */
         uniqueKey: { type: String },
         /** 传递给每行表单项 DOM 节点的属性 */
-        itemProps: { type: Object as PropType<Partial<Record<'class' | 'style', string | Record<string, any> | any[]>>> },
+        contentProps: { type: Object as PropType<Partial<Record<'class' | 'style', string | Record<string, any> | any[]>>> },
         /** 传递给组件的插槽 - 重写声明 */
         slots: { type: Object as PropType<DynamicGroupSlots<Query, OptionQuery>> },
         /** 传递给动态渲染组件的插槽 */

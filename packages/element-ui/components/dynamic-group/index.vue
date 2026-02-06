@@ -8,7 +8,7 @@
             <component :is="getNode(slots.prepend)" :query="query" :checked="plain.checked.value" :plain="plain" />
         </template>
         <template v-for="(opt, idx) of finalConfig">
-            <div :key="opt.uniqueValue" v-bind="itemProps">
+            <div :key="opt.uniqueValue" v-bind="contentProps">
                 <component :is="itemSlots.prepend" :query="query" :checked="plain.checked.value" :index="idx" :plain="plain" />
                 <template v-for="(item) of opt.options">
                     <component :is="getComponent2(item.t)" v-if="item" :key="`${field}.${idx}.${item.field || item[REWRITE_FIELD_KEY]}`" v-bind="item" :unique-value="opt.uniqueValue" :field="`${field}.${idx}.${item.field || item[REWRITE_FIELD_KEY]}`" :query="query" :parent-query="plain.checked.value[idx]" v-on="item.on" />
