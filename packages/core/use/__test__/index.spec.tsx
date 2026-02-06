@@ -14,17 +14,23 @@ import { useWrapper } from '../wrapper/index';
 import type { WrapperProps } from '../wrapper/types';
 import { wrapperProps } from '../wrapper/types';
 
-type PlainOption = Writable<ExtractPublicPropTypes<Omit<PlainProps<any, Record<string, any>, any>, 'field' | 'query'>>> & { uniqueKey?: string } & {
+type RawPlainOption = Writable<ExtractPublicPropTypes<Omit<PlainProps<Record<string, any>, any>, 'field' | 'query'>>> & { uniqueKey?: string } & {
     // config 如果是对象, 说明是扁平的, 单纯为了布局而设置的
     // config 如果是数组, 说明是动态表单, 根据 query[maybeFieldPath] 的值动态渲染表单项
-    config?: Record<string, PlainOption> | (PlainOption & { field: string })[] | ((option: { item: PlainOption & { field: string }; index: number }) => (PlainOption & { field: string })[]);
+    config?: PlainOptionNotFunc | ((option: { item: RawPlainOption & { field: string }; index: number }) => PlainOptionNotFunc);
 };
+
+type RawPlainOptionArr = (RawPlainOption & { field: string })[];
+
+type PlainOptionNotFunc = RawPlainOptionArr | Record<string, RawPlainOption>;
+
+type PlainOption = PlainOptionNotFunc | ((opts: { query: Record<string, any> }) => PlainOptionNotFunc);
 
 const userWrapperComponent = defineComponent({
     props: {
         ...wrapperProps,
         onReady: { type: Function as PropType<(query: Record<string, any>) => void> },
-        getOption: { type: Function as PropType<() => ({ backfill?: Ref<Record<string, any>>; model?: Ref<Record<string, any>>; options: Ref<Record<string, PlainOption>> })>, required: true },
+        getOption: { type: Function as PropType<() => ({ backfill?: Ref<Record<string, any>>; model?: Ref<Record<string, any>>; options: Ref<PlainOption> })>, required: true },
     },
     setup(props) {
         const { backfill: packageBackfill, model: packageModel, options: packageOptions } = props.getOption();
@@ -49,11 +55,14 @@ const WrapperComponent = defineComponent({
     props: {
         ...wrapperProps,
         /** 动态渲染的数据源 */
-        options: { type: Object as PropType<Record<string, PlainOption>>, required: true },
+        options: { type: [Object, Array, Function] as PropType<PlainOption>, required: true },
     },
     setup(props) {
-        const options = computed(() => Object.entries(props.options).map(([key, value]) => ({ ...value, field: key })));
         const wrapper = useWrapper(props);
+        const options = computed<RawPlainOptionArr>(() => typeof props.options === 'function' ? optToArr(props.options({ query: wrapper.query.value || {} })) : optToArr(props.options));
+        function optToArr(value: any) {
+            return Array.isArray(value) ? value : Object.entries(value).map(([key, value]: any) => ({ ...value, field: key }));
+        }
         /** 每个数据项配置生成的 plain 引用对象 */
         const refObj = ref<Record<string, ComponentExposed<typeof PlainComponent>>>({});
         function setRef(key: string) {
@@ -79,7 +88,7 @@ const PlainComponent = defineComponent({
     props: {
         ...plainProps,
         parentField: { type: String, default: '' },
-        config: { type: [Array, Object, Function] as PropType<Record<string, PlainOption> | PlainOption[] | ((option: { item: PlainOption & { field: string }; index: number; query: Record<string, any> }) => PlainOption[])> },
+        config: { type: [Array, Object, Function] as PropType<PlainOptionNotFunc | ((option: { item: PlainOption & { field: string }; index: number; query: Record<string, any> }) => PlainOptionNotFunc)> },
         setRef: { type: Function as PropType<(field: string) => (ins: Record<string, any> | null) => void>, required: true },
         refObj: { type: Object as PropType<Record<string, any>>, required: true },
         /**
@@ -207,7 +216,7 @@ const PlainComponent = defineComponent({
 });
 
 function genWrapperComponent({ mockOptions, mockQuery, mockModel, readySpy, searchSpy, onReady, onReset, onSearch, ...props }: {
-    mockOptions: Ref<Record<string, PlainOption>>;
+    mockOptions: Ref<PlainOption>;
     mockQuery?: Ref<Record<string, any>>;
     mockModel?: Ref<Record<string, any>>;
     onReady?: (q: Record<string, any>) => void;
@@ -252,7 +261,7 @@ describe('usePlain-useWrapper组合测试', () => {
         it('应该返回正确的 expose 对象结构', async () => {
             const searchSpy = vi.fn();
             const mockQuery = ref<Record<string, any>>({ 输入框: '测试值' });
-            const mockOptions = ref<Record<string, PlainOption>>({
+            const mockOptions = ref<PlainOption>({
                 输入框: {
                 },
                 数字: {
@@ -288,7 +297,7 @@ describe('usePlain-useWrapper组合测试', () => {
             const getOptionsSpy = vi.fn();
             const getOptionsSpy2 = vi.fn();
             const mockQuery = ref<Record<string, any>>({ 输入框: '测试值' });
-            const mockOptions = ref<Record<string, PlainOption>>({
+            const mockOptions = ref<PlainOption>({
                 输入框: { defaultValue: 123 },
                 数字: {
                     depend: true,
@@ -337,7 +346,7 @@ describe('usePlain-useWrapper组合测试', () => {
             it('应该返回正确的 expose 对象结构', async () => {
                 const searchSpy = vi.fn();
                 const mockQuery = ref<Record<string, any>>({ 输入框: '测试值' });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     '输入框': {
                     },
                     '数字': {
@@ -492,7 +501,7 @@ describe('usePlain-useWrapper组合测试', () => {
         describe('初始赋值时, 不应受到依赖影响', () => {
             it('初始同步 query 后, 不应被默认值替换', async () => {
                 const mockQuery = ref<Record<string, any>>({ 默认值: 'a', 默认值且被依赖: 'c' });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     默认值: {
                         defaultValue: '11',
                         depend: true,
@@ -520,7 +529,7 @@ describe('usePlain-useWrapper组合测试', () => {
             });
             it('初始同步 query 后, 不应被默认值替换2', async () => {
                 const mockQuery = ref<Record<string, any>>({ 默认值: 'a' });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     默认值: { defaultValue: '11', depend: true, dependFields: '默认值且被依赖' },
                     默认值和初始值: { initialValue: '方法', defaultValue: '22', depend: true, dependFields: '默认值且被依赖' },
                     默认值且被依赖: { defaultValue: '发发发' },
@@ -541,7 +550,7 @@ describe('usePlain-useWrapper组合测试', () => {
             it('有默认值时应该一直调用默认值生成', async () => {
                 const defaultValueSpy = vi.fn();
                 const mockQuery = ref<Record<string, any>>({ });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     反复赋值: {
                         defaultValue: () => {
                             defaultValueSpy();
@@ -601,7 +610,7 @@ describe('usePlain-useWrapper组合测试', () => {
             it('没默认值时应忽略不计', async () => {
                 const defaultValueSpy = vi.fn();
                 const mockQuery = ref<Record<string, any>>({ });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     反复赋值: {
                         defaultValue: () => {
                             defaultValueSpy();
@@ -661,7 +670,7 @@ describe('usePlain-useWrapper组合测试', () => {
                 const optionsDependHookSpy = vi.fn();
 
                 const mockQuery = ref<Record<string, any>>({ 城市: 'bj', 区域: 'cy' });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     城市: {
                         options: [{ label: '北京', value: 'bj' }, { label: '上海', value: 'sh' }],
                     },
@@ -724,7 +733,7 @@ describe('usePlain-useWrapper组合测试', () => {
 
             it('当 resetByDependValueChange 为 false 时不应该重置值', async () => {
                 const mockQuery = ref<Record<string, any>>({ 城市: 'bj', 区域: 'cy' });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     城市: {
                         options: [{ label: '北京', value: 'bj' }, { label: '上海', value: 'sh' }],
                     },
@@ -756,7 +765,7 @@ describe('usePlain-useWrapper组合测试', () => {
 
             it('支持多个依赖字段', async () => {
                 const mockQuery = ref<Record<string, any>>({ });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     国家: {
                         options: [
                             { label: '中国', value: 'cn' },
@@ -794,7 +803,7 @@ describe('usePlain-useWrapper组合测试', () => {
                 it('created 钩子应该在组件初始化时触发', async () => {
                     const createdSpy = vi.fn();
                     const mockQuery = ref<Record<string, any>>({ });
-                    const mockOptions = ref<Record<string, PlainOption>>({
+                    const mockOptions = ref<PlainOption>({
                         测试字段: {
                             hooks: {
                                 created({ props, plain }) {
@@ -817,7 +826,7 @@ describe('usePlain-useWrapper组合测试', () => {
                 it('backfillChange 钩子应该在外部 backfill 改变时触发', async () => {
                     const backfillChangeSpy = vi.fn();
                     const mockQuery = ref<Record<string, any>>({ });
-                    const mockOptions = ref<Record<string, PlainOption>>({
+                    const mockOptions = ref<PlainOption>({
                         输入框: {
                             hooks: {
                                 backfillChange(backfill, oldBackfill, { props, plain }) {
@@ -844,7 +853,7 @@ describe('usePlain-useWrapper组合测试', () => {
                 it('optionsDependChange 钩子应该在依赖的数据源改变时触发', async () => {
                     const optionsDependChangeSpy = vi.fn();
                     const mockQuery = ref<Record<string, any>>({ });
-                    const mockOptions = ref<Record<string, PlainOption>>({
+                    const mockOptions = ref<PlainOption>({
                         主字段: {
                             options: [
                                 { label: '选项1', value: '1' },
@@ -877,7 +886,7 @@ describe('usePlain-useWrapper组合测试', () => {
                     const searchSpy = vi.fn();
 
                     const mockQuery = ref<Record<string, any>>({ });
-                    const mockOptions = ref<Record<string, PlainOption>>({
+                    const mockOptions = ref<PlainOption>({
                         输入框: {},
                     });
                     const wrapper = genWrapperComponent({ mockOptions, mockQuery, searchSpy });
@@ -897,7 +906,7 @@ describe('usePlain-useWrapper组合测试', () => {
                     const searchSpy = vi.fn();
 
                     const mockQuery = ref<Record<string, any>>({ });
-                    const mockOptions = ref<Record<string, PlainOption>>({
+                    const mockOptions = ref<PlainOption>({
                         输入框: {},
                     });
                     const wrapper = genWrapperComponent({ mockOptions, mockQuery, realtime: false, searchSpy });
@@ -916,7 +925,7 @@ describe('usePlain-useWrapper组合测试', () => {
                     const searchSpy = vi.fn();
 
                     const mockQuery = ref<Record<string, any>>({ });
-                    const mockOptions = ref<Record<string, PlainOption>>({
+                    const mockOptions = ref<PlainOption>({
                         输入框: {},
                     });
                     const wrapper = genWrapperComponent({ mockOptions, mockQuery, realtime: false, searchSpy });
@@ -938,7 +947,7 @@ describe('usePlain-useWrapper组合测试', () => {
             describe('多字段级联场景', () => {
                 it('字段数组应该正确处理多个字段的值', async () => {
                     const mockQuery = ref<Record<string, any>>({ province: 'bj', city: 'cy' });
-                    const mockOptions = ref<Record<string, PlainOption>>({
+                    const mockOptions = ref<PlainOption>({
                         级联选择: {
                             fields: ['province', 'city'],
                             options: [
@@ -969,7 +978,7 @@ describe('usePlain-useWrapper组合测试', () => {
                 it('initialValue 应该优先于 defaultValue', async () => {
                     const searchSpy = vi.fn();
                     const mockQuery = ref<Record<string, any>>({ });
-                    const mockOptions = ref<Record<string, PlainOption>>({
+                    const mockOptions = ref<PlainOption>({
                         优先级测试: {
                             initialValue: 'initial',
                             defaultValue: 'default',
@@ -987,7 +996,7 @@ describe('usePlain-useWrapper组合测试', () => {
                 it('回填值应该优先于 initialValue', async () => {
                     const searchSpy = vi.fn();
                     const mockQuery = ref<Record<string, any>>({ 优先级测试: 'backfill' });
-                    const mockOptions = ref<Record<string, PlainOption>>({
+                    const mockOptions = ref<PlainOption>({
                         优先级测试: {
                             initialValue: 'initial',
                             defaultValue: 'default',
@@ -1005,7 +1014,7 @@ describe('usePlain-useWrapper组合测试', () => {
                 it('reset 应该重置为 initialValue 或 defaultValue', async () => {
                     const searchSpy = vi.fn();
                     const mockQuery = ref<Record<string, any>>({ 重置测试: '当前值' });
-                    const mockOptions = ref<Record<string, PlainOption>>({
+                    const mockOptions = ref<PlainOption>({
                         重置测试: {
                             initialValue: 'initial',
                             defaultValue: 'default',
@@ -1031,7 +1040,7 @@ describe('usePlain-useWrapper组合测试', () => {
                     const validatorSpy = vi.fn(() => true);
                     const searchSpy = vi.fn();
                     const mockQuery = ref<Record<string, any>>({ 重置测试: '当前值' });
-                    const mockOptions = ref<Record<string, PlainOption>>({
+                    const mockOptions = ref<PlainOption>({
                         验证字段: {
                             validator: validatorSpy,
                         },
@@ -1053,7 +1062,7 @@ describe('usePlain-useWrapper组合测试', () => {
                     let optionCallback: any;
                     const searchSpy = vi.fn();
                     const mockQuery = ref<Record<string, any>>({ 重置测试: '当前值' });
-                    const mockOptions = ref<Record<string, PlainOption>>({
+                    const mockOptions = ref<PlainOption>({
                         远程数据: {
                             options: [
                                 { label: '本地', value: '1' },
@@ -1089,7 +1098,7 @@ describe('usePlain-useWrapper组合测试', () => {
                     const searchSpy = vi.fn();
 
                     const mockQuery = ref<Record<string, any>>({ 国家: 'cn', 省份: 'bj', 城市: 'cy' });
-                    const mockOptions = ref<Record<string, PlainOption>>({
+                    const mockOptions = ref<PlainOption>({
                         国家: {
                             defaultValue: 'cn',
                             options: [
@@ -1193,7 +1202,7 @@ describe('usePlain-useWrapper组合测试', () => {
 
                     const mockQuery = ref<Record<string, any>>({ });
                     let cityOptionsCallback: any;
-                    const mockOptions = ref<Record<string, PlainOption>>({
+                    const mockOptions = ref<PlainOption>({
                         分类: {
                             defaultValue: 'type1',
                             options: [
@@ -1277,7 +1286,7 @@ describe('usePlain-useWrapper组合测试', () => {
                     const wrapperValidatorSpy = vi.fn();
                     const searchSpy = vi.fn();
                     const mockQuery = ref<Record<string, any>>({ });
-                    const mockOptions = ref<Record<string, PlainOption>>({
+                    const mockOptions = ref<PlainOption>({
                         邮箱: {
                             validator: (query) => {
                                 fieldValidatorSpy();
@@ -1337,63 +1346,11 @@ describe('usePlain-useWrapper组合测试', () => {
                 });
             });
 
-            describe('动态隐藏与条件显示', () => {
-                it('复杂的条件隐藏场景应该正确处理', async () => {
-                    const searchSpy = vi.fn();
-                    const mockQuery = ref<Record<string, any>>({ });
-                    const mockOptions = ref<Record<string, PlainOption>>({
-                        业务类型: {
-                            defaultValue: 'personal',
-                            options: [
-                                { label: '个人', value: 'personal' },
-                                { label: '企业', value: 'business' },
-                            ],
-                        },
-                        身份证: {
-                            hide: ({ query }) => query.业务类型 !== 'personal',
-                        },
-                        营业执照: {
-                            hide: ({ query }) => query.业务类型 !== 'business',
-                        },
-                        公司规模: {
-                            hide: ({ query }) => query.业务类型 !== 'business',
-                            depend: true,
-                            dependFields: '公司名称',
-                        },
-                        公司名称: {
-                            hide: ({ query }) => query.业务类型 !== 'business',
-                        },
-                    });
-                    const wrapper = genWrapperComponent({ mockOptions, mockQuery, searchSpy });
-                    const wrapperComp = wrapper.vm.wrapperRef;
-                    // 初始状态：个人业务
-                    expect(wrapperComp.refObj.业务类型.checked).toBe('personal');
-                    expect(wrapperComp.refObj.身份证.insetHide).toBe(false);
-                    expect(wrapperComp.refObj.营业执照.insetHide).toBe(true);
-                    expect(wrapperComp.refObj.公司名称.insetHide).toBe(true);
-                    // 切换到企业业务
-                    wrapperComp.refObj.业务类型.change('business');
-                    await nextTick();
-                    expect(wrapperComp.refObj.业务类型.checked).toBe('business');
-                    expect(wrapperComp.refObj.身份证.insetHide).toBe(true);
-                    expect(wrapperComp.refObj.营业执照.insetHide).toBe(false);
-                    expect(wrapperComp.refObj.公司名称.insetHide).toBe(false);
-                    // 验证隐藏字段不会被包含在 query 中
-                    wrapperComp.refObj.身份证.change('12345678');
-                    wrapperComp.refObj.营业执照.change('98765432');
-                    await nextTick();
-                    expect(mockQuery.value.身份证).toBe('12345678');
-                    expect(mockQuery.value.营业执照).toBe('98765432');
-                    await nextTick();
-                    wrapper.unmount();
-                });
-            });
-
             describe('多字段级联与复杂搜索', () => {
                 it('多字段级联的值同步与搜索', async () => {
                     const searchSpy = vi.fn();
                     const mockQuery = ref<Record<string, any>>({ });
-                    const mockOptions = ref<Record<string, PlainOption>>({
+                    const mockOptions = ref<PlainOption>({
                         时间段: {
                             fields: ['startDate', 'endDate'],
                             options: [],
@@ -1431,7 +1388,7 @@ describe('usePlain-useWrapper组合测试', () => {
                 it('混合实时和非实时字段的搜索行为', async () => {
                     const searchSpy = vi.fn();
                     const mockQuery = ref<Record<string, any>>({ });
-                    const mockOptions = ref<Record<string, PlainOption>>({
+                    const mockOptions = ref<PlainOption>({
                         实时搜索字段: {
                             defaultValue: '',
                         },
@@ -1462,7 +1419,7 @@ describe('usePlain-useWrapper组合测试', () => {
                 it('复杂表单的重置、初始化与恢复', async () => {
                     const searchSpy = vi.fn();
                     const mockQuery = ref<Record<string, any>>({ });
-                    const mockOptions = ref<Record<string, PlainOption>>({
+                    const mockOptions = ref<PlainOption>({
                         依赖字段: {
                             depend: true,
                             dependFields: '基础字段',
@@ -1528,7 +1485,7 @@ describe('usePlain-useWrapper组合测试', () => {
             it('应该返回正确的 expose 对象结构', async () => {
                 const searchSpy = vi.fn();
                 const mockModel = ref<Record<string, any>>({ 输入框: '测试值' });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     '输入框': {},
                     '数字': { initialValue: 123, defaultValue: 999, getOptions(cb, query, option) { option.changeInitialValue(666); } },
                     '默认值': { defaultValue: '0' },
@@ -1639,7 +1596,7 @@ describe('usePlain-useWrapper组合测试', () => {
             it('动态表单重置时, 如果存在默认值, 子级卸载时不应重置默认值的数据', async () => {
                 const searchSpy = vi.fn();
                 const mockModel = ref<Record<string, any>>({ });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     任务集: {
                         config: [
                             { field: '任务名称' },
@@ -1668,7 +1625,7 @@ describe('usePlain-useWrapper组合测试', () => {
             it('初始值为空的 model 应该使用默认值', async () => {
                 const searchSpy = vi.fn();
                 const mockModel = ref<Record<string, any>>({});
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     有默认值: { defaultValue: 'default' },
                     有初始值: { initialValue: 'initial' },
                     无默认值: {},
@@ -1688,7 +1645,7 @@ describe('usePlain-useWrapper组合测试', () => {
             it('多字段级联的同步应该正确处理', async () => {
                 const searchSpy = vi.fn();
                 const mockModel = ref<Record<string, any>>({ startDate: '2024-01-01', endDate: '2024-12-31' });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     时间范围: {
                         fields: ['startDate', 'endDate'],
                         options: [],
@@ -1718,7 +1675,7 @@ describe('usePlain-useWrapper组合测试', () => {
             it('依赖项变化时 model 应该正确重置子字段', async () => {
                 const searchSpy = vi.fn();
                 const mockModel = ref<Record<string, any>>({ 城市: '北京', 区域: '大兴', 楼栋: '旺德福' });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     城市: {},
                     区域: { depend: true, dependFields: '城市', defaultValue: '朝阳' },
                     楼栋: { defaultValue: '新星小区' },
@@ -1756,7 +1713,7 @@ describe('usePlain-useWrapper组合测试', () => {
                 const searchSpy = vi.fn();
                 const mockModel = ref<Record<string, any>>({});
                 let callback: any;
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     异步字段: {
                         getOptions(cb) {
                             callback = cb;
@@ -1784,7 +1741,7 @@ describe('usePlain-useWrapper组合测试', () => {
             it('重置操作应该恢复 model 到初始状态', async () => {
                 const searchSpy = vi.fn();
                 const mockModel = ref<Record<string, any>>({ 字段: 'changed' });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     字段: {
                         initialValue: 'initial',
                         defaultValue: 'default',
@@ -1805,7 +1762,7 @@ describe('usePlain-useWrapper组合测试', () => {
             it('数组类型值的同步应该正确处理', async () => {
                 const searchSpy = vi.fn();
                 const mockModel = ref<Record<string, any>>({ 多选: ['1', '2'] });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     多选: {
                         defaultValue: ['1'],
                         options: [{ label: '选项1', value: '1' }, { label: '选项2', value: '2' }, { label: '选项3', value: '3' }],
@@ -1830,7 +1787,7 @@ describe('usePlain-useWrapper组合测试', () => {
             it('复杂级联选择器的值同步', async () => {
                 const searchSpy = vi.fn();
                 const mockModel = ref<Record<string, any>>({ province: 'bj', city: 'cy' });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     级联: {
                         fields: ['province', 'city'],
                         options: [
@@ -1859,7 +1816,7 @@ describe('usePlain-useWrapper组合测试', () => {
             it('model 改变不触发搜索', async () => {
                 const searchSpy = vi.fn();
                 const mockModel = ref<Record<string, any>>({ 字段: 'value1' });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     字段: {},
                 });
                 const wrapper = genWrapperComponent({ mockOptions, mockModel, searchSpy });
@@ -1897,7 +1854,7 @@ describe('深层路径支持测试 (a.0[\'aa\'])', () => {
             const searchSpy = vi.fn();
             const watchSpy = vi.fn();
             const mockQuery = ref<Record<string, any>>({ 输入框: '测试值', 动态表单2: [], 动态表单3: [{}] });
-            const mockOptions = ref<Record<string, PlainOption>>({
+            const mockOptions = ref<PlainOption>({
                 动态表单1: {
                     config: [{ field: '文本框' }, { field: '下拉框' }],
                 },
@@ -2011,7 +1968,7 @@ describe('深层路径支持测试 (a.0[\'aa\'])', () => {
     describe('初始赋值时, 不应受到依赖影响', () => {
         it('初始同步 query 后, 不应被默认值替换', async () => {
             const mockQuery = ref<Record<string, any>>({ 包裹: [{ 默认值: 'a', 默认值且被依赖: 'c' }] });
-            const mockOptions = ref<Record<string, PlainOption>>({
+            const mockOptions = ref<PlainOption>({
                 包裹: {
                     config: ({ index }) => [
                         { field: '默认值', defaultValue: '11', depend: false, dependFields: `包裹.${index}.默认值且被依赖` },
@@ -2032,7 +1989,7 @@ describe('深层路径支持测试 (a.0[\'aa\'])', () => {
         });
         it('初始同步 query 后, 不应被默认值替换2', async () => {
             const mockQuery = ref<Record<string, any>>({ 包裹: [{ 默认值: 'a' }] });
-            const mockOptions = ref<Record<string, PlainOption>>({
+            const mockOptions = ref<PlainOption>({
                 包裹: {
                     config: ({ index }) => [
                         { field: '默认值', defaultValue: '11', depend: true, dependFields: `包裹.${index}.默认值且被依赖` },
@@ -2060,7 +2017,7 @@ describe('深层路径支持测试 (a.0[\'aa\'])', () => {
                 const defaultValueSpy = vi.fn();
                 const defaultValue2Spy = vi.fn();
                 const mockQuery = ref<Record<string, any>>({ });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     深层反复赋值: {
                         config: [
                             // eslint-disable-next-line max-statements-per-line,style/max-statements-per-line
@@ -2116,7 +2073,7 @@ describe('深层路径支持测试 (a.0[\'aa\'])', () => {
             it('支持 bracket notation 的 field 访问 (a.0[\'aa\'])', async () => {
                 const searchSpy = vi.fn();
                 const mockQuery = ref<Record<string, any>>({ a: [{ aa: 'x' }] });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     a: {
                         config: [{ field: 'aa' }],
                     },
@@ -2136,7 +2093,7 @@ describe('深层路径支持测试 (a.0[\'aa\'])', () => {
             it('依赖深层路径的重置与 default/initial 优先级', async () => {
                 const searchSpy = vi.fn();
                 const mockQuery = ref<Record<string, any>>({ a: [{ b: 'v1' }], c: undefined });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     a: {
                         config: ({ item }: any) => [{ field: 'b' }],
                     },
@@ -2165,7 +2122,7 @@ describe('深层路径支持测试 (a.0[\'aa\'])', () => {
 
             it('uniqueKey 重排序应保持字段映射一致', async () => {
                 const mockQuery = ref<Record<string, any>>({ list: [{ _id: '1', val: 'a' }, { _id: '2', val: 'b' }] });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     list: {
                         uniqueKey: '_id',
                         config: [{ field: 'val' }],
@@ -2191,7 +2148,7 @@ describe('深层路径支持测试 (a.0[\'aa\'])', () => {
 
             it('删除数组元素后索引与依赖正确更新', async () => {
                 const mockQuery = ref<Record<string, any>>({ arr: [{ x: '1' }, { x: '2', y: '22' }, { x: '3', y: '33' }] });
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     arr: {
                         config: ({ item, index }: any) => [
                             { field: 'x' },
@@ -2229,7 +2186,7 @@ describe('深层路径支持测试 (a.0[\'aa\'])', () => {
 
             it('嵌套对象字段的默认值和函数默认值生效', async () => {
                 const mockQuery = ref<Record<string, any>>({});
-                const mockOptions = ref<Record<string, PlainOption>>({
+                const mockOptions = ref<PlainOption>({
                     obj: {
                         config: {
                             nested: { defaultValue: () => ({ k: 'v' }) },

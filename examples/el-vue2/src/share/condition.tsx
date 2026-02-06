@@ -170,8 +170,6 @@ export function conditionFactory() {
                 placeholder: '级联选择',
                 fields: ['level1', 'level2', 'level3'],
                 // props: { emitPath: false },
-                // hide: ({query}) => !query.ac?.length,
-                // dynamicProps: ({ query }) => ({ disabled: !query.ac?.length }),
                 options: [
                     { label: 'A', value: 'bc_1', children: [{ label: 'A-11111', value: 'bc_1-1' }] },
                     {

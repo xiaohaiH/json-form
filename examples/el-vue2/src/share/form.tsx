@@ -4,7 +4,7 @@ import { h, set } from 'vue';
 
 export function conditionFactory() {
     return {
-        condition: defineOption([
+        condition: defineOption(({ query }) => [
             {
                 t: 'dynamic-group',
                 field: '布局组件',
@@ -27,7 +27,7 @@ export function conditionFactory() {
                 //         ],
                 //     },
                 // },
-                itemProps: { class: 'flex' },
+                contentProps: { class: 'flex' },
                 config: ({ item, index }) => ({
                     对象布局组件_输入框: {
                         t: 'input',
@@ -220,7 +220,7 @@ export function conditionFactory() {
                 t: 'input',
                 field: 'input1',
                 label: 'input1',
-                placeholder: '哈哈哈',
+                placeholder: 'input2在我有值后显示',
                 // itemSlots: {
                 //     append: ({ plain, onChange }) => {
                 //         return (
@@ -236,6 +236,7 @@ export function conditionFactory() {
                 field: 'input2',
                 label: 'input2',
                 placeholder: '666',
+                hide: !query.input1,
                 rules: [{ required: true, message: '必填项' }],
             },
             {
