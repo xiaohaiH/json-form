@@ -17,7 +17,7 @@ $ pnpm i -S @xiaohaih/json-form-plus
 ```vue
 <template>
     <HForm
-        :datum="formOption"
+        :config="formOption"
         :render-btn="false" :realtime="true"
         @search="log" @submit.prevent
     />

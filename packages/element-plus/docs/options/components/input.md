@@ -20,7 +20,7 @@ defineOption({
 
 除了 [共享 Props](../shares/share-props.md) 和 [ElInput 自带的 Props](https://element-plus.org/zh-CN/component/input.html#attributes) 外, `Input` 组件还支持以下特定属性:
 
-### waitTime
+### debounceTime
 
 - 类型: `number`
 - 默认: `-`

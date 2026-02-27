@@ -11,10 +11,9 @@
 <template>
     <HForm
         ref="hFormRef"
-        :datum="formOption" :backfill="query"
-        :render-btn="false" :realtime="true"
+        :config="formOption" :model-value="query"
         size="small" label-position="right" label-width="120px"
-        @search="search" @ready="search" @submit.prevent
+        @submit.prevent
     >
         <ElFormItem>
             <ElButton size="small" @click="reset">
