@@ -1,5 +1,14 @@
 # @xiaohaih/json-form-el
 
+## 0.2.7
+
+### Patch Changes
+
+- 1. hide 改为只接受布尔值, 且从 core 模块中移除, 改为 ui 层实现
+  2. 调整 dynamic-group.itemProps 为 contentProps, 与其它组件保持一致
+- Updated dependencies
+  - @xiaohaih/json-form-core@0.2.7
+
 ## 0.2.6
 
 ### Patch Changes
