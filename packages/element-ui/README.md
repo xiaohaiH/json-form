@@ -772,3 +772,4 @@ MIT License
 - [项目主页](https://github.com/xiaohaih/json-form)
 - [核心模块](https://github.com/xiaohaiH/json-form/tree/master/packages/core/README.md)
 - [Element Plus 版本](https://github.com/xiaohaiH/json-form/tree/master/packages/element-plus/README.md)
+- [Vant 版本](https://github.com/xiaohaiH/json-form/tree/master/packages/vant/README.md)

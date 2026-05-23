@@ -31,6 +31,7 @@
     "types": "src/index.ts",
     "scripts": {
         "build": "node ./scripts/generate-version.mjs && vite build",
+        "build:dts": "tsdown",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "peerDependencies": {
@@ -48,15 +49,20 @@
         "vue-demi": "0.14.5"
     },
     "devDependencies": {
-        "@rollup/plugin-terser": "^0.4.4",
+        "@docsearch/js": "^4.6.3",
+        "@rollup/plugin-terser": "^1.0.0",
+        "@vue/language-core": "^3.3.1",
         "element-ui": "^2.15.14",
-        "vite": "^6.1.0",
-        "vite-plugin-dts": "^4.5.3",
+        "tsdown": "^0.22.0",
+        "unplugin-dts": "^1.0.1",
+        "vite": "^8.0.13",
         "vite-plugin-inspect": "^11.0.1",
         "vite-plugin-vue2": "^2.0.3",
+        "vitepress": "2.0.0-alpha.12",
         "vue": "^2.7.16",
-        "vue-component-type-helpers": "^2.1.10",
-        "vue-template-compiler": "2.7.16"
+        "vue-component-type-helpers": "^3.3.1",
+        "vue-template-compiler": "2.7.16",
+        "vue-tsc": "^3.3.1"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/",

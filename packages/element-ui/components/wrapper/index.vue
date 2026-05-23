@@ -27,7 +27,7 @@ import { Button as ElButton, Form as ElForm } from 'element-ui';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 import { computed, defineComponent, markRaw, nextTick, onMounted, ref, watch } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
-import { HGroup } from '../components';
+import { HGroup } from '../group/index';
 import type { FormSlots } from './types';
 import { formEmitsPrivate as emits, formPropsPrivate as props } from './types';
 

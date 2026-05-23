@@ -1,8 +1,8 @@
 import { resolve } from 'node:path';
 import terser from '@rollup/plugin-terser';
+import dts from 'unplugin-dts/vite';
 import type { PluginOption } from 'vite';
 import { defineConfig, version } from 'vite';
-import dts from 'vite-plugin-dts';
 import ViteInspect from 'vite-plugin-inspect';
 import { createVuePlugin } from 'vite-plugin-vue2';
 import pkgJson from './package.json';
