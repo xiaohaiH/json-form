@@ -1,6 +1,6 @@
 <template>
     <!-- eslint-disable-next-line vue/no-unused-refs -->
-    <VirtualGroup ref="virtualGroupRef" :tag="tag">
+    <VirtualGroup ref="virtualGroupRef" v-bind="$attrs" :tag="virtualTag" :slots="virtualSlots || tagSlots" :query="query" :wrapper="wrapper">
         <template v-if="slots?.prepend || ($slots as GroupSlots).prepend">
             <component :is="getNode(slots?.prepend || ($slots as GroupSlots).prepend)" :query="query" :wrapper="wrapper" />
         </template>
@@ -20,7 +20,7 @@
 </template>
 
 <script lang="tsx">
-import { get, getNode, getProvideValue, hyphenate, isPlainObject, usePlain } from '@xiaohaih/json-form-core';
+import { get, getNode, getProvideValue, hyphenate, isPlainObject, useEmitter, usePlain } from '@xiaohaih/json-form-core';
 import type { FunctionalComponent, SlotsType } from 'vue';
 import { computed, defineComponent, markRaw, ref, watch } from 'vue';
 import { pick } from '../../src/utils';
@@ -31,6 +31,14 @@ import VirtualGroup from './virtual-group.vue';
 
 /** 当 field 不存在, 但 fields 存在时, 合并 fields 到对象上的 key */
 const REWRITE_FIELD_KEY = '__field__' as const;
+/** 特殊类型可以直接复用组件的 */
+const specialComponents: Record<string, {
+    /** 重渲染的组件 */
+    tag: any;
+    /** 该组件所拥有的插槽(默认插槽不用定义) */
+    slots?: (slots: Record<string, any> | undefined) => Record<string, any> | undefined;
+}> = {
+};
 
 /**
  * @file 自定义组件 - 支持多列渲染
@@ -40,11 +48,20 @@ export default defineComponent({
     components: {
         VirtualGroup,
     },
+    inheritAttrs: false,
     props,
     emits,
     slots: Object as SlotsType<GroupSlots>,
     setup(props, ctx) {
         const virtualGroupRef = ref<Record<string, any> | undefined>();
+        const virtualTag = computed(() => {
+            const { tag, t } = props;
+            return specialComponents[t!]?.tag || tag;
+        });
+        const virtualSlots = computed(() => {
+            const { t, slots } = props;
+            return specialComponents[t!]?.slots?.(slots);
+        });
         const tagRef = computed(() => virtualGroupRef.value?.tagRef);
         /** 容器注入值 */
         const wrapper = getProvideValue();
@@ -74,13 +91,16 @@ export default defineComponent({
             return name === 'group' ? 'HGroup' : getComponent(name);
         }
 
-        props.hooks?.created?.({ props });
+        const emitter = useEmitter(wrapper);
+        props.hooks?.created?.({ props, wrapper, ...emitter });
 
         return {
             hyphenate,
             getNode,
             REWRITE_FIELD_KEY,
             virtualGroupRef,
+            virtualTag,
+            virtualSlots,
             tagRef,
             wrapper,
             finalConfig,

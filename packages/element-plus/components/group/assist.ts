@@ -9,6 +9,7 @@ import {
     HDatePicker,
     HInput,
     HInputNumber,
+    HInputOtp,
     HInputTag,
     HMention,
     HRadio,
@@ -23,7 +24,7 @@ import {
     HTimeSelect,
     HTreeSelect,
     HUpload,
-} from '../components-whole';
+} from '../component-definition/components';
 
 /* eslint-disable ts/no-unnecessary-type-assertion */
 // 不重新 as 一下会发生👇下方的错误
@@ -38,6 +39,7 @@ const compMap = {
     'date-picker': markRaw(HDatePicker) as typeof HDatePicker,
     'input': markRaw(HInput) as typeof HInput,
     'input-number': markRaw(HInputNumber) as typeof HInputNumber,
+    'input-otp': markRaw(HInputOtp) as typeof HInputOtp,
     'input-tag': markRaw(HInputTag) as typeof HInputTag,
     'mention': markRaw(HMention) as typeof HMention,
     'radio': markRaw(HRadio) as typeof HRadio,

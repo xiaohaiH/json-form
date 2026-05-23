@@ -1,4 +1,4 @@
-import type { CamelCase, getProvideValue, Obj2Props, PlainProps, usePlain } from '@xiaohaih/json-form-core';
+import type { CamelCase, EventsWithoutInstance, getProvideValue, Obj2Props, PlainProps, usePlain } from '@xiaohaih/json-form-core';
 import { emits2props, plainProps } from '@xiaohaih/json-form-core';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component, ExtractPropTypes, PropType } from 'vue-demi';
@@ -6,7 +6,7 @@ import type { ComponentType } from '../share';
 
 export interface GroupHookOption {
     /** 组件创建前触发的钩子, 可在内部监听生命周期, 获取实例, 以及操作该组件内的各种属性 */
-    created?: (options: { props: ExtractPropTypes<ReturnType<typeof groupPropsGeneric>> }) => void;
+    created?: (options: { props: ExtractPropTypes<ReturnType<typeof groupPropsGeneric>>; wrapper: ReturnType<typeof getProvideValue> } & EventsWithoutInstance) => void;
 }
 
 /** 组件传参 - 私有 */

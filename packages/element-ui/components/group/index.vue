@@ -26,7 +26,7 @@
 </template>
 
 <script lang="tsx">
-import { get, getProvideValue, hasOwn, hyphenate, isPlainObject, usePlain } from '@xiaohaih/json-form-core';
+import { get, getProvideValue, hasOwn, hyphenate, isPlainObject, useEmitter, usePlain } from '@xiaohaih/json-form-core';
 // import type { SlotsType } from 'vue';
 import { computed, defineComponent, markRaw, ref, watch } from 'vue-demi';
 import { getNode, pick } from '../../src/utils';
@@ -77,7 +77,8 @@ export default defineComponent({
             return name === 'group' ? 'HGroup' : getComponent(name);
         }
 
-        props.hooks?.created?.({ props });
+        const emitter = useEmitter(wrapper);
+        props.hooks?.created?.({ props, wrapper, ...emitter });
 
         return {
             hyphenate,

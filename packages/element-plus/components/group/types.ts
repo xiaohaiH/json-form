@@ -1,4 +1,4 @@
-import type { CamelCase, getProvideValue, Obj2Props, PlainProps, usePlain } from '@xiaohaih/json-form-core';
+import type { CamelCase, EventsWithoutInstance, getProvideValue, Obj2Props, PlainProps, usePlain } from '@xiaohaih/json-form-core';
 import { emits2props, plainProps } from '@xiaohaih/json-form-core';
 import type { Component, ExtractPublicPropTypes, Prop, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
@@ -6,7 +6,7 @@ import type { ComponentType } from '../share';
 
 export interface GroupHookOption {
     /** 组件创建前触发的钩子, 可在内部监听生命周期, 获取实例, 以及操作该组件内的各种属性 */
-    created?: (options: { props: ExtractPublicPropTypes<ReturnType<typeof groupPropsGeneric>> }) => void;
+    created?: (options: { props: ExtractPublicPropTypes<ReturnType<typeof groupPropsGeneric>>; wrapper: ReturnType<typeof getProvideValue> } & EventsWithoutInstance) => void;
 }
 
 /** 组件传参 - 私有 */
@@ -21,6 +21,8 @@ export function groupPropsGeneric<Query extends Record<string, any>, OptionQuery
         query: { type: Object as PropType<Query>, required: true },
         /** 渲染的标签 */
         tag: { type: [Object, String, Array, Function] as PropType<any>, default: 'div' },
+        /** 传递给渲染标签的插槽(默认插槽是渲染的子条件) */
+        tagSlots: { type: Object as PropType<Record<string, ComponentType<{ query: Query; wrapper: ReturnType<typeof getProvideValue> }>>> },
         /** 渲染的子条件 */
         config: { type: [Object, Array, Function] as PropType<any> },
         /** 传递给组件的插槽 */
