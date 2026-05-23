@@ -22,13 +22,13 @@ jobs:
             - name: Install pnpm
               uses: pnpm/action-setup@v2
               with:
-                  version: 8
+                  version: 11
 
             # 第三步: 设置 node 版本
-            - name: Set node version to 20.12.0
+            - name: Set node version to 24.4.0
               uses: actions/setup-node@v2
               with:
-                  node-version: 20.12.0
+                  node-version: 24.4.0
                   # cache: pnpm
 
             - run: pnpm install
@@ -59,7 +59,57 @@ jobs:
                   folder: ./packages/element-plus/docs/.vitepress/dist/
                   target-folder: ./docs-plus
                   clean: true
-    # 任务二 - 打包 element-plus 版本文档
+    # 任务二 - 打包 vant3 版本文档
+    build-example-vant3:
+        # 运行环境
+        runs-on: ubuntu-latest
+        steps:
+            # 第一步: 定义名称并使用插件(检出仓库代码)
+            - name: get code
+              uses: actions/checkout@v2
+
+            # 第二步: 安装 pnpm
+            - name: Install pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: 11
+
+            # 第三步: 设置 node 版本
+            - name: Set node version to 24.4.0
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 24.4.0
+                  # cache: pnpm
+
+            - run: pnpm install
+
+            # # 设置 vue 版本, 防止示例打包失败
+            # - name: build
+            #   run: pnpm switch3
+            # 对示例包进行打包
+            - name: build-example-vant-vue3
+              run: pnpm build:docs:vant-v3
+
+            #     # 要操作的文件
+            # - name: copy *.html
+            #   uses: JamesIves/github-pages-deploy-action@v4
+            #   with:
+            #       folder: ./example/static
+            #       # 复制到指定文件夹(可省略)(.: 根目录, ~: 绝对路径)
+            #       target-folder: .
+            #       single-commit: true
+            #       clean: true
+            #       clean-exclude: |
+            #           *.js
+            #           *.css
+
+            - name: copy example-vant-vue3-dist
+              uses: JamesIves/github-pages-deploy-action@v4
+              with:
+                  folder: ./packages/vant/docs/.vitepress/dist/
+                  target-folder: ./docs-vant
+                  clean: true
+    # 任务三 - 打包 element-ui 版本文档
     build-example-vue2:
         # 运行环境
         runs-on: ubuntu-latest
@@ -72,13 +122,13 @@ jobs:
             - name: Install pnpm
               uses: pnpm/action-setup@v2
               with:
-                  version: 8
+                  version: 11
 
             # 第三步: 设置 node 版本
-            - name: Set node version to 20.12.0
+            - name: Set node version to 24.4.0
               uses: actions/setup-node@v2
               with:
-                  node-version: 20.12.0
+                  node-version: 24.4.0
                   # cache: pnpm
 
             - run: pnpm install
