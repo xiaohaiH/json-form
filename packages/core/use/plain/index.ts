@@ -12,7 +12,7 @@ import {
     watch,
 } from 'vue-demi';
 import { get, isArray, isEmptyValue, isNotEmptyValue, noop } from '../../utils/index';
-import { useFlag, vueSet } from '../assist';
+import { useEmitter, useFlag, vueSet } from '../assist';
 import type { ProvideValue } from '../constant';
 import { defineCommonMethod, getProvideValue } from '../constant';
 import type { HookOption, plainProps, PlainProps } from './types';
@@ -171,7 +171,7 @@ export function usePlain<Query extends Record<string, any> = Record<string, any>
         const pathArr = path.split('.');
         const target = get(obj, pathArr.slice(0, -1).join('.'));
         if (target !== obj2) return;
-        delete obj2[pathArr[pathArr.length - 1]];
+        delete obj2[pathArr[pathArr.length - 1]!];
     }
 
     /** 是否允许依赖变动时, 重置值(外部通过 search, change 主动改变值时, 内部应取消重置) */
@@ -323,6 +323,7 @@ export function usePlain<Query extends Record<string, any> = Record<string, any>
         checked.value = value;
     }
 
+    const emitter = useEmitter(wrapper);
     const expose = {
         /** 覆盖 props 的最新的值(defaultValue, initialValue) */
         coverProps,
@@ -354,9 +355,10 @@ export function usePlain<Query extends Record<string, any> = Record<string, any>
         globalReadonly: wrapper?.readonly || ref(false),
         /** 表单级别的禁用 */
         globalDisabled: wrapper?.disabled || ref(false),
+        ...emitter,
     };
 
-    initialProps.hooks?.created?.({ plain: expose, props: unref(props) });
+    initialProps.hooks?.created?.({ plain: expose, props: unref(props), wrapper, ...emitter });
 
     return expose;
 }

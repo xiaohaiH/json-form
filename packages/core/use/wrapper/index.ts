@@ -14,7 +14,8 @@ import {
     watch,
 } from 'vue-demi';
 import { hasOwn } from '../../utils/index';
-import type { CommonMethod, ProvideValue } from '../constant';
+import { useCreateEmitter, useEmitter, useWithCurrentInstance } from '../assist';
+import type { CommonMethod, Events, ProvideValue } from '../constant';
 import { defineProvideValue, IS_COMPOSITION_VERSION, provideKey } from '../constant';
 import type { wrapperProps } from './types';
 
@@ -36,6 +37,10 @@ interface Config<T = any> {
 export function useWrapper<T>(props: WrapperProps, config?: Config<T>) {
     /** 兼容 v2版本的 value */
     const MODEL_VALUE = (config?.modelField || 'model') as 'model';
+    /** 创建的监听事件 */
+    const emitterWithInstance = useCreateEmitter<Events>();
+    /** 创建的监听事件 - 已绑定 wrapper 的 vue 实例 */
+    const emitter = useEmitter({ emitterWithInstance });
 
     const child: CommonMethod[] = [];
     onBeforeUnmount(() => child.splice(0));
@@ -78,6 +83,8 @@ export function useWrapper<T>(props: WrapperProps, config?: Config<T>) {
         },
         search,
         options: optionsObj,
+        emitterWithInstance,
+        emitter,
     });
     provide<ProvideValue>(provideKey, wrapperInstance);
 
@@ -239,10 +246,12 @@ export function useWrapper<T>(props: WrapperProps, config?: Config<T>) {
      * @param {object} [target] 重置后默认值(初始值)所挂载的对象 - 默认取 query
      */
     function reset(target?: Record<string, any>) {
+        const callbacks = emitterWithInstance.emit('reset');
         // 逆序重置
         // 动态表单是父级先渲染, 子级后渲染, 如果正序重置会导致
         // 父级先重置返回新的数据, 旧的子级后重置时会污染新渲染的数据
-        child.forEach((v, i, r) => r[r.length - 1 - i].reset(target));
+        child.forEach((v, i, r) => r[r.length - 1 - i]!.reset(target));
+        callbacks.forEach((cb) => typeof cb === 'function' && cb());
     }
     /** 自定义校验条件的值并弹出提示 */
     function validateToast(): Promise<any> | any {

@@ -1,5 +1,44 @@
-import type { Ref } from 'vue-demi';
+import type { getCurrentInstance, Ref } from 'vue-demi';
 import { inject, version } from 'vue-demi';
+
+// eslint-disable-next-line ts/consistent-type-definitions
+export type Events = {
+    /**
+     * 重置事件
+     * @param {string} type 监听事件类型
+     * @param {(...args: any[]) => (() => void | any)} callback 事件逻辑执行前触发, 可返回一个函数在逻辑执行后执行
+     * @return {() => void} 返回一个移除监听的函数
+     */
+    reset: () => ((() => void) | void);
+};
+
+// eslint-disable-next-line ts/consistent-type-definitions
+export type EventsWithInstance = {
+    /**
+     * 监听指定类型事件
+     * @param {ReturnType<typeof getCurrentInstance>} instance vue 实例
+     * @param {string} type 监听事件类型
+     * @param {(...args: any[]) => (() => void | any)} fn 事件逻辑执行前触发, 可返回一个函数在逻辑执行后执行
+     * @return {() => void} 返回一个移除监听的函数
+     */
+    on: <K extends keyof Events>(instance: ReturnType<typeof getCurrentInstance>, type: K, fn: Events[K]) => () => void;
+    /**
+     * 移除指定类型事件
+     * @param {ReturnType<typeof getCurrentInstance>} instance vue 实例
+     * @param {string} type 监听事件类型
+     * @param {(...args: any[]) => any} [fn] 监听事件回调函数
+     */
+    off: <K extends keyof Events>(instance: ReturnType<typeof getCurrentInstance>, type: K, fn?: Events[K]) => void;
+    /**
+     * 移除所有事件
+     * @param {ReturnType<typeof getCurrentInstance>} instance vue 实例
+     */
+    clear: (instance: ReturnType<typeof getCurrentInstance>) => void;
+}
+
+export type EventsWithoutInstance<T extends EventsWithInstance = EventsWithInstance> = {
+    [K in keyof T]: T[K] extends (_: any, ...args: infer P) => infer R ? (...args: P) => R : never;
+}
 
 /** 判断是否是 2.7.* 版本, 监听生命周期需对该版本做处理 */
 export const IS_COMPOSITION_VERSION = version.slice(0, 3) === '2.7';
@@ -38,6 +77,10 @@ export interface ProvideValue<Query extends Record<string, any> = Record<string,
     reset: (target?: Record<string, any>) => void;
     /** 所有条件的 options 数据 */
     options: Options;
+    /** 事件监听 - 需传 vue 实例 */
+    emitterWithInstance: EventsWithInstance;
+    /** 事件监听, 组件卸载时自动移除相关事件 - 无需传 vue 实例 */
+    emitter: EventsWithoutInstance;
 }
 /** 获取容器注入的值 */
 export function getProvideValue<Query extends Record<string, any> = Record<string, any>, Options extends Record<string, any> = Record<string, any>, FormInstance = any>(): ProvideValue<Query, Options, FormInstance> | undefined {

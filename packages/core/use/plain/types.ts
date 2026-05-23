@@ -1,12 +1,13 @@
 import type { PropType, Ref, WatchOptions } from 'vue-demi';
 import { nextTick } from 'vue-demi';
 import { noop } from '../../utils/index';
+import type { EventsWithoutInstance, ProvideValue } from '../constant';
 import type { usePlain } from './index';
 
 /** 组件额外的钩子选项 */
 export interface HookOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> {
     /** 组件创建前触发的钩子, 可在内部监听生命周期, 获取实例, 以及操作该组件内的各种属性 */
-    created?: (option: { props: Record<string, any>; plain: ReturnType<typeof usePlain<Query, OptionQuery>> }) => void;
+    created?: (option: { props: Record<string, any>; plain: ReturnType<typeof usePlain<Query, OptionQuery>>; wrapper: ProvideValue | undefined } & EventsWithoutInstance) => void;
     /** 依赖项发生变化时触发 - 语法糖钩子, 可通过 create 钩子监听指定数据源(watch(() => option.props.query[field], callback))  */
     dependChange?: (option: { props: Record<string, any>; plain: ReturnType<typeof usePlain<Query, OptionQuery>> }) => void;
     /** 依赖项数据源发生变动时触发 - 语法糖钩子, 可通过 create 钩子监听指定数据源(watch(() => option.plain.wrapper.options[field], callback)) */
