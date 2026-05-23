@@ -1,5 +1,19 @@
 # @xiaohaih/json-form-plus
 
+## 0.2.8
+
+### Patch Changes
+
+- 1. 修复core包单个依赖的数据源发生变化时未触发getOptions事件
+  2. 增加事件监听(目前支持 reset 事件)
+  3. 所有依赖版本升级, pnpm升级到v11, vite升级到8, rollup改为tsdown
+  4. 修复custom-render中render函数重渲染的问题(产生了额外的依赖)
+  5. group组件为tag增加插槽透传并抛出wrapper和事件监听属性
+  6. 修复低版本ui安装时报错
+  7. 增加input-otp组件
+- Updated dependencies
+  - @xiaohaih/json-form-core@0.2.8
+
 ## 0.2.7
 
 ### Patch Changes

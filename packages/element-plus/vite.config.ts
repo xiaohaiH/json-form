@@ -59,7 +59,7 @@ export default defineConfig((env) => {
             outDir: 'dist',
             sourcemap: true,
             minify: false,
-            rollupOptions: {
+            rolldownOptions: {
                 external,
                 output: [
                     { entryFileNames: retainMinSuffix(pkg.module, false), format: 'es' },

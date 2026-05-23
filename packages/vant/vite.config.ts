@@ -40,6 +40,14 @@ export default defineConfig((env) => {
                 tsconfigPath: './tsconfig.app.json',
                 // insertTypesEntry: true,
                 // rollupTypes: true,
+                // 由于 vant3 比 vant4 多一个组件, 打包时会自动检索所有文件
+                // 而处于高版本没法打包 vant3 的组件, 所以这里手动排除
+                exclude: [
+                    'components/component-definition/definition.ts',
+                    'components/datetime-picker/index.vue',
+                    'components/datetime-picker/index.ts',
+                    'components/datetime-picker/types.ts',
+                ],
             }),
         ],
         optimizeDeps: {
@@ -54,7 +62,7 @@ export default defineConfig((env) => {
             outDir: 'dist',
             sourcemap: true,
             minify: false,
-            rollupOptions: {
+            rolldownOptions: {
                 external,
                 output: [
                     { entryFileNames: retainMinSuffix(pkg.module, false), format: 'es' },
