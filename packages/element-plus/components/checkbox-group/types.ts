@@ -1,18 +1,19 @@
 import type { CamelCase, Obj2Props, PlainProps, usePlain } from '@xiaohaih/json-form-core';
 import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
-import type { checkboxEmits as elCheckboxEmits, checkboxProps as elCheckboxProps } from 'element-plus';
+import type { ElCheckbox } from 'element-plus';
 import { ElCheckboxGroup } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
-const elCheckboxGroupProps = ElCheckboxGroup.props as Obj2Props<ComponentProps<typeof ElCheckboxGroup>>;
+const elCheckboxGroupProps = ElCheckboxGroup.props as unknown as Obj2Props<ComponentProps<typeof ElCheckboxGroup>>;
 const elCheckboxGroupEmits = emits2obj(ElCheckboxGroup.emits);
+type CheckboxProps = Obj2Props<ComponentProps<typeof ElCheckbox>>;
 
 /** 组件传参 - 私有 */
 export function checkboxGroupPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
-    type _Prop = typeof elCheckboxGroupProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elCheckboxGroupEmits>]>>;
+    type _Prop = typeof elCheckboxGroupProps;
 
     return {
         ...{} as _Prop,
@@ -28,7 +29,7 @@ export function checkboxGroupPropsGeneric<Query extends Record<string, any>, Opt
         /** 选项禁用字段 */
         disabledKey: { type: String as PropType<string>, default: 'disabled' },
         /** 暴露给 Checkbox 或 CheckboxButton 的属性 */
-        itemProps: { type: Object as PropType<Partial<ExtractPublicPropTypes<ReturnType<typeof emits2props<typeof elCheckboxProps, [NonNullable<typeof elCheckboxEmits>]>>>>> },
+        itemProps: { type: Object as PropType<Partial<CheckboxProps>> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
             default: ComponentType<CheckboxGroupSlotOption<Query, OptionQuery> & { option: any; labelKey: string; valueKey: string; disabledKey: string }>;
@@ -41,16 +42,15 @@ export interface CheckboxGroupSlotOption<Query extends Record<string, any>, Opti
 /** 组件传参 - 私有 */
 export const checkboxGroupPropsPrivate = checkboxGroupPropsGeneric();
 /** 组件传参 - 外部调用 */
-export const checkboxGroupProps = emits2props({
+export const checkboxGroupProps = {
     ...elCheckboxGroupProps,
     ...checkboxGroupPropsPrivate,
-}, elCheckboxGroupEmits);
+};
 export type CheckboxGroupProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof checkboxGroupPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function checkboxGroupEmitsGeneric<T>() {
     return {
-        ...{} as typeof elCheckboxGroupEmits,
     };
 }
 /** 组件事件 - 私有 */
@@ -59,7 +59,7 @@ export const checkboxGroupEmitsPrivate = checkboxGroupEmitsGeneric();
 export const checkboxGroupEmits = {
     ...elCheckboxGroupEmits,
     ...checkboxGroupEmitsPrivate,
-} as ReturnType<typeof checkboxGroupEmitsGeneric<any>>;
+}
 export type CheckboxGroupEmits<T> = ReturnType<typeof checkboxGroupEmitsGeneric<T>>;
 
 export interface CheckboxGroupSlots extends CommonSlots<Record<string, any>> {

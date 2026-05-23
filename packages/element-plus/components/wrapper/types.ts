@@ -7,8 +7,8 @@
  * - 表单插槽类型
  * - 表单相关的接口类型
  */
-import type { CamelCase, WrapperProps as CoreWrapperProps, Obj2Props, useWrapper, WrapperArrayable } from '@xiaohaih/json-form-core';
-import { wrapperProps as coreWrapperProps, emits2obj, emits2props } from '@xiaohaih/json-form-core';
+import type { CamelCase, WrapperProps as CoreWrapperProps, emits2props, Obj2Props, useWrapper, WrapperArrayable } from '@xiaohaih/json-form-core';
+import { wrapperProps as coreWrapperProps, emits2obj } from '@xiaohaih/json-form-core';
 import { ElForm, ElMessage } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
@@ -16,10 +16,10 @@ import type { defineOption } from '../../src/assist';
 import type { ComponentType } from '../share';
 
 /**
- * Element UI表单属性对象
- * 从Element UI Form组件中提取属性定义
+ * ElementPlus 表单属性对象
+ * 从 ElementPlus Form组件中提取属性定义
  */
-const elFormProps = ElForm.props as Obj2Props<ComponentProps<typeof ElForm>>;
+const elFormProps = ElForm.props as unknown as Obj2Props<ComponentProps<typeof ElForm>>;
 /**
  * Element UI表单事件对象
  * 定义表单组件支持的原生事件
@@ -28,7 +28,7 @@ const elFormEmits = emits2obj(ElForm.emits);
 
 /** 表单属性生成函数 */
 export function formPropsGeneric<T extends Record<string, any> = Record<string, any>, O extends Record<keyof T, any> = Record<keyof T, any>>() {
-    type _Prop = typeof elFormProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elFormEmits>]>> & {
+    type _Prop = typeof elFormProps & {
         class: { type: PropType<string | Record<string, any> | any[]> };
         style: { type: PropType<string | Record<string, any> | any[]> };
     };
@@ -53,10 +53,10 @@ export const formPropsPrivate = formPropsGeneric();
  * 表单组件对外暴露的属性定义
  * 将表单属性和Element UI表单属性合并
  */
-export const formProps = emits2props({
+export const formProps = {
     ...elFormProps,
     ...formPropsPrivate,
-}) as unknown as typeof formPropsPrivate & typeof elFormProps;
+};
 
 /**
  * 表单事件生成函数 - 泛型版本
@@ -67,7 +67,6 @@ export const formProps = emits2props({
  */
 export function formEmitsGeneric<T>() {
     return {
-        ...{} as typeof elFormEmits,
         // /** query 已初始化 - 组件就绪时触发 */
         // ready: (query: Record<string, any>) => true,
         // /** 搜索事件 - 触发内部 query 对象更新 */
@@ -97,7 +96,7 @@ export const formEmitsPrivate = formEmitsGeneric() as ReturnType<typeof formEmit
 export const formEmits = {
     ...elFormEmits,
     ...formEmitsPrivate,
-} as typeof elFormEmits & typeof formEmitsPrivate;
+}
 
 /**
  * 表单事件类型定义

@@ -1,10 +1,13 @@
 import type { CamelCase, Obj2Props, PlainProps, usePlain } from '@xiaohaih/json-form-core';
-import { emits2props, plainProps } from '@xiaohaih/json-form-core';
-import { timePickerDefaultProps as elTimePickerProps } from 'element-plus/es/components/time-picker/src/common/props';
+import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
+import { ElTimePicker } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
+
+const elTimePickerProps = ElTimePicker.props as unknown as Obj2Props<ComponentProps<typeof ElTimePicker>>;
+const elTimePickerEmits = emits2obj(ElTimePicker.emits);
 
 /** 组件传参 - 私有 */
 export function timePickerPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
@@ -29,16 +32,15 @@ export interface TimePickerSlotOption<Query extends Record<string, any>, OptionQ
 export const timePickerPropsPrivate = timePickerPropsGeneric();
 /** 组件传参 - 外部调用 */
 
-export const timePickerProps = emits2props({
+export const timePickerProps = {
     ...elTimePickerProps,
     ...timePickerPropsPrivate,
-}) as typeof timePickerPropsPrivate;
+};
 export type TimePickerProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof timePickerPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function timePickerEmitsGeneric<T>() {
     return {
-        // ...{} as typeof elTimePickerEmits,
     };
 }
 /** 组件事件 - 私有 */
@@ -51,7 +53,7 @@ export const timePickerEmits = {
     clear: () => true,
     visibleChange: (visibility: boolean) => true,
     ...timePickerEmitsPrivate,
-} as ReturnType<typeof timePickerEmitsGeneric<any>>;
+};
 export type TimePickerEmits<T> = ReturnType<typeof timePickerEmitsGeneric<T>>;
 
 export interface TimePickerSlots extends CommonSlots<Record<string, any>> {

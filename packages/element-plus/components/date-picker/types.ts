@@ -6,7 +6,7 @@ import type { ComponentExposed, ComponentProps } from 'vue-component-type-helper
 import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
-const elDatePickerProps = ElDatePicker.props as Obj2Props<ComponentProps<typeof ElDatePicker>>;
+const elDatePickerProps = ElDatePicker.props as unknown as Obj2Props<ComponentProps<typeof ElDatePicker>>;
 const elDatePickerEmits = emits2obj(ElDatePicker.emits);
 
 /** 组件传参 - 私有 */
@@ -40,16 +40,15 @@ export interface DatePickerSlotOption<Query extends Record<string, any>, OptionQ
 export const datePickerPropsPrivate = datePickerPropsGeneric();
 /** 组件传参 - 外部调用 */
 
-export const datePickerProps = emits2props({
+export const datePickerProps = {
     ...elDatePickerProps,
     ...datePickerPropsPrivate,
-}) as typeof datePickerPropsPrivate;
+};
 export type DatePickerProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof datePickerPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function datePickerEmitsGeneric<T>() {
     return {
-        // ...{} as typeof elDatePickerEmits,
     };
 }
 /** 组件事件 - 私有 */
@@ -64,7 +63,7 @@ export const datePickerEmits = {
     panelChange: (date: Date | [Date, Date], mode: 'month' | 'year', view?: string) => true,
     visibleChange: (visibility: boolean) => true,
     ...datePickerEmitsPrivate,
-} as ReturnType<typeof datePickerEmitsGeneric<any>>;
+}
 export type DatePickerEmits<T> = ReturnType<typeof datePickerEmitsGeneric<T>>;
 
 export interface DatePickerSlots extends CommonSlots<Record<string, any>> {

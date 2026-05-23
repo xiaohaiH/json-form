@@ -13,6 +13,7 @@
         </template>
         <slot v-else v-bind="slotProps">
             <ElCascader
+                ref="cascaderRef"
                 :filterable="filterable"
                 :clearable="clearable"
                 :options="(finalOption as any[])"
@@ -41,6 +42,7 @@ import { getNode, hyphenate, isEmptyValue, usePlain } from '@xiaohaih/json-form-
 import { ElCascader, ElFormItem } from 'element-plus';
 import type { SlotsType } from 'vue';
 import { computed, defineComponent, nextTick, reactive, ref, toRefs, watch } from 'vue';
+import type { ComponentExposed } from 'vue-component-type-helpers';
 import { pick } from '../../src/utils';
 import { useCommonSetup, useTempChecked } from '../use';
 import type { CascaderSlots } from './types';
@@ -63,8 +65,10 @@ export default defineComponent({
         const plain = usePlain(props);
         const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
         const { tempChecked, change } = useTempChecked(plain.checked);
+        const cascaderRef = ref<ComponentExposed<typeof ElCascader>>();
 
         return {
+            cascaderRef,
             hyphenate,
             getNode,
             ...plain,

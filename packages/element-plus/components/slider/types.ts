@@ -6,12 +6,12 @@ import type { ComponentExposed, ComponentProps } from 'vue-component-type-helper
 import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
-const elSliderProps = ElSlider.props as Obj2Props<ComponentProps<typeof ElSlider>>;
+const elSliderProps = ElSlider.props as unknown as Obj2Props<ComponentProps<typeof ElSlider>>;
 const elSliderEmits = emits2obj(ElSlider.emits);
 
 /** 组件传参 - 私有 */
 export function sliderPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
-    type _Prop = typeof elSliderProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elSliderEmits>]>>;
+    type _Prop = typeof elSliderProps;
 
     return {
         ...{} as _Prop,
@@ -29,16 +29,15 @@ export interface SliderSlotOption<Query extends Record<string, any>, OptionQuery
 /** 组件传参 - 私有 */
 export const sliderPropsPrivate = sliderPropsGeneric();
 /** 组件传参 - 外部调用 */
-export const sliderProps = emits2props({
+export const sliderProps = {
     ...elSliderProps,
     ...sliderPropsPrivate,
-}) as typeof sliderPropsPrivate;
+};
 export type SliderProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof sliderPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function sliderEmitsGeneric<T>() {
     return {
-        ...{} as typeof elSliderEmits,
     };
 }
 /** 组件事件 - 私有 */
@@ -47,7 +46,7 @@ export const sliderEmitsPrivate = sliderEmitsGeneric();
 export const sliderEmits = {
     ...elSliderEmits,
     ...sliderEmitsPrivate,
-} as ReturnType<typeof sliderEmitsGeneric<any>>;
+};
 export type SliderEmits<T> = ReturnType<typeof sliderEmitsGeneric<T>>;
 
 export interface SliderSlots extends CommonSlots<Record<string, any>> {

@@ -6,12 +6,12 @@ import type { ComponentExposed, ComponentProps } from 'vue-component-type-helper
 import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
-const elCheckboxProps = ElCheckbox.props as Obj2Props<ComponentProps<typeof ElCheckbox>>;
+const elCheckboxProps = ElCheckbox.props as unknown as Obj2Props<ComponentProps<typeof ElCheckbox>>;
 const elCheckboxEmits = emits2obj(ElCheckbox.emits);
 
 /** 组件传参 - 私有 */
 export function checkboxPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
-    type _Prop = typeof elCheckboxProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elCheckboxEmits>]>>;
+    type _Prop = typeof elCheckboxProps;
 
     return {
         ...{} as _Prop,
@@ -32,16 +32,15 @@ export interface CheckboxSlotOption<Query extends Record<string, any>, OptionQue
 /** 组件传参 - 私有 */
 export const checkboxPropsPrivate = checkboxPropsGeneric();
 /** 组件传参 - 外部调用 */
-export const checkboxProps = emits2props({
+export const checkboxProps = {
     ...elCheckboxProps,
     ...checkboxPropsPrivate,
-}, elCheckboxEmits) as typeof checkboxPropsPrivate;
+};
 export type CheckboxProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof checkboxPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function checkboxEmitsGeneric<T>() {
     return {
-        ...{} as typeof elCheckboxEmits,
     };
 }
 /** 组件事件 - 私有 */
@@ -50,7 +49,7 @@ export const checkboxEmitsPrivate = checkboxEmitsGeneric();
 export const checkboxEmits = {
     ...elCheckboxEmits,
     ...checkboxEmitsPrivate,
-};
+}
 export type CheckboxEmits<T> = ReturnType<typeof checkboxEmitsGeneric<T>>;
 
 export interface CheckboxSlots extends CommonSlots<Record<string, any>> {

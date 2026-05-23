@@ -1,14 +1,17 @@
 import type { CamelCase, Obj2Props, PlainProps, usePlain } from '@xiaohaih/json-form-core';
-import { emits2props, plainProps } from '@xiaohaih/json-form-core';
-import { inputEmits as elInputEmits, inputProps as elInputProps } from 'element-plus';
+import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
+import { ElInput } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
+const elInputProps = ElInput.props as unknown as Obj2Props<ComponentProps<typeof ElInput>>;
+const elInputEmits = emits2obj(ElInput.emits);
+
 /** 组件传参 - 私有 */
 export function inputPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
-    type _Prop = typeof elInputProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elInputEmits>]>>;
+    type _Prop = typeof elInputProps;
 
     return {
         ...{} as _Prop,
@@ -34,16 +37,15 @@ export interface InputSlotOption<Query extends Record<string, any>, OptionQuery 
 /** 组件传参 - 私有 */
 export const inputPropsPrivate = inputPropsGeneric();
 /** 组件传参 - 外部调用 */
-export const inputProps = emits2props({
+export const inputProps = {
     ...elInputProps,
     ...inputPropsPrivate,
-}, elInputEmits);
+};
 export type InputProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof inputPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function inputEmitsGeneric<T>() {
     return {
-        ...{} as typeof elInputEmits,
     };
 }
 /** 组件事件 - 私有 */
@@ -52,7 +54,7 @@ export const inputEmitsPrivate = inputEmitsGeneric();
 export const inputEmits = {
     ...elInputEmits,
     ...inputEmitsPrivate,
-} as ReturnType<typeof inputEmitsGeneric<any>>;
+}
 export type InputEmits<T> = ReturnType<typeof inputEmitsGeneric<T>>;
 
 export interface InputSlots extends CommonSlots<Record<string, any>> {

@@ -1,18 +1,17 @@
 import type { CamelCase, Obj2Props, PlainProps, usePlain } from '@xiaohaih/json-form-core';
 import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
 import { ElSelectV2 } from 'element-plus';
-import type ElSelectV2Type from 'element-plus/es/components/select-v2/src/select.vue';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
-const elSelectV2Props = ElSelectV2.props as Obj2Props<ComponentProps<typeof ElSelectV2Type>>;
+const elSelectV2Props = ElSelectV2.props as unknown as Obj2Props<ComponentProps<typeof ElSelectV2>>;
 const elSelectV2Emits = emits2obj(ElSelectV2.emits);
 
 /** 组件传参 - 私有 */
 export function selectV2PropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
-    type _Prop = typeof elSelectV2Props & ReturnType<typeof emits2props<null, [NonNullable<typeof elSelectV2Emits>]>>;
+    type _Prop = typeof elSelectV2Props;
 
     return {
         ...{} as _Prop,
@@ -47,16 +46,15 @@ export interface SelectV2SlotOption<Query extends Record<string, any>, OptionQue
 export const selectV2PropsPrivate = selectV2PropsGeneric();
 /** 组件传参 - 外部调用 */
 
-export const selectV2Props = emits2props({
+export const selectV2Props = {
     ...elSelectV2Props,
     ...selectV2PropsPrivate,
-});
+};
 export type SelectV2Props<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof selectV2PropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function selectV2EmitsGeneric<T>() {
     return {
-        ...{} as typeof elSelectV2Emits,
     };
 }
 /** 组件事件 - 私有 */

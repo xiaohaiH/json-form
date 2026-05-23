@@ -13,6 +13,7 @@ import type {
     DynamicGroupProps as PureDynamicGroupProps,
     GroupProps as PureGroupProps,
     InputNumberProps as PureInputNumberProps,
+    InputOtpProps as PureInputOtpProps,
     InputProps as PureInputProps,
     InputTagProps as PureInputTagProps,
     MentionProps as PureMentionProps,
@@ -56,6 +57,7 @@ export type JSONFormOption<Field, Query extends Record<string, any>, Option, Opt
         | DynamicGroupProps<Field, Query, Option, OptionQuery>
         | GroupProps<Field, Query, Option, OptionQuery>
         | InputNumberProps<Field, Query, Option, OptionQuery>
+        | InputOtpProps<Field, Query, Option, OptionQuery>
         | InputProps<Field, Query, Option, OptionQuery>
         | InputTagProps<Field, Query, Option, OptionQuery>
         | MentionProps<Field, Query, Option, OptionQuery>
@@ -158,6 +160,14 @@ export interface InputNumberProps<
     OptionQuery extends Record<string, any> = Record<string, any>,
 > extends Omit<PureInputNumberProps<Query, OptionQuery>, BuiltInField>, RewriteOption<Field, Query, Option, OptionQuery> {
     t: 'input-number';
+}
+export interface InputOtpProps<
+    Field,
+    Query extends Record<string, any>,
+    Option,
+    OptionQuery extends Record<string, any> = Record<string, any>,
+> extends Omit<PureInputOtpProps<Query, OptionQuery>, BuiltInField>, RewriteOption<Field, Query, Option, OptionQuery> {
+    t: 'input-otp';
 }
 export interface InputProps<
     Field,

@@ -1,14 +1,17 @@
 import type { CamelCase, Obj2Props, PlainProps, usePlain } from '@xiaohaih/json-form-core';
-import { emits2props, plainProps } from '@xiaohaih/json-form-core';
-import { switchEmits as elSwitchEmits, switchProps as elSwitchProps } from 'element-plus';
+import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
+import { ElSwitch } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
+const elSwitchProps = ElSwitch.props as unknown as Obj2Props<ComponentProps<typeof ElSwitch>>;
+const elSwitchEmits = emits2obj(ElSwitch.emits);
+
 /** 组件传参 - 私有 */
 export function switchPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
-    type _Prop = typeof elSwitchProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elSwitchEmits>]>>;
+    type _Prop = typeof elSwitchProps;
 
     return {
         ...{} as _Prop,
@@ -29,16 +32,15 @@ export interface SwitchSlotOption<Query extends Record<string, any>, OptionQuery
 export const switchPropsPrivate = switchPropsGeneric();
 /** 组件传参 - 外部调用 */
 
-export const switchProps = emits2props({
+export const switchProps = {
     ...elSwitchProps,
     ...switchPropsPrivate,
-}) as typeof switchPropsPrivate;
+};
 export type SwitchProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof switchPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function switchEmitsGeneric<T>() {
     return {
-        ...{} as typeof elSwitchEmits,
     };
 }
 /** 组件事件 - 私有 */
@@ -47,7 +49,7 @@ export const switchEmitsPrivate = switchEmitsGeneric();
 export const switchEmits = {
     ...elSwitchEmits,
     ...switchEmitsPrivate,
-} as ReturnType<typeof switchEmitsGeneric<any>>;
+};
 export type SwitchEmits<T> = ReturnType<typeof switchEmitsGeneric<T>>;
 
 export interface SwitchSlots extends CommonSlots<Record<string, any>> {

@@ -246,7 +246,7 @@ export default defineComponent({
                     for (let i = total - _props.limit; i > 0; i--) {
                         // @ts-expect-error 内部未补充 uploadFiles 声明
                         if (_checked.length) discardFiles.push(_checked.splice(0, 1)[0]);
-                        else if (files.length) discardFiles.push(files.splice(0, 1)[0]);
+                        else if (files.length) discardFiles.push(files.splice(0, 1)[0]!);
                     }
                 }
                 else {

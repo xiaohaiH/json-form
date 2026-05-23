@@ -6,7 +6,7 @@ import type { ComponentExposed, ComponentProps } from 'vue-component-type-helper
 import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
-const elTimeSelectProps = ElTimeSelect.props as Obj2Props<ComponentProps<typeof ElTimeSelect>>;
+const elTimeSelectProps = ElTimeSelect.props as unknown as Obj2Props<ComponentProps<typeof ElTimeSelect>>;
 const elTimeSelectEmits = emits2obj(ElTimeSelect.emits);
 
 /** 组件传参 - 私有 */
@@ -30,16 +30,15 @@ export interface TimeSelectSlotOption<Query extends Record<string, any>, OptionQ
 export const timeSelectPropsPrivate = timeSelectPropsGeneric();
 /** 组件传参 - 外部调用 */
 
-export const timeSelectProps = emits2props({
+export const timeSelectProps = {
     ...elTimeSelectProps,
     ...timeSelectPropsPrivate,
-}) as typeof timeSelectPropsPrivate;
+};
 export type TimeSelectProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof timeSelectPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function timeSelectEmitsGeneric<T>() {
     return {
-        // ...{} as typeof elTimeSelectEmits,
     };
 }
 /** 组件事件 - 私有 */
@@ -51,7 +50,7 @@ export const timeSelectEmits = {
     focus: (ev: FocusEvent) => true,
     clear: () => true,
     ...timeSelectEmitsPrivate,
-} as ReturnType<typeof timeSelectEmitsGeneric<any>>;
+};
 export type TimeSelectEmits<T> = ReturnType<typeof timeSelectEmitsGeneric<T>>;
 
 export interface TimeSelectSlots extends CommonSlots<Record<string, any>> {

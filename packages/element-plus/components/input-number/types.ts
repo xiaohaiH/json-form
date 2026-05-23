@@ -1,14 +1,17 @@
 import type { CamelCase, Obj2Props, PlainProps, usePlain } from '@xiaohaih/json-form-core';
-import { emits2props, plainProps } from '@xiaohaih/json-form-core';
-import { inputNumberEmits as elInputNumberEmits, inputNumberProps as elInputNumberProps } from 'element-plus';
+import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
+import { ElInputNumber } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
+const elInputNumberProps = ElInputNumber.props as unknown as Obj2Props<ComponentProps<typeof ElInputNumber>>;
+const elInputNumberEmits = emits2obj(ElInputNumber.emits);
+
 /** 组件传参 - 私有 */
 export function inputNumberPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
-    type _Prop = typeof elInputNumberProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elInputNumberEmits>]>>;
+    type _Prop = typeof elInputNumberProps
 
     return {
         ...{} as _Prop,
@@ -33,16 +36,15 @@ export interface InputNumberSlotOption<Query extends Record<string, any>, Option
 export const inputNumberPropsPrivate = inputNumberPropsGeneric();
 /** 组件传参 - 外部调用 */
 
-export const inputNumberProps = emits2props({
+export const inputNumberProps = {
     ...elInputNumberProps,
     ...inputNumberPropsPrivate,
-}, elInputNumberEmits) as typeof inputNumberPropsPrivate;
+};
 export type InputNumberProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof inputNumberPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function inputNumberEmitsGeneric<T>() {
     return {
-        ...{} as typeof elInputNumberEmits,
     };
 }
 /** 组件事件 - 私有 */
@@ -51,7 +53,7 @@ export const inputNumberEmitsPrivate = inputNumberEmitsGeneric();
 export const inputNumberEmits = {
     ...elInputNumberEmits,
     ...inputNumberEmitsPrivate,
-} as ReturnType<typeof inputNumberEmitsGeneric<any>>;
+}
 export type InputNumberEmits<T> = ReturnType<typeof inputNumberEmitsGeneric<T>>;
 
 export interface InputNumberSlots extends CommonSlots<Record<string, any>> {

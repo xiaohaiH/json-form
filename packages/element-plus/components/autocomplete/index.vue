@@ -67,7 +67,6 @@ export default defineComponent({
     setup(props, ctx) {
         const autocompleteRef = ref<ComponentExposed<typeof ElAutocomplete>>();
 
-        // @ts-expect-error 忽视类型复杂导致的报错
         const plain = usePlain(props);
         const { formItemActualProps, contentActualProps, slotProps } = useCommonSetup(props, ctx, plain);
 

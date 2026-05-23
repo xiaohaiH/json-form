@@ -6,7 +6,7 @@ import type { ComponentExposed, ComponentProps } from 'vue-component-type-helper
 import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
-const elSelectProps = ElSelect.props as Obj2Props<ComponentProps<typeof ElSelect>>;
+const elSelectProps = ElSelect.props as unknown as Obj2Props<ComponentProps<typeof ElSelect>>;
 const elSelectEmits = emits2obj(ElSelect.emits);
 
 /** 组件传参 - 私有 */
@@ -58,16 +58,15 @@ export interface SelectSlotOption<Query extends Record<string, any>, OptionQuery
 export const selectPropsPrivate = selectPropsGeneric();
 /** 组件传参 - 外部调用 */
 
-export const selectProps = emits2props({
+export const selectProps = {
     ...elSelectProps,
     ...selectPropsPrivate,
-});
+};
 export type SelectProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof selectPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function selectEmitsGeneric<T>() {
     return {
-        // ...{} as typeof elSelectEmits,
     };
 }
 /** 组件事件 - 私有 */

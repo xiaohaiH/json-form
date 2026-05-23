@@ -6,8 +6,8 @@ import type { ComponentExposed, ComponentProps } from 'vue-component-type-helper
 import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
-const elAutocompleteProps = ElAutocomplete.props as Obj2Props<ComponentProps<typeof ElAutocomplete>>;
-const elAutocompleteEmits = emits2obj(ElAutocomplete.emits);
+const elAutocompleteProps = (ElAutocomplete as any).props as unknown as Obj2Props<ComponentProps<typeof ElAutocomplete>>;
+const elAutocompleteEmits = emits2obj((ElAutocomplete as any).emits);
 
 /** 重写指定事件 */
 const rewriteOn = {
@@ -19,7 +19,7 @@ const rewriteOn = {
 
 /** 组件传参 - 私有 */
 export function autocompletePropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
-    type _Prop = typeof elAutocompleteProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elAutocompleteEmits>]>>;
+    type _Prop = typeof elAutocompleteProps;
 
     return {
         ...{} as _Prop,
@@ -65,16 +65,15 @@ export interface AutocompleteSlotOption<Query extends Record<string, any>, Optio
 /** 组件传参 - 私有 */
 export const autocompletePropsPrivate = autocompletePropsGeneric();
 /** 组件传参 - 外部调用 */
-export const autocompleteProps = emits2props({
+export const autocompleteProps = {
     ...elAutocompleteProps,
     ...autocompletePropsPrivate,
-}, elAutocompleteEmits);
+};
 export type AutocompleteProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof autocompletePropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function autocompleteEmitsGeneric<T>() {
     return {
-        ...{} as typeof elAutocompleteEmits,
         ...rewriteOn,
     };
 }
@@ -84,7 +83,7 @@ export const autocompleteEmitsPrivate = autocompleteEmitsGeneric();
 export const autocompleteEmits = {
     ...elAutocompleteEmits,
     ...autocompleteEmitsPrivate,
-};
+}
 export type AutocompleteEmits<T> = ReturnType<typeof autocompleteEmitsGeneric<T>>;
 
 export interface AutocompleteSlots extends CommonSlots<Record<string, any>> {

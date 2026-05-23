@@ -1,15 +1,19 @@
 import type { CamelCase, Obj2Props, PlainProps, usePlain } from '@xiaohaih/json-form-core';
-import { emits2props, plainProps } from '@xiaohaih/json-form-core';
-import type { radioEmits as elRadioEmits, radioProps as elRadioProps } from 'element-plus';
-import { radioGroupEmits as elRadioGroupEmits, radioGroupProps as elRadioGroupProps } from 'element-plus';
+import { emits2obj, emits2props, plainProps } from '@xiaohaih/json-form-core';
+import type { ElRadio } from 'element-plus';
+import { ElRadioGroup } from 'element-plus';
 import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
+const elRadioGroupProps = ElRadioGroup.props as unknown as Obj2Props<ComponentProps<typeof ElRadioGroup>>;
+const elRadioGroupEmits = emits2obj(ElRadioGroup.emits);
+type RadioProps = Obj2Props<ComponentProps<typeof ElRadio>>;
+
 /** 组件传参 - 私有 */
 export function radioGroupPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
-    type _Prop = typeof elRadioGroupProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elRadioGroupEmits>]>>;
+    type _Prop = typeof elRadioGroupProps;
 
     return {
         ...{} as _Prop,
@@ -27,7 +31,7 @@ export function radioGroupPropsGeneric<Query extends Record<string, any>, Option
         /** 选项禁用字段 */
         disabledKey: { type: String as PropType<string>, default: 'disabled' },
         /** 暴露给 Radio 或 RadioButton 的属性 */
-        itemProps: { type: Object as PropType<Partial<ExtractPublicPropTypes<ReturnType<typeof emits2props<typeof elRadioProps, [NonNullable<typeof elRadioEmits>]>>>>> },
+        itemProps: { type: Object as PropType<Partial<RadioProps>> },
         /** 传递给组件的插槽 */
         itemSlots: { type: Object as PropType<Partial<{
             default: ComponentType<RadioGroupSlotOption<Query, OptionQuery> & { option: any; labelKey: string; valueKey: string; disabledKey: string }>;
@@ -41,16 +45,15 @@ export interface RadioGroupSlotOption<Query extends Record<string, any>, OptionQ
 export const radioGroupPropsPrivate = radioGroupPropsGeneric();
 /** 组件传参 - 外部调用 */
 
-export const radioGroupProps = emits2props({
+export const radioGroupProps = {
     ...elRadioGroupProps,
     ...radioGroupPropsPrivate,
-}, elRadioGroupEmits);
+};
 export type RadioGroupProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof radioGroupPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function radioGroupEmitsGeneric<T>() {
     return {
-        ...{} as typeof elRadioGroupEmits,
     };
 }
 /** 组件事件 - 私有 */
@@ -59,7 +62,7 @@ export const radioGroupEmitsPrivate = radioGroupEmitsGeneric();
 export const radioGroupEmits = {
     ...elRadioGroupEmits,
     ...radioGroupEmitsPrivate,
-} as ReturnType<typeof radioGroupEmitsGeneric<any>>;
+};
 export type RadioGroupEmits<T> = ReturnType<typeof radioGroupEmitsGeneric<T>>;
 
 export interface RadioGroupSlots extends CommonSlots<Record<string, any>> {

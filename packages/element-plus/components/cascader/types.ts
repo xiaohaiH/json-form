@@ -7,12 +7,13 @@ import type { ComponentExposed, ComponentProps } from 'vue-component-type-helper
 import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
-const elCascaderProps = ElCascader.props as Obj2Props<ComponentProps<typeof ElCascader>>;
+const elCascaderProps = ElCascader.props as unknown as Obj2Props<ComponentProps<typeof ElCascader>>;
 const elCascaderEmits = emits2obj(ElCascader.emits);
 
 /** 组件传参 - 私有 */
 export function cascaderPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
-    type _Prop = typeof elCascaderProps & ReturnType<typeof emits2props<null, [NonNullable<typeof elCascaderEmits>]>>;
+    type _Prop = typeof elCascaderProps;
+
     return {
         ...{} as _Prop,
         ...plainProps as PlainProps<Query, OptionQuery>,
@@ -37,16 +38,15 @@ export interface CascaderSlotOption<Query extends Record<string, any>, OptionQue
 /** 组件传参 - 私有 */
 export const cascaderPropsPrivate = cascaderPropsGeneric();
 /** 组件传参 - 外部调用 */
-export const cascaderProps = emits2props({
+export const cascaderProps = {
     ...elCascaderProps,
     ...cascaderPropsPrivate,
-}, elCascaderEmits);
+}
 export type CascaderProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof cascaderPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function cascaderEmitsGeneric<T>() {
     return {
-        ...{} as typeof elCascaderEmits,
     };
 }
 /** 组件事件 - 私有 */
@@ -55,7 +55,7 @@ export const cascaderEmitsPrivate = cascaderEmitsGeneric();
 export const cascaderEmits = {
     ...elCascaderEmits,
     ...cascaderEmitsPrivate,
-};
+}
 export type CascaderEmits<T> = ReturnType<typeof cascaderEmitsGeneric<T>>;
 
 export interface CascaderSlots extends CommonSlots<Record<string, any>> {

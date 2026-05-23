@@ -7,7 +7,7 @@ import type { ComponentExposed, ComponentProps } from 'vue-component-type-helper
 import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
 
-const elUploadProps = ElUpload.props as Obj2Props<ComponentProps<typeof ElUpload>>;
+const elUploadProps = ElUpload.props as unknown as Obj2Props<ComponentProps<typeof ElUpload>>;
 const elUploadEmits = emits2obj(ElUpload.emits);
 
 /**
@@ -18,7 +18,7 @@ let fileId = 3000;
 export const genFileId = () => Date.now() + ++fileId;
 /** 组件传参 - 私有 */
 export function uploadPropsGeneric<Query extends Record<string, any>, OptionQuery extends Record<string, any>>() {
-    type _Prop = typeof elUploadProps; // & ReturnType<typeof emits2props<null, [NonNullable<typeof ElUpload.emits>]>>;
+    type _Prop = typeof elUploadProps;
 
     return {
         ...{} as _Prop,
@@ -73,16 +73,15 @@ export interface UploadSlotOption<Query extends Record<string, any>, OptionQuery
 /** 组件传参 - 私有 */
 export const uploadPropsPrivate = uploadPropsGeneric();
 /** 组件传参 - 外部调用 */
-export const uploadProps = emits2props({
+export const uploadProps = {
     ...elUploadProps,
     ...uploadPropsPrivate,
-});
+};
 export type UploadProps<Query extends Record<string, any>, OptionQuery extends Record<string, any>> = ExtractPublicPropTypes<ReturnType<typeof uploadPropsGeneric<Query, OptionQuery>>>;
 
 /** 组件事件 - 私有 */
 export function uploadEmitsGeneric<T>() {
     return {
-        // ...{} as typeof elUploadEmits,
     };
 }
 /** 组件事件 - 私有 */
@@ -90,7 +89,7 @@ export const uploadEmitsPrivate = uploadEmitsGeneric();
 /** 组件事件 - 外部调用 */
 export const uploadEmits = {
     ...uploadEmitsPrivate,
-} as ReturnType<typeof uploadEmitsGeneric<any>>;
+};
 export type UploadEmits<T> = ReturnType<typeof uploadEmitsGeneric<T>>;
 
 export interface UploadSlots extends CommonSlots<Record<string, any>> {
