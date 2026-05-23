@@ -277,17 +277,17 @@ describe('usePlain-useWrapper组合测试', () => {
 
             // 测试基本值
             expect(wrapperComp).toBeDefined();
-            expect(wrapperComp.refObj['输入框'].checked).toBe('测试值');
-            expect(wrapperComp.refObj['数字'].checked).toBe(123);
-            wrapperComp.refObj['数字'].query['数字'] = '123';
+            expect(wrapperComp.refObj['输入框']!.checked).toBe('测试值');
+            expect(wrapperComp.refObj['数字']!.checked).toBe(123);
+            wrapperComp.refObj['数字']!.query['数字'] = '123';
             await nextTick();
-            wrapperComp.refObj['数字'].change('aa');
+            wrapperComp.refObj['数字']!.change('aa');
             await nextTick();
-            wrapperComp.refObj['数字'].query['数字'] = '789';
+            wrapperComp.refObj['数字']!.query['数字'] = '789';
             await nextTick();
-            wrapperComp.refObj['数字'].query['数字'] = '333';
+            wrapperComp.refObj['数字']!.query['数字'] = '333';
             await nextTick();
-            wrapperComp.refObj['数字'].query['数字'] = '222';
+            wrapperComp.refObj['数字']!.query['数字'] = '222';
 
             await nextTick();
             wrapper.unmount();
@@ -323,16 +323,16 @@ describe('usePlain-useWrapper组合测试', () => {
             // 测试基本值
             expect(wrapperComp).toBeDefined();
             await nextTick();
-            expect(getOptionsSpy).toBeCalledTimes(1);
-            expect(getOptionsSpy2).toBeCalledTimes(1);
+            expect(getOptionsSpy).toHaveBeenCalledTimes(1);
+            expect(getOptionsSpy2).toHaveBeenCalledTimes(1);
             mockQuery.value['输入框'] = 'sss';
             await nextTick();
-            wrapperComp.refObj['输入框2'].change('哈哈哈');
+            wrapperComp.refObj['输入框2']!.change('哈哈哈');
             await nextTick();
             expect(mockQuery.value).toEqual({ 输入框: 'sss', 输入框2: '哈哈哈' });
             await nextTick();
-            expect(getOptionsSpy).toBeCalledTimes(2);
-            expect(getOptionsSpy2).toBeCalledTimes(2);
+            expect(getOptionsSpy).toHaveBeenCalledTimes(2);
+            expect(getOptionsSpy2).toHaveBeenCalledTimes(2);
 
             await nextTick();
             wrapper.unmount();
@@ -433,30 +433,30 @@ describe('usePlain-useWrapper组合测试', () => {
 
                 // 测试基本值
                 expect(wrapperComp).toBeDefined();
-                expect(wrapperComp.refObj['输入框'].checked).toBe('测试值');
-                expect(wrapperComp.refObj['数字'].checked).toBe(123);
-                expect(wrapperComp.refObj['默认值'].checked).toBe('0');
-                expect(wrapperComp.refObj['下拉框'].checked).toBeUndefined();
-                expect(wrapperComp.refObj['下拉框异步数据源'].finalOption).toEqual([]);
+                expect(wrapperComp.refObj['输入框']!.checked).toBe('测试值');
+                expect(wrapperComp.refObj['数字']!.checked).toBe(123);
+                expect(wrapperComp.refObj['默认值']!.checked).toBe('0');
+                expect(wrapperComp.refObj['下拉框']!.checked).toBeUndefined();
+                expect(wrapperComp.refObj['下拉框异步数据源']!.finalOption).toEqual([]);
                 // 多字段内部会置为数组, 哪怕这个字段其实是 undefined
-                expect(wrapperComp.refObj['级联多字段'].checked).toEqual([]);
-                // expect(wrapperComp.refObj['级联多字段'].checked).toBeUndefined();
-                expect(wrapperComp.refObj['值为数组类型 - 多个数组值'].checked).toBeUndefined();
-                expect(wrapperComp.refObj['值为数组 - 多选'].checked).toEqual(['1']);
+                expect(wrapperComp.refObj['级联多字段']!.checked).toEqual([]);
+                // expect(wrapperComp.refObj['级联多字段']!.checked).toBeUndefined();
+                expect(wrapperComp.refObj['值为数组类型 - 多个数组值']!.checked).toBeUndefined();
+                expect(wrapperComp.refObj['值为数组 - 多选']!.checked).toEqual(['1']);
 
                 // 改变外部 query 的值
                 mockQuery.value['数字'] = 789456123;
                 await nextTick();
-                expect(wrapperComp.refObj['数字'].checked).toBe(789456123);
+                expect(wrapperComp.refObj['数字']!.checked).toBe(789456123);
                 // 通过 query 改变组件内部的值
-                wrapperComp.refObj['数字'].query['数字'] = 987654321;
+                wrapperComp.refObj['数字']!.query['数字'] = 987654321;
                 await nextTick();
-                expect(wrapperComp.refObj['数字'].checked).toBe(987654321);
+                expect(wrapperComp.refObj['数字']!.checked).toBe(987654321);
                 expect(mockQuery.value['数字']).toBe(987654321);
                 // 通过方法改变组件内部的值
-                wrapperComp.refObj['数字'].change(123456);
+                wrapperComp.refObj['数字']!.change(123456);
                 await nextTick();
-                expect(searchSpy).toBeCalledTimes(2);
+                expect(searchSpy).toHaveBeenCalledTimes(2);
                 expect(mockQuery.value['数字']).toBe(123456);
                 // 重置整个 query 对象
                 mockQuery.value = {};
@@ -479,15 +479,15 @@ describe('usePlain-useWrapper组合测试', () => {
                 expect(wrapperComp.refObj['值为数组类型 - 多个数组值']).toBe(null);
                 expect(wrapperComp.refObj['值为数组 - 多选']).toBe(null);
                 expect(wrapperComp.refObj['重置后的值']).toBeDefined();
-                expect(wrapperComp.refObj['重置后的值'].checked).toBe(123);
-                wrapperComp.refObj['重置后的值'].change('888');
-                expect(wrapperComp.refObj['重置后的值'].checked).toBe('888');
+                expect(wrapperComp.refObj['重置后的值']!.checked).toBe(123);
+                wrapperComp.refObj['重置后的值']!.change('888');
+                expect(wrapperComp.refObj['重置后的值']!.checked).toBe('888');
                 await nextTick();
                 expect(mockQuery.value['重置后的值']).toEqual('888');
                 mockQuery.value['重置后的值'] = '777';
-                expect(wrapperComp.refObj['重置后的值'].checked).toBe('888');
+                expect(wrapperComp.refObj['重置后的值']!.checked).toBe('888');
                 await nextTick();
-                expect(wrapperComp.refObj['重置后的值'].checked).toBe('777');
+                expect(wrapperComp.refObj['重置后的值']!.checked).toBe('777');
                 expect(mockQuery.value['重置后的值']).toEqual('777');
 
                 await nextTick();
@@ -563,11 +563,11 @@ describe('usePlain-useWrapper组合测试', () => {
 
                 // 测试基本值
                 expect(wrapperComp).toBeDefined();
-                expect(wrapperComp.refObj['反复赋值'].checked).toEqual([]);
+                expect(wrapperComp.refObj['反复赋值']!.checked).toEqual([]);
                 expect(defaultValueSpy).toHaveBeenCalledTimes(1);
                 // 内部设置值后由外部清空
-                wrapperComp.refObj['反复赋值'].change(['aaa', 'bbb']);
-                expect(wrapperComp.refObj['反复赋值'].checked).toEqual(['aaa', 'bbb']);
+                wrapperComp.refObj['反复赋值']!.change(['aaa', 'bbb']);
+                expect(wrapperComp.refObj['反复赋值']!.checked).toEqual(['aaa', 'bbb']);
                 await nextTick();
                 expect(mockQuery.value['反复赋值']).toEqual(['aaa', 'bbb']);
                 expect(defaultValueSpy).toHaveBeenCalledTimes(1);
@@ -575,22 +575,22 @@ describe('usePlain-useWrapper组合测试', () => {
                 await nextTick();
                 expect(defaultValueSpy).toHaveBeenCalledTimes(2);
                 expect(mockQuery.value['反复赋值']).toEqual([]);
-                expect(wrapperComp.refObj['反复赋值'].checked).toEqual([]);
-                wrapperComp.refObj['反复赋值'].change(['aa']);
-                expect(wrapperComp.refObj['反复赋值'].checked).toEqual(['aa']);
+                expect(wrapperComp.refObj['反复赋值']!.checked).toEqual([]);
+                wrapperComp.refObj['反复赋值']!.change(['aa']);
+                expect(wrapperComp.refObj['反复赋值']!.checked).toEqual(['aa']);
                 await nextTick();
                 expect(mockQuery.value['反复赋值']).toEqual(['aa']);
                 mockQuery.value = {};
                 await nextTick();
                 expect(defaultValueSpy).toHaveBeenCalledTimes(3);
-                wrapperComp.refObj['反复赋值'].change(['bb']);
+                wrapperComp.refObj['反复赋值']!.change(['bb']);
                 await nextTick();
                 expect(mockQuery.value['反复赋值']).toEqual(['bb']);
                 mockQuery.value = {};
                 await nextTick();
                 expect(defaultValueSpy).toHaveBeenCalledTimes(4);
                 expect(mockQuery.value['反复赋值']).toEqual([]);
-                expect(wrapperComp.refObj['反复赋值'].checked).toEqual([]);
+                expect(wrapperComp.refObj['反复赋值']!.checked).toEqual([]);
                 mockQuery.value = {};
                 await nextTick();
                 expect(defaultValueSpy).toHaveBeenCalledTimes(5);
@@ -623,11 +623,11 @@ describe('usePlain-useWrapper组合测试', () => {
 
                 // 测试基本值
                 expect(wrapperComp).toBeDefined();
-                expect(wrapperComp.refObj['反复赋值'].checked).toBeUndefined();
+                expect(wrapperComp.refObj['反复赋值']!.checked).toBeUndefined();
                 expect(defaultValueSpy).toHaveBeenCalledTimes(1);
                 // 内部设置值后由外部清空
-                wrapperComp.refObj['反复赋值'].change(['aaa', 'bbb']);
-                expect(wrapperComp.refObj['反复赋值'].checked).toEqual(['aaa', 'bbb']);
+                wrapperComp.refObj['反复赋值']!.change(['aaa', 'bbb']);
+                expect(wrapperComp.refObj['反复赋值']!.checked).toEqual(['aaa', 'bbb']);
                 await nextTick();
                 expect(mockQuery.value['反复赋值']).toEqual(['aaa', 'bbb']);
                 expect(defaultValueSpy).toHaveBeenCalledTimes(1);
@@ -635,27 +635,27 @@ describe('usePlain-useWrapper组合测试', () => {
                 await nextTick();
                 expect(defaultValueSpy).toHaveBeenCalledTimes(2);
                 expect(mockQuery.value['反复赋值']).toBeUndefined();
-                expect(wrapperComp.refObj['反复赋值'].checked).toBeUndefined();
-                wrapperComp.refObj['反复赋值'].change(['aa']);
-                expect(wrapperComp.refObj['反复赋值'].checked).toEqual(['aa']);
+                expect(wrapperComp.refObj['反复赋值']!.checked).toBeUndefined();
+                wrapperComp.refObj['反复赋值']!.change(['aa']);
+                expect(wrapperComp.refObj['反复赋值']!.checked).toEqual(['aa']);
                 await nextTick();
                 expect(mockQuery.value['反复赋值']).toEqual(['aa']);
                 mockQuery.value = {};
                 await nextTick();
                 expect(defaultValueSpy).toHaveBeenCalledTimes(3);
-                wrapperComp.refObj['反复赋值'].change(['bb']);
+                wrapperComp.refObj['反复赋值']!.change(['bb']);
                 await nextTick();
                 expect(mockQuery.value['反复赋值']).toEqual(['bb']);
                 mockQuery.value = {};
                 await nextTick();
                 expect(defaultValueSpy).toHaveBeenCalledTimes(4);
                 expect(mockQuery.value['反复赋值']).toBeUndefined();
-                expect(wrapperComp.refObj['反复赋值'].checked).toBeUndefined();
+                expect(wrapperComp.refObj['反复赋值']!.checked).toBeUndefined();
                 mockQuery.value = {};
                 await nextTick();
                 expect(defaultValueSpy).toHaveBeenCalledTimes(4);
                 expect(mockQuery.value['反复赋值']).toBeUndefined();
-                expect(wrapperComp.refObj['反复赋值'].checked).toBeUndefined();
+                expect(wrapperComp.refObj['反复赋值']!.checked).toBeUndefined();
 
                 await nextTick();
                 wrapper.unmount();
@@ -709,23 +709,23 @@ describe('usePlain-useWrapper组合测试', () => {
                 expect(wrapperComp).toBeDefined();
                 expect(mockQuery.value['城市']).toBe('bj');
                 expect(mockQuery.value['区域']).toBe('cy');
-                expect(wrapperComp.refObj['城市'].checked).toBe('bj');
-                expect(wrapperComp.refObj['区域'].checked).toBe('cy');
+                expect(wrapperComp.refObj['城市']!.checked).toBe('bj');
+                expect(wrapperComp.refObj['区域']!.checked).toBe('cy');
                 await nextTick();
                 // 内部改变城市值
-                wrapperComp.refObj['城市'].change('sh');
+                wrapperComp.refObj['城市']!.change('sh');
                 await nextTick();
                 expect(searchSpy).toHaveBeenCalledTimes(1);
                 // 验证依赖项钩子被调用
                 expect(dependHookSpy).toHaveBeenCalledTimes(1);
-                expect(wrapperComp.refObj['城市'].checked).toBe('sh');
+                expect(wrapperComp.refObj['城市']!.checked).toBe('sh');
                 expect(mockQuery.value['城市']).toBe('sh');
-                expect(wrapperComp.refObj['区域'].checked).toBeUndefined();
+                expect(wrapperComp.refObj['区域']!.checked).toBeUndefined();
                 // 外部改变城市值
                 mockQuery.value = { 城市: 'bj' };
                 expect(dependHookSpy).toHaveBeenCalledTimes(1);
                 await nextTick();
-                expect(wrapperComp.refObj['城市'].checked).toBe('bj');
+                expect(wrapperComp.refObj['城市']!.checked).toBe('bj');
                 expect(dependHookSpy).toHaveBeenCalledTimes(2);
                 await nextTick();
                 wrapper.unmount();
@@ -753,12 +753,12 @@ describe('usePlain-useWrapper组合测试', () => {
                 const wrapperComp = wrapper.vm.wrapperRef;
                 // 初始状态验证
                 expect(wrapperComp).toBeDefined();
-                expect(wrapperComp.refObj['区域'].checked).toBe('cy');
+                expect(wrapperComp.refObj['区域']!.checked).toBe('cy');
                 // 改变城市值
-                wrapperComp.refObj['城市'].change('sh');
+                wrapperComp.refObj['城市']!.change('sh');
                 await nextTick();
                 // 区域的值应该保持不变
-                expect(wrapperComp.refObj['区域'].checked).toBe('cy');
+                expect(wrapperComp.refObj['区域']!.checked).toBe('cy');
                 await nextTick();
                 wrapper.unmount();
             });
@@ -788,13 +788,13 @@ describe('usePlain-useWrapper组合测试', () => {
                 const wrapperComp = wrapper.vm.wrapperRef;
                 // 初始状态验证
                 expect(wrapperComp).toBeDefined();
-                wrapperComp.refObj['国家'].change('cn');
+                wrapperComp.refObj['国家']!.change('cn');
                 await nextTick();
-                expect(wrapperComp.refObj['城市'].checked).toBeUndefined();
-                expect(wrapperComp.refObj['县城'].checked).toBeUndefined();
-                wrapperComp.refObj['城市'].change('bj');
+                expect(wrapperComp.refObj['城市']!.checked).toBeUndefined();
+                expect(wrapperComp.refObj['县城']!.checked).toBeUndefined();
+                wrapperComp.refObj['城市']!.change('bj');
                 await nextTick();
-                expect(wrapperComp.refObj['县城'].checked).toBeUndefined();
+                expect(wrapperComp.refObj['县城']!.checked).toBeUndefined();
                 await nextTick();
                 wrapper.unmount();
             });
@@ -894,10 +894,10 @@ describe('usePlain-useWrapper组合测试', () => {
 
                     // 测试基本值
                     expect(wrapperComp).toBeDefined();
-                    wrapperComp.refObj['输入框'].change('测试值');
+                    wrapperComp.refObj['输入框']!.change('测试值');
                     await nextTick();
                     expect(searchSpy).toHaveBeenCalledTimes(1);
-                    expect(searchSpy.mock.calls[0][0]['输入框']).toBe('测试值');
+                    expect(searchSpy.mock.calls[0]![0]['输入框']).toBe('测试值');
                     await nextTick();
                     wrapper.unmount();
                 });
@@ -913,7 +913,7 @@ describe('usePlain-useWrapper组合测试', () => {
                     const wrapperComp = wrapper.vm.wrapperRef;
                     // 测试基本值
                     expect(wrapperComp).toBeDefined();
-                    wrapperComp.refObj['输入框'].change('测试值');
+                    wrapperComp.refObj['输入框']!.change('测试值');
                     await nextTick();
                     // 不实时, 所以不会在值改变时立即触发搜索
                     expect(searchSpy).not.toHaveBeenCalled();
@@ -932,13 +932,13 @@ describe('usePlain-useWrapper组合测试', () => {
                     const wrapperComp = wrapper.vm.wrapperRef;
                     // 测试基本值
                     expect(wrapperComp).toBeDefined();
-                    wrapperComp.refObj['输入框'].change('测试值');
+                    wrapperComp.refObj['输入框']!.change('测试值');
                     await nextTick();
                     expect(searchSpy).not.toHaveBeenCalled();
                     await wrapperComp.search();
                     expect(searchSpy).toHaveBeenCalledTimes(1);
-                    expect(searchSpy.mock.calls[0][0]).toEqual({ 输入框: '测试值' });
-                    expect(searchSpy.mock.calls[0][0]['输入框']).toBe('测试值');
+                    expect(searchSpy.mock.calls[0]![0]).toEqual({ 输入框: '测试值' });
+                    expect(searchSpy.mock.calls[0]![0]['输入框']).toBe('测试值');
                     await nextTick();
                     wrapper.unmount();
                 });
@@ -966,7 +966,7 @@ describe('usePlain-useWrapper组合测试', () => {
                     // 测试基本值
                     expect(wrapperComp).toBeDefined();
                     // 验证 fields 格式的值正确回填
-                    expect(wrapperComp.refObj['级联选择'].checked).toEqual(['bj', 'cy']);
+                    expect(wrapperComp.refObj['级联选择']!.checked).toEqual(['bj', 'cy']);
                     expect(wrapperComp.query.province).toBe('bj');
                     expect(wrapperComp.query.city).toBe('cy');
                     await nextTick();
@@ -988,7 +988,7 @@ describe('usePlain-useWrapper组合测试', () => {
                     const wrapperComp = wrapper.vm.wrapperRef;
                     // 测试基本值
                     expect(wrapperComp).toBeDefined();
-                    expect(wrapperComp.refObj['优先级测试'].checked).toBe('initial');
+                    expect(wrapperComp.refObj['优先级测试']!.checked).toBe('initial');
                     await nextTick();
                     wrapper.unmount();
                 });
@@ -1006,7 +1006,7 @@ describe('usePlain-useWrapper组合测试', () => {
                     const wrapperComp = wrapper.vm.wrapperRef;
                     // 测试基本值
                     expect(wrapperComp).toBeDefined();
-                    expect(wrapperComp.refObj['优先级测试'].checked).toBe('backfill');
+                    expect(wrapperComp.refObj['优先级测试']!.checked).toBe('backfill');
                     await nextTick();
                     wrapper.unmount();
                 });
@@ -1024,10 +1024,10 @@ describe('usePlain-useWrapper组合测试', () => {
                     const wrapperComp = wrapper.vm.wrapperRef;
                     // 测试基本值
                     expect(wrapperComp).toBeDefined();
-                    expect(wrapperComp.refObj['重置测试'].checked).toBe('当前值');
+                    expect(wrapperComp.refObj['重置测试']!.checked).toBe('当前值');
                     wrapperComp.reset();
                     await nextTick();
-                    expect(wrapperComp.refObj['重置测试'].checked).toBe('initial');
+                    expect(wrapperComp.refObj['重置测试']!.checked).toBe('initial');
                     await nextTick();
                     expect(mockQuery.value['重置测试']).toBe('initial');
                     await nextTick();
@@ -1049,7 +1049,7 @@ describe('usePlain-useWrapper组合测试', () => {
                     const wrapperComp = wrapper.vm.wrapperRef;
                     // 测试基本值
                     expect(wrapperComp).toBeDefined();
-                    wrapperComp.refObj['验证字段'].change('test');
+                    wrapperComp.refObj['验证字段']!.change('test');
                     await wrapperComp.search();
                     expect(validatorSpy).toHaveBeenCalledTimes(1);
                     await nextTick();
@@ -1077,13 +1077,13 @@ describe('usePlain-useWrapper组合测试', () => {
                     // 测试基本值
                     expect(wrapperComp).toBeDefined();
                     // 初始应该返回本地数据源
-                    expect(wrapperComp.refObj['远程数据'].finalOption).toEqual([{ label: '本地', value: '1' }]);
+                    expect(wrapperComp.refObj['远程数据']!.finalOption).toEqual([{ label: '本地', value: '1' }]);
 
                     await nextTick();
                     // 调用远程回调
                     optionCallback([{ label: '远程1', value: 'r1' }, { label: '远程2', value: 'r2' }]);
                     // 现在应该返回远程数据源
-                    expect(wrapperComp.refObj['远程数据'].finalOption).toEqual([{ label: '远程1', value: 'r1' }, { label: '远程2', value: 'r2' }]);
+                    expect(wrapperComp.refObj['远程数据']!.finalOption).toEqual([{ label: '远程1', value: 'r1' }, { label: '远程2', value: 'r2' }]);
                     await nextTick();
                     wrapper.unmount();
                 });
@@ -1158,34 +1158,34 @@ describe('usePlain-useWrapper组合测试', () => {
 
                     const wrapperComp = wrapper.vm.wrapperRef;
                     // 验证初始状态
-                    expect(wrapperComp.refObj.国家.checked).toBe('cn');
-                    expect(wrapperComp.refObj.省份.checked).toBe('bj');
-                    expect(wrapperComp.refObj.城市.checked).toBe('cy');
+                    expect(wrapperComp.refObj.国家!.checked).toBe('cn');
+                    expect(wrapperComp.refObj.省份!.checked).toBe('bj');
+                    expect(wrapperComp.refObj.城市!.checked).toBe('cy');
                     expect(searchSpy).toHaveBeenCalledTimes(0); // onReady 时不触发搜索
                     await nextTick();
                     // 场景1: 改变国家 - 应该重置省份和城市
-                    wrapperComp.refObj.国家.change('us');
+                    wrapperComp.refObj.国家!.change('us');
                     await nextTick();
-                    expect(wrapperComp.refObj.国家.checked).toBe('us');
-                    expect(wrapperComp.refObj.省份.checked).toBeUndefined();
-                    expect(wrapperComp.refObj.城市.checked).toBeUndefined();
+                    expect(wrapperComp.refObj.国家!.checked).toBe('us');
+                    expect(wrapperComp.refObj.省份!.checked).toBeUndefined();
+                    expect(wrapperComp.refObj.城市!.checked).toBeUndefined();
                     expect(dependHook1Spy).toHaveBeenCalledTimes(1);
                     expect(dependHook2Spy).toHaveBeenCalledTimes(1);
                     expect(searchSpy).toHaveBeenCalledTimes(1);
                     expect(mockQuery.value).toEqual({ 国家: 'us' });
                     // 场景2: 选择美国的省份 - 城市应该被重置
-                    wrapperComp.refObj.省份.change('ny');
+                    wrapperComp.refObj.省份!.change('ny');
                     await nextTick();
-                    expect(wrapperComp.refObj.省份.checked).toBe('ny');
-                    expect(wrapperComp.refObj.城市.checked).toBeUndefined();
+                    expect(wrapperComp.refObj.省份!.checked).toBe('ny');
+                    expect(wrapperComp.refObj.城市!.checked).toBeUndefined();
                     expect(dependHook1Spy).toHaveBeenCalledTimes(1);
                     expect(dependHook2Spy).toHaveBeenCalledTimes(2);
                     expect(searchSpy).toHaveBeenCalledTimes(2);
                     expect(mockQuery.value).toEqual({ 国家: 'us', 省份: 'ny' });
                     // 场景3: 选择曼哈顿城市
-                    wrapperComp.refObj.城市.change('mh');
+                    wrapperComp.refObj.城市!.change('mh');
                     await nextTick();
-                    expect(wrapperComp.refObj.城市.checked).toBe('mh');
+                    expect(wrapperComp.refObj.城市!.checked).toBe('mh');
                     expect(dependHook1Spy).toHaveBeenCalledTimes(1);
                     expect(dependHook2Spy).toHaveBeenCalledTimes(2);
                     expect(searchSpy).toHaveBeenCalledTimes(3);
@@ -1253,27 +1253,27 @@ describe('usePlain-useWrapper组合测试', () => {
                     const wrapper = genWrapperComponent({ mockOptions, mockQuery, searchSpy });
 
                     const wrapperComp = wrapper.vm.wrapperRef;
-                    expect(wrapperComp.refObj.分类.checked).toBe('type1');
+                    expect(wrapperComp.refObj.分类!.checked).toBe('type1');
                     await nextTick();
                     expect(asyncLoadSpy).toHaveBeenCalledTimes(1);
                     // 等待异步数据加载
                     await sleep(100);
-                    expect(wrapperComp.refObj.商品.finalOption).toEqual([{ label: '商品A', value: 'a' }, { label: '商品B', value: 'b' }]);
+                    expect(wrapperComp.refObj.商品!.finalOption).toEqual([{ label: '商品A', value: 'a' }, { label: '商品B', value: 'b' }]);
                     // 选择商品
-                    wrapperComp.refObj.商品.change('a');
+                    wrapperComp.refObj.商品!.change('a');
                     await awaitGetOptions();
-                    expect(wrapperComp.refObj.规格.finalOption).toEqual([{ label: '大', value: 'large' }, { label: '小', value: 'small' }]);
+                    expect(wrapperComp.refObj.规格!.finalOption).toEqual([{ label: '大', value: 'large' }, { label: '小', value: 'small' }]);
                     // 改变分类 - 商品应该重新加载
-                    wrapperComp.refObj.分类.change('type2');
+                    wrapperComp.refObj.分类!.change('type2');
                     await awaitGetOptions();
                     expect(asyncLoadSpy).toHaveBeenCalledTimes(2);
-                    expect(wrapperComp.refObj.商品.checked).toBeUndefined();
-                    expect(wrapperComp.refObj.规格.checked).toBeUndefined();
+                    expect(wrapperComp.refObj.商品!.checked).toBeUndefined();
+                    expect(wrapperComp.refObj.规格!.checked).toBeUndefined();
                     await sleep(100);
-                    expect(wrapperComp.refObj.商品.finalOption).toEqual([{ label: '商品C', value: 'c' }]);
-                    wrapperComp.refObj.商品.change('c');
+                    expect(wrapperComp.refObj.商品!.finalOption).toEqual([{ label: '商品C', value: 'c' }]);
+                    wrapperComp.refObj.商品!.change('c');
                     await awaitGetOptions();
-                    expect(wrapperComp.refObj.规格.finalOption).toEqual([{ label: '标准', value: 'standard' }]);
+                    expect(wrapperComp.refObj.规格!.finalOption).toEqual([{ label: '标准', value: 'standard' }]);
                     expect(mockQuery.value).toEqual({ 分类: 'type2', 商品: 'c', 规格: undefined });
                     await nextTick();
                     wrapper.unmount();
@@ -1320,24 +1320,24 @@ describe('usePlain-useWrapper组合测试', () => {
                     });
                     const wrapperComp = wrapper.vm.wrapperRef;
                     // 场景1: 输入错误邮箱格式
-                    wrapperComp.refObj.邮箱.change('invalid-email');
-                    wrapperComp.refObj.年龄.change(25);
+                    wrapperComp.refObj.邮箱!.change('invalid-email');
+                    wrapperComp.refObj.年龄!.change(25);
                     await wrapperComp.search();
                     expect(fieldValidatorSpy).toHaveBeenCalledTimes(1);
                     // 由于邮箱格式错误，搜索不应该成功
                     expect(searchSpy).not.toHaveBeenCalled();
                     // 场景2: 纠正邮箱格式
-                    wrapperComp.refObj.邮箱.change('valid@email.com');
+                    wrapperComp.refObj.邮箱!.change('valid@email.com');
                     await wrapperComp.search();
                     expect(fieldValidatorSpy).toHaveBeenCalledTimes(2);
                     expect(searchSpy).toHaveBeenCalledTimes(1);
                     expect(mockQuery.value).toEqual({ 邮箱: 'valid@email.com', 年龄: 25 });
                     // 场景3: 输入超出范围的年龄
-                    wrapperComp.refObj.年龄.change(150);
+                    wrapperComp.refObj.年龄!.change(150);
                     await wrapperComp.search();
                     expect(searchSpy).toHaveBeenCalledTimes(1); // 不会增加
                     // 场景4: 重新设置正确的值
-                    wrapperComp.refObj.年龄.change(30);
+                    wrapperComp.refObj.年龄!.change(30);
                     await wrapperComp.search();
                     expect(searchSpy).toHaveBeenCalledTimes(2);
                     expect(mockQuery.value).toEqual({ 邮箱: 'valid@email.com', 年龄: 30 });
@@ -1365,16 +1365,16 @@ describe('usePlain-useWrapper组合测试', () => {
                     const wrapper = genWrapperComponent({ mockOptions, mockQuery, searchSpy });
                     const wrapperComp = wrapper.vm.wrapperRef;
                     // 验证多字段初始值
-                    expect(wrapperComp.refObj.金额范围.checked).toEqual([0, 10000]);
+                    expect(wrapperComp.refObj.金额范围!.checked).toEqual([0, 10000]);
                     expect(mockQuery.value).toEqual({ minAmount: 0, maxAmount: 10000 });
                     // 改变多字段值
-                    wrapperComp.refObj.时间段.change(['2024-01-01', '2024-12-31']);
+                    wrapperComp.refObj.时间段!.change(['2024-01-01', '2024-12-31']);
                     await nextTick();
-                    expect(wrapperComp.refObj.时间段.checked).toEqual(['2024-01-01', '2024-12-31']);
+                    expect(wrapperComp.refObj.时间段!.checked).toEqual(['2024-01-01', '2024-12-31']);
                     expect(mockQuery.value.startDate).toBe('2024-01-01');
                     expect(mockQuery.value.endDate).toBe('2024-12-31');
                     // 改变金额范围
-                    wrapperComp.refObj.金额范围.change([1000, 5000]);
+                    wrapperComp.refObj.金额范围!.change([1000, 5000]);
                     await nextTick();
                     expect(mockQuery.value.minAmount).toBe(1000);
                     expect(mockQuery.value.maxAmount).toBe(5000);
@@ -1399,11 +1399,11 @@ describe('usePlain-useWrapper组合测试', () => {
                     const wrapper = genWrapperComponent({ mockOptions, mockQuery, searchSpy });
                     const wrapperComp = wrapper.vm.wrapperRef;
                     // 改变实时字段 - 应该立即触发搜索
-                    wrapperComp.refObj.实时搜索字段.change('值1');
+                    wrapperComp.refObj.实时搜索字段!.change('值1');
                     await nextTick();
                     expect(searchSpy).toHaveBeenCalledTimes(1);
                     // 改变非实时字段
-                    wrapperComp.refObj.非实时搜索字段.change('值2');
+                    wrapperComp.refObj.非实时搜索字段!.change('值2');
                     await nextTick();
                     expect(searchSpy).toHaveBeenCalledTimes(2); // 在全局实时模式下仍会触发
                     // 手动触发搜索
@@ -1447,32 +1447,32 @@ describe('usePlain-useWrapper组合测试', () => {
                     const wrapperComp = wrapper.vm.wrapperRef;
                     await nextTick();
                     // 验证初始值
-                    expect(wrapperComp.refObj.基础字段.checked).toBe('init-value');
-                    expect(wrapperComp.refObj.依赖字段.checked).toBe('depend-init');
-                    expect(wrapperComp.refObj.依赖字段无默认值.checked).toBe('ahha');
-                    expect(wrapperComp.refObj.独立字段.checked).toEqual(['选项1']);
+                    expect(wrapperComp.refObj.基础字段!.checked).toBe('init-value');
+                    expect(wrapperComp.refObj.依赖字段!.checked).toBe('depend-init');
+                    expect(wrapperComp.refObj.依赖字段无默认值!.checked).toBe('ahha');
+                    expect(wrapperComp.refObj.独立字段!.checked).toEqual(['选项1']);
                     // 改变值
-                    wrapperComp.refObj.基础字段.change('new-value');
-                    wrapperComp.refObj.独立字段.change(['选项2']);
+                    wrapperComp.refObj.基础字段!.change('new-value');
+                    wrapperComp.refObj.独立字段!.change(['选项2']);
                     await nextTick();
                     expect(searchSpy).toHaveBeenCalledTimes(1);
-                    expect(wrapperComp.refObj.基础字段.checked).toBe('new-value');
+                    expect(wrapperComp.refObj.基础字段!.checked).toBe('new-value');
                     expect(mockQuery.value.依赖字段).toBe('depend-default'); // 依赖改变导致重置
-                    expect(wrapperComp.refObj.依赖字段.checked).toBe('depend-default'); // 依赖改变导致重置
-                    expect(wrapperComp.refObj.依赖字段无默认值.checked).toBeUndefined(); // 依赖改变导致重置
-                    expect(wrapperComp.refObj.独立字段.checked).toEqual(['选项2']);
+                    expect(wrapperComp.refObj.依赖字段!.checked).toBe('depend-default'); // 依赖改变导致重置
+                    expect(wrapperComp.refObj.依赖字段无默认值!.checked).toBeUndefined(); // 依赖改变导致重置
+                    expect(wrapperComp.refObj.独立字段!.checked).toEqual(['选项2']);
                     // 重置表单
                     wrapperComp.reset();
                     await nextTick();
-                    expect(wrapperComp.refObj.基础字段.checked).toBe('init-value');
-                    expect(wrapperComp.refObj.依赖字段.checked).toBe('depend-init');
-                    expect(wrapperComp.refObj.依赖字段无默认值.checked).toBe('ahha');
-                    expect(wrapperComp.refObj.独立字段.checked).toEqual(['选项1']);
+                    expect(wrapperComp.refObj.基础字段!.checked).toBe('init-value');
+                    expect(wrapperComp.refObj.依赖字段!.checked).toBe('depend-init');
+                    expect(wrapperComp.refObj.依赖字段无默认值!.checked).toBe('ahha');
+                    expect(wrapperComp.refObj.独立字段!.checked).toEqual(['选项1']);
                     // 再次改变并验证最终状态
-                    wrapperComp.refObj.基础字段.change('another-value');
+                    wrapperComp.refObj.基础字段!.change('another-value');
                     await nextTick();
-                    expect(wrapperComp.refObj.依赖字段.checked).toBe('depend-default');
-                    expect(wrapperComp.refObj.依赖字段无默认值.checked).toBeUndefined();
+                    expect(wrapperComp.refObj.依赖字段!.checked).toBe('depend-default');
+                    expect(wrapperComp.refObj.依赖字段无默认值!.checked).toBeUndefined();
                     await nextTick();
                     wrapper.unmount();
                 });
@@ -1539,27 +1539,27 @@ describe('usePlain-useWrapper组合测试', () => {
 
                 // 测试基本值
                 expect(wrapperComp).toBeDefined();
-                expect(wrapperComp.refObj['输入框'].checked).toBe('测试值');
-                expect(wrapperComp.refObj['数字'].checked).toBe(123);
-                expect(wrapperComp.refObj['默认值'].checked).toBe('0');
-                expect(wrapperComp.refObj['下拉框'].checked).toBeUndefined();
-                expect(wrapperComp.refObj['下拉框异步数据源'].finalOption).toEqual([]);
+                expect(wrapperComp.refObj['输入框']!.checked).toBe('测试值');
+                expect(wrapperComp.refObj['数字']!.checked).toBe(123);
+                expect(wrapperComp.refObj['默认值']!.checked).toBe('0');
+                expect(wrapperComp.refObj['下拉框']!.checked).toBeUndefined();
+                expect(wrapperComp.refObj['下拉框异步数据源']!.finalOption).toEqual([]);
                 // 多字段内部会置为数组, 哪怕这个字段其实是 undefined
-                expect(wrapperComp.refObj['级联多字段'].checked).toEqual([]);
-                // expect(wrapperComp.refObj['级联多字段'].checked).toBeUndefined();
-                expect(wrapperComp.refObj['值为数组类型 - 多个数组值'].checked).toBeUndefined();
-                expect(wrapperComp.refObj['值为数组 - 多选'].checked).toEqual(['1']);
+                expect(wrapperComp.refObj['级联多字段']!.checked).toEqual([]);
+                // expect(wrapperComp.refObj['级联多字段']!.checked).toBeUndefined();
+                expect(wrapperComp.refObj['值为数组类型 - 多个数组值']!.checked).toBeUndefined();
+                expect(wrapperComp.refObj['值为数组 - 多选']!.checked).toEqual(['1']);
 
                 // 改变外部 query 的值
                 mockModel.value['数字'] = 789456123;
-                expect(wrapperComp.refObj['数字'].checked).toBe(789456123);
+                expect(wrapperComp.refObj['数字']!.checked).toBe(789456123);
                 // 通过 query 改变组件内部的值
-                wrapperComp.refObj['数字'].query['数字'] = 987654321;
-                expect(wrapperComp.refObj['数字'].checked).toBe(987654321);
+                wrapperComp.refObj['数字']!.query['数字'] = 987654321;
+                expect(wrapperComp.refObj['数字']!.checked).toBe(987654321);
                 expect(mockModel.value['数字']).toBe(987654321);
                 // 通过方法改变组件内部的值
-                wrapperComp.refObj['数字'].change(123456);
-                expect(searchSpy).toBeCalledTimes(0);
+                wrapperComp.refObj['数字']!.change(123456);
+                expect(searchSpy).toHaveBeenCalledTimes(0);
                 expect(mockModel.value['数字']).toBe(123456);
                 // getOptions 异步触发的, 因此需要等下个周期执行
                 await nextTick();
@@ -1581,12 +1581,12 @@ describe('usePlain-useWrapper组合测试', () => {
                 expect(wrapperComp.refObj['值为数组类型 - 多个数组值']).toBe(null);
                 expect(wrapperComp.refObj['值为数组 - 多选']).toBe(null);
                 expect(wrapperComp.refObj['重置后的值']).toBeDefined();
-                expect(wrapperComp.refObj['重置后的值'].checked).toBe(123);
-                wrapperComp.refObj['重置后的值'].change('888');
-                expect(wrapperComp.refObj['重置后的值'].checked).toBe('888');
+                expect(wrapperComp.refObj['重置后的值']!.checked).toBe(123);
+                wrapperComp.refObj['重置后的值']!.change('888');
+                expect(wrapperComp.refObj['重置后的值']!.checked).toBe('888');
                 expect(mockModel.value['重置后的值']).toEqual('888');
                 mockModel.value['重置后的值'] = '777';
-                expect(wrapperComp.refObj['重置后的值'].checked).toBe('777');
+                expect(wrapperComp.refObj['重置后的值']!.checked).toBe('777');
                 expect(mockModel.value['重置后的值']).toEqual('777');
 
                 await nextTick();
@@ -1633,9 +1633,9 @@ describe('usePlain-useWrapper组合测试', () => {
                 const wrapper = genWrapperComponent({ mockOptions, mockModel, searchSpy });
                 const wrapperComp = wrapper.vm.wrapperRef;
 
-                expect(wrapperComp.refObj['有默认值'].checked).toBe('default');
-                expect(wrapperComp.refObj['有初始值'].checked).toBe('initial');
-                expect(wrapperComp.refObj['无默认值'].checked).toBeUndefined();
+                expect(wrapperComp.refObj['有默认值']!.checked).toBe('default');
+                expect(wrapperComp.refObj['有初始值']!.checked).toBe('initial');
+                expect(wrapperComp.refObj['无默认值']!.checked).toBeUndefined();
                 expect(mockModel.value).toEqual({ 有默认值: 'default', 有初始值: 'initial' });
 
                 await nextTick();
@@ -1654,19 +1654,19 @@ describe('usePlain-useWrapper组合测试', () => {
                 const wrapper = genWrapperComponent({ mockOptions, mockModel, searchSpy });
                 const wrapperComp = wrapper.vm.wrapperRef;
 
-                expect(wrapperComp.refObj['时间范围'].checked).toEqual(['2024-01-01', '2024-12-31']);
+                expect(wrapperComp.refObj['时间范围']!.checked).toEqual(['2024-01-01', '2024-12-31']);
                 expect(mockModel.value).toEqual({ startDate: '2024-01-01', endDate: '2024-12-31' });
                 // 改变内部值
-                wrapperComp.refObj['时间范围'].change(['2025-01-01', '2025-12-31']);
+                wrapperComp.refObj['时间范围']!.change(['2025-01-01', '2025-12-31']);
                 expect(mockModel.value.startDate).toBe('2025-01-01');
                 expect(mockModel.value.endDate).toBe('2025-12-31');
                 // 改变外部值
                 mockModel.value = { startDate: '2026-01-01', endDate: '2026-12-31' };
                 await nextTick();
-                expect(wrapperComp.refObj['时间范围'].checked).toEqual(['2026-01-01', '2026-12-31']);
+                expect(wrapperComp.refObj['时间范围']!.checked).toEqual(['2026-01-01', '2026-12-31']);
                 // 不改变引用时改变值
                 Object.assign(mockModel.value, { startDate: '2022-12-12', endDate: '2302-03-03' });
-                expect(wrapperComp.refObj['时间范围'].checked).toEqual(['2022-12-12', '2302-03-03']);
+                expect(wrapperComp.refObj['时间范围']!.checked).toEqual(['2022-12-12', '2302-03-03']);
 
                 await nextTick();
                 wrapper.unmount();
@@ -1683,26 +1683,26 @@ describe('usePlain-useWrapper组合测试', () => {
                 const wrapper = genWrapperComponent({ mockOptions, mockModel, searchSpy, shallowWatchModel: true });
                 const wrapperComp = wrapper.vm.wrapperRef;
 
-                expect(wrapperComp.refObj['城市'].checked).toBe('北京');
-                expect(wrapperComp.refObj['区域'].checked).toBe('大兴');
+                expect(wrapperComp.refObj['城市']!.checked).toBe('北京');
+                expect(wrapperComp.refObj['区域']!.checked).toBe('大兴');
                 expect(mockModel.value).toEqual({ 城市: '北京', 区域: '大兴', 楼栋: '旺德福' });
                 await nextTick();
                 // 改变城市，区域应该重置
-                wrapperComp.refObj['城市'].change('上海');
+                wrapperComp.refObj['城市']!.change('上海');
                 await nextTick();
-                expect(wrapperComp.refObj['区域'].checked).toBe('朝阳');
+                expect(wrapperComp.refObj['区域']!.checked).toBe('朝阳');
                 expect(mockModel.value).toEqual({ 城市: '上海', 区域: '朝阳', 楼栋: '旺德福' });
                 // 改变外部值时, 内部不跟随重置 - 引用发生改变
                 mockModel.value = { 城市: '长沙', 区域: '岳麓' };
                 await nextTick();
-                expect(wrapperComp.refObj['城市'].checked).toBe('长沙');
-                expect(wrapperComp.refObj['区域'].checked).toBe('岳麓');
+                expect(wrapperComp.refObj['城市']!.checked).toBe('长沙');
+                expect(wrapperComp.refObj['区域']!.checked).toBe('岳麓');
                 expect(mockModel.value).toEqual({ 城市: '长沙', 区域: '岳麓', 楼栋: '新星小区' });
                 // 改变外部值时, 内部跟随重置 - 引用未发生改变
                 Object.assign(mockModel.value, { 城市: '湘潭', 区域: '雨湖' });
                 await nextTick();
-                expect(wrapperComp.refObj['城市'].checked).toBe('湘潭');
-                expect(wrapperComp.refObj['区域'].checked).toBe('雨湖');
+                expect(wrapperComp.refObj['城市']!.checked).toBe('湘潭');
+                expect(wrapperComp.refObj['区域']!.checked).toBe('雨湖');
                 expect(mockModel.value).toEqual({ 城市: '湘潭', 区域: '雨湖', 楼栋: '新星小区' });
 
                 await nextTick();
@@ -1723,15 +1723,15 @@ describe('usePlain-useWrapper组合测试', () => {
                 const wrapper = genWrapperComponent({ mockOptions, mockModel, searchSpy });
                 const wrapperComp = wrapper.vm.wrapperRef;
 
-                expect(wrapperComp.refObj['异步字段'].finalOption).toEqual([]);
+                expect(wrapperComp.refObj['异步字段']!.finalOption).toEqual([]);
                 // getOptions 会被延迟触发, 因此等待下一个周期再执行
                 await nextTick();
                 // 模拟异步加载
                 callback([{ label: '选项1', value: '1' }, { label: '选项2', value: '2' }]);
                 await nextTick();
-                expect(wrapperComp.refObj['异步字段'].finalOption).toEqual([{ label: '选项1', value: '1' }, { label: '选项2', value: '2' }]);
+                expect(wrapperComp.refObj['异步字段']!.finalOption).toEqual([{ label: '选项1', value: '1' }, { label: '选项2', value: '2' }]);
                 // 选择值
-                wrapperComp.refObj['异步字段'].change('1');
+                wrapperComp.refObj['异步字段']!.change('1');
                 expect(mockModel.value['异步字段']).toBe('1');
 
                 await nextTick();
@@ -1750,9 +1750,9 @@ describe('usePlain-useWrapper组合测试', () => {
                 const wrapper = genWrapperComponent({ mockOptions, mockModel, searchSpy });
                 const wrapperComp = wrapper.vm.wrapperRef;
 
-                expect(wrapperComp.refObj['字段'].checked).toBe('changed');
+                expect(wrapperComp.refObj['字段']!.checked).toBe('changed');
                 wrapperComp.reset();
-                expect(wrapperComp.refObj['字段'].checked).toBe('initial');
+                expect(wrapperComp.refObj['字段']!.checked).toBe('initial');
                 expect(mockModel.value['字段']).toBe('initial');
 
                 await nextTick();
@@ -1771,14 +1771,14 @@ describe('usePlain-useWrapper组合测试', () => {
                 const wrapper = genWrapperComponent({ mockOptions, mockModel, searchSpy });
                 const wrapperComp = wrapper.vm.wrapperRef;
 
-                expect(wrapperComp.refObj['多选'].checked).toEqual(['1', '2']);
+                expect(wrapperComp.refObj['多选']!.checked).toEqual(['1', '2']);
                 expect(mockModel.value['多选']).toEqual(['1', '2']);
                 // 改变值
-                wrapperComp.refObj['多选'].change(['3']);
+                wrapperComp.refObj['多选']!.change(['3']);
                 expect(mockModel.value['多选']).toEqual(['3']);
                 // 外部改变
                 mockModel.value['多选'] = ['1', '3'];
-                expect(wrapperComp.refObj['多选'].checked).toEqual(['1', '3']);
+                expect(wrapperComp.refObj['多选']!.checked).toEqual(['1', '3']);
 
                 await nextTick();
                 wrapper.unmount();
@@ -1802,10 +1802,10 @@ describe('usePlain-useWrapper组合测试', () => {
                 const wrapper = genWrapperComponent({ mockOptions, mockModel, searchSpy });
                 const wrapperComp = wrapper.vm.wrapperRef;
 
-                expect(wrapperComp.refObj['级联'].checked).toEqual(['bj', 'cy']);
+                expect(wrapperComp.refObj['级联']!.checked).toEqual(['bj', 'cy']);
                 expect(mockModel.value).toEqual({ province: 'bj', city: 'cy' });
                 // 改变级联值
-                wrapperComp.refObj['级联'].change(['bj', 'hd']);
+                wrapperComp.refObj['级联']!.change(['bj', 'hd']);
                 expect(mockModel.value.province).toBe('bj');
                 expect(mockModel.value.city).toBe('hd');
 
@@ -1822,9 +1822,9 @@ describe('usePlain-useWrapper组合测试', () => {
                 const wrapper = genWrapperComponent({ mockOptions, mockModel, searchSpy });
                 const wrapperComp = wrapper.vm.wrapperRef;
 
-                expect(wrapperComp.refObj['字段'].checked).toBe('value1');
+                expect(wrapperComp.refObj['字段']!.checked).toBe('value1');
                 // 改变值不触发搜索
-                wrapperComp.refObj['字段'].change('value2');
+                wrapperComp.refObj['字段']!.change('value2');
                 expect(searchSpy).not.toHaveBeenCalled();
                 expect(mockModel.value['字段']).toBe('value2');
 
@@ -1906,9 +1906,9 @@ describe('深层路径支持测试 (a.0[\'aa\'])', () => {
                 时间选择: '11:22',
             });
             // 内部修改值后判断是否同步
-            wrapperComp.refObj['动态表单1.0.文本框'].change('dd');
-            wrapperComp.refObj['动态表单1.0.下拉框'].change('xiaLa');
-            wrapperComp.refObj['动态表单3.0.切换框'].change('fff');
+            wrapperComp.refObj['动态表单1.0.文本框']!.change('dd');
+            wrapperComp.refObj['动态表单1.0.下拉框']!.change('xiaLa');
+            wrapperComp.refObj['动态表单3.0.切换框']!.change('fff');
             await nextTick();
             expect(mockQuery.value).toEqual({
                 输入框: '测试值',
@@ -1921,30 +1921,30 @@ describe('深层路径支持测试 (a.0[\'aa\'])', () => {
             // 删除动态表单中的某一项
             mockQuery.value['动态表单2'].splice(0, 1);
             await nextTick();
-            expect(wrapperComp.refObj['动态表单2.0.多选框'].checked).toBe('ii');
-            expect(wrapperComp.refObj['动态表单2.0.单选框'].checked).toBe('test');
+            expect(wrapperComp.refObj['动态表单2.0.多选框']!.checked).toBe('ii');
+            expect(wrapperComp.refObj['动态表单2.0.单选框']!.checked).toBe('test');
             expect(mockQuery.value['动态表单2']).toEqual([{ _id: '2', 多选框: 'ii', 单选框: 'test' }]);
             // 为动态菜单中的某项中的某个字段重新赋值
             mockQuery.value['动态表单2'][0]['单选框'] = 'hhh';
             await nextTick();
-            expect(wrapperComp.refObj['动态表单2.0.多选框'].checked).toBe('a');
-            expect(wrapperComp.refObj['动态表单2.0.单选框'].checked).toBe('hhh');
+            expect(wrapperComp.refObj['动态表单2.0.多选框']!.checked).toBe('a');
+            expect(wrapperComp.refObj['动态表单2.0.单选框']!.checked).toBe('hhh');
             expect(mockQuery.value['动态表单2']).toEqual([{ _id: '2', 多选框: 'a', 单选框: 'hhh' }]);
             // 还原动态菜单中的数据以便做后续的测试
             mockQuery.value['动态表单2'].splice(0, 1, { _id: '33', 多选框: 'ii', 单选框: 'test' });
             await nextTick();
-            expect(wrapperComp.refObj['动态表单2.0.多选框'].checked).toBe('ii');
-            expect(wrapperComp.refObj['动态表单2.0.单选框'].checked).toBe('test');
+            expect(wrapperComp.refObj['动态表单2.0.多选框']!.checked).toBe('ii');
+            expect(wrapperComp.refObj['动态表单2.0.单选框']!.checked).toBe('test');
             expect(mockQuery.value['动态表单2']).toEqual([{ _id: '33', 多选框: 'ii', 单选框: 'test' }]);
             // 为动态菜单中的某项中的某个字段重新赋值, 但更新源对象
             // 测试改变某个值后, 依赖其的数据也应更新
             mockQuery.value['动态表单2'][0] = { _id: '33', 单选框: 'hhh' };
             await nextTick();
-            expect(wrapperComp.refObj['动态表单2.0.多选框'].checked).toBe('a');
-            expect(wrapperComp.refObj['动态表单2.0.单选框'].checked).toBe('hhh');
+            expect(wrapperComp.refObj['动态表单2.0.多选框']!.checked).toBe('a');
+            expect(wrapperComp.refObj['动态表单2.0.单选框']!.checked).toBe('hhh');
             expect(mockQuery.value['动态表单2']).toEqual([{ _id: '33', 多选框: 'a', 单选框: 'hhh' }]);
             // 通过引用对象手动在 query 上给动态表单赋值
-            wrapperComp.refObj['动态表单4'].query['动态表单2'] = [];
+            wrapperComp.refObj['动态表单4']!.query['动态表单2'] = [];
             await nextTick();
             watch(() => mockQuery.value['动态表单2'], (query) => watchSpy(query), { deep: true });
             expect(watchSpy).toHaveBeenCalledTimes(0);
@@ -1952,11 +1952,11 @@ describe('深层路径支持测试 (a.0[\'aa\'])', () => {
             await nextTick();
             expect(watchSpy).toBeCalledWith([{ _id: '44', 多选框: 'ii', 单选框: 'hhh' }]);
             expect(watchSpy).toHaveBeenCalledTimes(1);
-            wrapperComp.refObj['动态表单4'].query['动态表单2'][0]['多选框'] = 'bb';
+            wrapperComp.refObj['动态表单4']!.query['动态表单2'][0]['多选框'] = 'bb';
             await nextTick();
             expect(watchSpy).toBeCalledWith([{ _id: '44', 多选框: 'bb', 单选框: 'hhh' }]);
             expect(watchSpy).toHaveBeenCalledTimes(2);
-            wrapperComp.refObj['动态表单4'].query['动态表单2'][0]['单选框'] = '999';
+            wrapperComp.refObj['动态表单4']!.query['动态表单2'][0]['单选框'] = '999';
             await nextTick();
             expect(watchSpy).toBeCalledWith([{ _id: '44', 多选框: 'a', 单选框: '999' }]);
             expect(watchSpy).toHaveBeenCalledTimes(4);
@@ -2081,8 +2081,8 @@ describe('深层路径支持测试 (a.0[\'aa\'])', () => {
                 const wrapper = genWrapperComponent({ mockOptions, mockQuery, searchSpy });
                 const wrapperComp = wrapper.vm.wrapperRef;
 
-                expect(wrapperComp.refObj['a.0.aa'].checked).toBe('x');
-                wrapperComp.refObj['a.0.aa'].change('y');
+                expect(wrapperComp.refObj['a.0.aa']!.checked).toBe('x');
+                wrapperComp.refObj['a.0.aa']!.change('y');
                 await nextTick();
                 expect(mockQuery.value.a[0].aa).toBe('y');
 
@@ -2109,12 +2109,12 @@ describe('深层路径支持测试 (a.0[\'aa\'])', () => {
                 const wrapperComp = wrapper.vm.wrapperRef;
 
                 // initialValue 优先
-                expect(wrapperComp.refObj.c.checked).toBe('init-c');
+                expect(wrapperComp.refObj.c!.checked).toBe('init-c');
                 await nextTick();
                 // 改变依赖值后应该被重置为 defaultValue
                 mockQuery.value.a[0].b = 'v2';
                 await nextTick();
-                expect(wrapperComp.refObj.c.checked).toBe('default-c');
+                expect(wrapperComp.refObj.c!.checked).toBe('default-c');
 
                 await nextTick();
                 wrapper.unmount();
@@ -2133,14 +2133,14 @@ describe('深层路径支持测试 (a.0[\'aa\'])', () => {
                 const wrapperComp = wrapper.vm.wrapperRef;
 
                 // 初始映射
-                expect(wrapperComp.refObj['list.0.val'].checked).toBe('a');
+                expect(wrapperComp.refObj['list.0.val']!.checked).toBe('a');
 
                 // 交换顺序
                 mockQuery.value.list.splice(0, 2, { _id: '2', val: 'b' }, { _id: '1', val: 'a' });
                 await nextTick();
 
                 // 重新索引后首项应为 'b'
-                expect(wrapperComp.refObj['list.0.val'].checked).toBe('b');
+                expect(wrapperComp.refObj['list.0.val']!.checked).toBe('b');
 
                 await nextTick();
                 wrapper.unmount();
@@ -2163,22 +2163,22 @@ describe('深层路径支持测试 (a.0[\'aa\'])', () => {
                 mockQuery.value.arr.splice(1, 1);
                 await nextTick();
                 // 现在索引1的值应该来自原索引2
-                expect(wrapperComp.refObj['arr.1.x'].checked).toBe('3');
-                expect(wrapperComp.refObj['arr.1.y'].checked).toBe('33');
+                expect(wrapperComp.refObj['arr.1.x']!.checked).toBe('3');
+                expect(wrapperComp.refObj['arr.1.y']!.checked).toBe('33');
                 // 内部重新设值后 y 要重置为默认值
-                wrapperComp.refObj['arr.1.x'].checked = '99';
+                wrapperComp.refObj['arr.1.x']!.checked = '99';
                 await nextTick();
-                expect(wrapperComp.refObj['arr.1.y'].checked).toBeUndefined();
+                expect(wrapperComp.refObj['arr.1.y']!.checked).toBeUndefined();
                 // 重新设值
                 mockQuery.value.arr[1] = { x: 'g', y: 'gg' };
                 await nextTick();
-                expect(wrapperComp.refObj['arr.1.x'].checked).toBe('g');
-                expect(wrapperComp.refObj['arr.1.y'].checked).toBe('gg');
+                expect(wrapperComp.refObj['arr.1.x']!.checked).toBe('g');
+                expect(wrapperComp.refObj['arr.1.y']!.checked).toBe('gg');
                 // 外部重新设值后 y 要重置为默认值
                 mockQuery.value.arr[1].x = '99';
                 await nextTick();
-                expect(wrapperComp.refObj['arr.1.x'].checked).toBe('99');
-                expect(wrapperComp.refObj['arr.1.y'].checked).toBeUndefined();
+                expect(wrapperComp.refObj['arr.1.x']!.checked).toBe('99');
+                expect(wrapperComp.refObj['arr.1.y']!.checked).toBeUndefined();
 
                 await nextTick();
                 wrapper.unmount();
@@ -2197,7 +2197,7 @@ describe('深层路径支持测试 (a.0[\'aa\'])', () => {
                 const wrapper = genWrapperComponent({ mockOptions, mockQuery });
                 const wrapperComp = wrapper.vm.wrapperRef;
                 expect(mockQuery.value).toEqual({ nested: { k: 'v' } });
-                wrapperComp.refObj.nested.change({ k: 'new' });
+                wrapperComp.refObj.nested!.change({ k: 'new' });
                 await nextTick();
                 expect(mockQuery.value.nested.k).toBe('new');
 

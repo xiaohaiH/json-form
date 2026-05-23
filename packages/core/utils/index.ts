@@ -62,8 +62,8 @@ export function isEqual(x: any, y: any): boolean {
     const keysY = Reflect.ownKeys(y as unknown as object);
     if (keysX.length !== keysY.length) return false;
     for (let i = 0; i < keysX.length; i++) {
-        if (!Reflect.has(y as unknown as object, keysX[i])) return false;
-        if (!isEqual(x[keysX[i]], y[keysX[i]])) return false;
+        if (!Reflect.has(y as unknown as object, keysX[i]!)) return false;
+        if (!isEqual(x[keysX[i]!], y[keysX[i]!])) return false;
     }
     return true;
 }
@@ -258,16 +258,17 @@ export function get<TDefault = unknown>(value: any, path: string, defaultValue?:
 export function set<T extends object, K>(initial: T, path: string, value: K, assign?: (obj: Record<string, any>, key: string, value: any) => void) {
     if (!initial || !path) return;
     const segments = path.split(fieldPathReg).filter((x) => !!x.trim());
+    if (!segments.length) return;
     const _set = (node: any) => {
         if (segments.length > 1) {
             const key = segments.shift() as string;
             node[key] === undefined && (assign
-                ? assign(node, key, (numReg.test(segments[0]) ? [] : {}))
-                : node[key] = (numReg.test(segments[0]) ? [] : {}));
+                ? assign(node, key, (numReg.test(segments[0]!) ? [] : {}))
+                : node[key] = (numReg.test(segments[0]!) ? [] : {}));
             _set(node[key]);
         }
         else {
-            assign ? assign(node, segments[0], value) : node[segments[0]] = value;
+            assign ? assign(node, segments[0]!, value) : node[segments[0]!] = value;
         }
     };
     _set(initial);
