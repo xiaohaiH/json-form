@@ -21,16 +21,17 @@ function writeContent(dest, content) {
     fs.writeFileSync(dest, content, 'utf-8');
 }
 
-const reg = /(export\s+\*\s+from\s+'\.\/)([\w|\-]+)(\/index';)/;
+const reg = /(export\s+\*\s+from\s+'\.\.\/)([\w|\-]+)(\/index';)/;
 const wordReg = /-\w/g;
 /** 不经过 element-plus 的组件 */
 const whiteList = ['custom-render'];
+/** 引用了多个 element-plus 的组件 */
+const multipleList = {
+};
 function reexport(content, Ui) {
     const arr = content.split('\n');
     const newContent = {
-        // group/dynamic-group 组件比较特殊, 不能存在于 components-whole 中
-        // 避免循环引用, 因此单独提出来
-        imp: [`export * from './group/index';`, `export * from './dynamic-group/index';`],
+        imp: [],
         exp: [],
     };
     arr.forEach((item) => {
@@ -39,7 +40,7 @@ function reexport(content, Ui) {
         const [all, $1, $2, $3] = result;
         if (whiteList.includes($2) || hasComponent(Ui, $2)) return newContent.imp.push(all);
         newContent.exp.push([
-            `export const ${camelize2(`h-${$2}`)} = {};`,
+            `export const ${camelize2(`h-${$2}`)} = { render: () => null };`,
             `export interface ${camelize2(`${$2}-props`)}<A, B, C, D> {}`,
         ].join('\n'));
     });
@@ -48,6 +49,7 @@ function reexport(content, Ui) {
 }
 
 function hasComponent(Ui, name) {
+    if (multipleList[name]) return multipleList[name].every((o) => camelize2(`el-${o}`) in Ui);
     return camelize2(`el-${name}`) in Ui;
 }
 function camelize(name) {

@@ -26,7 +26,7 @@ import type { Ref, SlotsType } from 'vue';
 import { computed, defineComponent, Fragment, markRaw, nextTick, onMounted, ref, watch } from 'vue';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 import { pick } from '../../src/utils';
-import { HGroup } from '../components';
+import { HGroup } from '../group/index';
 import type { FormSlots } from './types';
 import { formEmitsPrivate as emits, formPropsPrivate as props } from './types';
 
