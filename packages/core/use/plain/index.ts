@@ -252,7 +252,7 @@ export function usePlain<Query extends Record<string, any> = Record<string, any>
                 if (_uniqueValue !== __uniqueValue) return;
                 if (!_depend) return;
                 // 依赖为单个值时, 直接比较值是否一致
-                if (typeof _dependFields === 'string' && _val !== __val) return;
+                if (typeof _dependFields === 'string' && _val === __val) return;
                 // 依赖为多个值时, 遍历比较值是否一致
                 else if (_val.length === __val?.length && (_val as any[]).every((o, i) => o === __val[i])) return;
                 // 异步触发回调, 某些场景得先清空值, 再清空数据源
