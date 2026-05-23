@@ -1,6 +1,6 @@
 import type { CamelCase, Obj2Props, PlainProps, usePlain } from '@xiaohaih/json-form-core';
 import { emits2props, plainProps } from '@xiaohaih/json-form-core';
-import type { Component, ExtractPublicPropTypes, PropType } from 'vue';
+import type { Component, ExtractPublicPropTypes, PropType, Ref } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { CommonProps, CommonSlots, CommonSlotsProps, ComponentType, FormItemProps } from '../share';
 import { commonProps, formItemProps } from '../share';
@@ -22,7 +22,7 @@ export function customRenderPropsGeneric<Query extends Record<string, any>, Opti
 }
 export interface CustomRenderSlotOption<Query extends Record<string, any>, OptionQuery extends Record<string, any>> extends CommonSlotsProps<Query, OptionQuery> {
     /** 获取表单项属性 */
-    formItemProps: Record<string, any>;
+    formItemProps: Ref<Record<string, any>>;
 }
 /** 组件传参 - 私有 */
 export const customRenderPropsPrivate = customRenderPropsGeneric();

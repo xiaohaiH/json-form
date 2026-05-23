@@ -37,15 +37,23 @@ export default defineComponent({
         const plain = usePlain(props);
         const { formItemActualProps } = useFormItemProps(props, ctx);
         const slotProps = computed(() => ({
-            formItemProps: formItemActualProps.value,
+            formItemProps: formItemActualProps,
             props,
             plain,
         }));
-        const customRender = computed(() => {
-            return typeof props.render === 'function'
-                ? getNode(props.render(slotProps.value))
-                : props.render;
-        });
+        const customRender = ref<any>();
+        // 由计算属性改为 watch
+        // 防止在 watch 中引用了响应式变量导致重渲染
+        watch(() => props.render, (render) => {
+            customRender.value = typeof render === 'function'
+                ? getNode(render(slotProps.value))
+                : render;
+        }, { immediate: true });
+        // const customRender = computed(() => {
+        //     return typeof props.render === 'function'
+        //         ? getNode(props.render(slotProps.value))
+        //         : props.render;
+        // });
 
         return {
             hyphenate,
