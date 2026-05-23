@@ -1,0 +1,84 @@
+{
+    "name": "@xiaohaih/json-form-vant",
+    "type": "module",
+    "version": "0.0.0",
+    "description": "基于vant实现, 通过JSON配置表单组件(表单项间可相互依赖)",
+    "author": "xiaohai",
+    "license": "MIT",
+    "homepage": "https://xiaohaih.github.io/json-form/example-vant-vue3/index.html",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/xiaohaiH/json-form/tree/master/packages/vant"
+    },
+    "keywords": [
+        "vue3",
+        "vant",
+        "JSON Form"
+    ],
+    "exports": {
+        ".": {
+            "browser": "./src/index.ts",
+            "types": "./src/index.ts",
+            "import": "./src/index.ts",
+            "require": "./dist/index.cjs.js"
+        },
+        "./*": "./*"
+    },
+    "main": "dist/index.cjs.js",
+    "module": "dist/index.esm.js",
+    "unpkg": "dist/index.umd.js",
+    "jsdelivr": "dist/index.umd.js",
+    "types": "src/index.ts",
+    "scripts": {
+        "build": "node ./scripts/generate-version.mjs && vite build",
+        "build:dts": "tsdown",
+        "postinstall": "node -e \"try{require('./scripts/postinstall.cjs')}catch(e){}\"",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "docs:dev": "vitepress dev docs",
+        "docs:build": "vitepress build docs",
+        "docs:preview": "vitepress preview docs"
+    },
+    "peerDependencies": {
+        "vant": "^3.0.0",
+        "vue": "^3.0.0"
+    },
+    "dependencies": {
+        "@xiaohaih/json-form-core": "workspace:*"
+    },
+    "devDependencies": {
+        "@docsearch/js": "^4.6.3",
+        "@popperjs/core": "^2.11.8",
+        "@rollup/plugin-terser": "^1.0.0",
+        "@vitejs/plugin-vue": "^6.0.7",
+        "@vitejs/plugin-vue-jsx": "^5.1.5",
+        "@vue/language-core": "^3.3.1",
+        "tsdown": "^0.22.0",
+        "typescript": "~6.0.3",
+        "unocss": "^66.5.0",
+        "unplugin-dts": "^1.0.1",
+        "unplugin-vue": "^7.2.0",
+        "vant": "^4.9.24",
+        "vite": "^8.0.13",
+        "vitepress": "2.0.0-alpha.12",
+        "vue": "^3.5.13",
+        "vue-component-type-helpers": "^3.3.1",
+        "vue-tsc": "^3.3.1"
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/",
+        "main": "dist/index.cjs.js",
+        "module": "dist/index.esm.js",
+        "unpkg": "dist/index.umd.js",
+        "jsdelivr": "dist/index.umd.js",
+        "types": "src/index.ts",
+        "exports": {
+            ".": {
+                "browser": "./src/index.ts",
+                "types": "./src/index.ts",
+                "import": "./src/index.ts",
+                "require": "./dist/index.cjs.js"
+            },
+            "./*": "./*"
+        }
+    }
+}
