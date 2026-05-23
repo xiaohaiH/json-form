@@ -1,5 +1,5 @@
 {
-    "name": "example-plus-vue3",
+    "name": "example-vant-vue3",
     "type": "module",
     "version": "0.0.1",
     "private": true,
@@ -11,11 +11,9 @@
         "preview": "vite preview --host"
     },
     "dependencies": {
-        "@xiaohaih/json-form-plus": "workspace:^",
-        "@xiaohaih/vue-monaco-editor": "^0.0.6",
-        "element-plus": "2.14.0",
-        "monaco-editor": "^0.44.0",
+        "@xiaohaih/json-form-vant": "workspace:^",
         "split.js": "^1.6.5",
+        "vant": "^4.9.24",
         "vue": "^3.5.13"
     },
     "devDependencies": {

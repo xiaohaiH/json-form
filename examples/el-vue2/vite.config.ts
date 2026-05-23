@@ -30,6 +30,7 @@ export default defineConfig({
             'vue': resolve(dirname, './node_modules/vue2/dist/vue.runtime.esm.js'),
             'vue-demi': resolve(dirname, './node_modules/vue-demi/lib/v2.7/index.mjs'),
         },
+        dedupe: ['vue', 'vue-demi', 'element-ui'],
     },
     preview: {
         open: true,

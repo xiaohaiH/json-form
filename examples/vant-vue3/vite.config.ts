@@ -25,7 +25,7 @@ export default defineConfig({
             'vue': 'vue/dist/vue.esm-bundler.js',
             'vue-demi': 'vue-demi/lib/v3/index.mjs',
         },
-        dedupe: ['vue', 'vue-demi', 'element-plus'],
+        dedupe: ['vue', 'vue-demi', 'vant'],
     },
     oxc: {
         jsx: 'preserve',
@@ -33,9 +33,9 @@ export default defineConfig({
     },
     preview: {
         open: true,
-        port: 2020,
+        port: 2022,
     },
     server: {
-        port: 2000,
+        port: 2002,
     },
 });

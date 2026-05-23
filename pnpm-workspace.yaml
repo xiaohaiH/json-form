@@ -1,12 +1,34 @@
 packages:
-  - packages/**
-  - examples/**
-  - '!**/test/**'
-onlyBuiltDependencies:
-  - '@parcel/watcher'
-  - core-js
-  - esbuild
-  - vue-demi
-
+    -   packages/**
+    -   examples/**
+    -   '!**/test/**'
+shamefullyHoist: true
+# strictPeerDependencies: false
+# sideEffectsCache: false
+# shellEmulator: true
+allowBuilds:
+    '@parcel/watcher': true
+    core-js: true
+    esbuild: true
+    vue-demi: true
 patchedDependencies:
-  vue-template-compiler: patches/vue-template-compiler.patch
+    vue-template-compiler: patches/vue-template-compiler.patch
+minimumReleaseAgeExclude:
+    -   '@vue/language-core@3.3.1'
+    -   vue-tsc@3.3.1
+    -   '@rolldown/binding-android-arm64@1.0.2'
+    -   '@rolldown/binding-darwin-arm64@1.0.2'
+    -   '@rolldown/binding-darwin-x64@1.0.2'
+    -   '@rolldown/binding-freebsd-x64@1.0.2'
+    -   '@rolldown/binding-linux-arm-gnueabihf@1.0.2'
+    -   '@rolldown/binding-linux-arm64-gnu@1.0.2'
+    -   '@rolldown/binding-linux-arm64-musl@1.0.2'
+    -   '@rolldown/binding-linux-ppc64-gnu@1.0.2'
+    -   '@rolldown/binding-linux-s390x-gnu@1.0.2'
+    -   '@rolldown/binding-linux-x64-gnu@1.0.2'
+    -   '@rolldown/binding-linux-x64-musl@1.0.2'
+    -   '@rolldown/binding-openharmony-arm64@1.0.2'
+    -   '@rolldown/binding-wasm32-wasi@1.0.2'
+    -   '@rolldown/binding-win32-arm64-msvc@1.0.2'
+    -   '@rolldown/binding-win32-x64-msvc@1.0.2'
+    -   rolldown@1.0.2

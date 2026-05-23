@@ -1,10 +1,29 @@
 import { defineOption } from '@xiaohaih/json-form-plus';
-import { ElFormItem } from 'element-plus';
+import { ElFormItem, ElInput } from 'element-plus';
 import { defineComponent, markRaw, ref } from 'vue';
 
 export function conditionFactory() {
     return {
         condition: defineOption(({ query, formRef }) => [
+            {
+                'field': 'group',
+                't': 'group',
+                'placeholder': '哈哈哈',
+                'tag': ElInput,
+                'modelValue': query.group,
+                'onUpdate:modelValue': (val: string) => query.group = val,
+                'tagSlots': { prepend: 'group-带插槽', append: '123' },
+                'hooks': {
+                    created(option) {
+                        option.on('reset', () => {
+                            query.group = '';
+                            return () => {
+                                console.log('重置后, 6666');
+                            };
+                        });
+                    },
+                },
+            },
             {
                 t: 'dynamic-group',
                 field: '布局组件',
@@ -504,6 +523,12 @@ export function conditionFactory() {
                     { label: 'bbb', value: 'bbb' },
                     { label: 'ccc', value: 'ccc' },
                 ],
+            },
+            {
+                t: 'input-otp',
+                field: '验证码',
+                label: '验证码',
+                rules: [{ required: true, message: '必填项' }],
             },
         ]),
     };
