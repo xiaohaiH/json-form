@@ -27,10 +27,10 @@ export default async () => {
 
     // https://vitepress.dev/reference/site-config
     return defineConfig({
-        title: 'json-form-plus',
+        title: 'json-form-el',
         description: '基于 json 驱动的表单',
         lang: 'zh-CN',
-        base: '/json-form/docs-plus/',
+        base: '/json-form/docs-el/',
         head: [['meta', { name: 'algolia-site-verification', content: '61B7703469FD262F' }]],
         themeConfig: {
             search: {
