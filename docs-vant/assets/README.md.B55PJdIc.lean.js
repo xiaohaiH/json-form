@@ -1,0 +1,1 @@
+import{_ as e,c as s,o as n,ah as t}from"./chunks/framework.DbJ-jR7g.js";const m=JSON.parse('{"title":"Vant 组件文档","description":"","frontmatter":{},"headers":[],"relativePath":"README.md","filePath":"README.md"}'),r={name:"README.md"};function i(l,a,o,p,h,c){return n(),s("div",null,[...a[0]||(a[0]=[t("",6)])])}const _=e(r,[["render",i]]);export{m as __pageData,_ as default};
