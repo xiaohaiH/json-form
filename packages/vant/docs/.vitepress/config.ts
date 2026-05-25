@@ -39,7 +39,7 @@ export default async () => {
                 // options: {
                 //     appId: '7I5QJDRVQQ',
                 //     apiKey: '22b659ca38c3f820e963499fc03547b4',
-                //     indexName: 'json-form-plus',
+                //     indexName: 'json-form-vant',
                 // },
             },
             // https://vitepress.dev/reference/default-theme-config
@@ -48,7 +48,7 @@ export default async () => {
                 { text: '配置项', link: '/options/shares/share-props' },
                 { text: '友情链接', link: '/friendly-links' },
                 { text: '示例', link: '/examples/index' },
-                { text: '更新日志', link: 'https://github.com/xiaohaiH/json-form/blob/master/packages/element-plus/CHANGELOG.md' },
+                { text: '更新日志', link: 'https://github.com/xiaohaiH/json-form/blob/master/packages/vant/CHANGELOG.md' },
             ],
             sidebar: {
                 '/options': [
@@ -75,7 +75,7 @@ export default async () => {
                 // '/friendly-links': [],
             },
             socialLinks: [
-                { icon: 'github', link: 'https://github.com/xiaohaiH/json-form/tree/master/packages/element-plus' },
+                { icon: 'github', link: 'https://github.com/xiaohaiH/json-form/tree/master/packages/vant' },
             ],
         },
         // outDir: './dist',
