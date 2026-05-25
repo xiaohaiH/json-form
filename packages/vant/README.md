@@ -803,5 +803,5 @@ MIT License
 
 - [项目主页](https://github.com/xiaohaiH/json-form/tree/master/packages/vant)
 - [核心模块](https://github.com/xiaohaiH/json-form/tree/master/packages/core/README.md)
-- [Element Plus 版本](https://github.com/xiaohaiH/json-form/tree/master/packages/element-plus/README.md)
-- [Element UI 版本](https://github.com/xiaohaiH/json-form/tree/master/packages/element-ui/README.md)
+- [ElementPlus 版本](https://github.com/xiaohaiH/json-form/tree/master/packages/element-plus/README.md)
+- [ElementUI 版本](https://github.com/xiaohaiH/json-form/tree/master/packages/element-ui/README.md)

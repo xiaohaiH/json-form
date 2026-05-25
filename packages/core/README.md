@@ -267,6 +267,7 @@ ISC License
 ## 🔗 相关链接
 
 - [项目主页](https://github.com/xiaohaiH/json-form/tree/master/packages/core)
-- [Element Plus 适配](https://github.com/xiaohaih/json-form/tree/master/packages/element-plus)
-- [Element UI 适配](https://github.com/xiaohaih/json-form/tree/master/packages/element-ui)
+- [ElementPlus 适配](https://github.com/xiaohaih/json-form/tree/master/packages/element-plus)
+- [ElementUI 适配](https://github.com/xiaohaih/json-form/tree/master/packages/element-ui)
+- [Vant 适配](https://github.com/xiaohaih/json-form/tree/master/packages/vant)
 - [使用示例](https://github.com/xiaohaih/json-form/tree/master/examples)

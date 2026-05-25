@@ -16,5 +16,5 @@ docs/
 ## 相关链接
 
 - [GitHub 仓库](https://github.com/xiaohaih/json-form)
-- [Element Plus 官方文档](https://element-plus.org/)
+- [Vant 官方文档](https://vant.pro/vant/)
 - [核心库文档](https://github.com/xiaohaiH/json-form/tree/master/packages/core)

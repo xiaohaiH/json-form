@@ -10,7 +10,7 @@
 - 🎯 **JSON 配置驱动**: 通过 JSON 对象配置表单，无需手写模板
 - 🔗 **智能依赖**: 支持表单项间的级联依赖和数据联动
 - ✅ **表单校验**: 沿用 UI 框架本身的校验机制
-- 🎨 **多 UI 适配**: 支持 Element UI、Element Plus 等主流 UI 框架
+- 🎨 **多 UI 适配**: 支持 Element UI、Element Plus、Vant 等主流 UI 框架
 - 📦 **模块化设计**: 核心逻辑与 UI 层解耦，支持扩展
 - 🎪 **Vue 3 优先**: 基于 Vue 3 Composition API，同时支持 Vue 2
 - 🎯 **TypeScript**: 完整的类型定义和类型推导
@@ -34,6 +34,9 @@ pnpm add @xiaohaih/json-form-plus
 
 # Element UI 版本 (Vue 2)
 pnpm add @xiaohaih/json-form-el
+
+# Vant 版本 (vue 3)
+pnpm add @xiaohaih/json-form-vant
 ```
 
 ## 🏗️ 架构设计
@@ -82,6 +85,13 @@ json-form 采用 **分层架构设计**，将表单逻辑与 UI 渲染完全解�
 - **完整组件库**: 支持所有 Element UI 表单组件
 - **向下兼容**: 保持与旧版本的兼容性
 
+#### `@xiaohaih/json-form-vant` (Vant)
+
+- **Vue 2 支持**: 兼容 Vue 2.7+
+- **Vant 集成**: 深度集成 Vant 3.x, 4.x
+- **完整组件库**: 支持所有 Vant 表单组件
+- **向下兼容**: 保持与旧版本的兼容性
+
 ## 🚀 快速开始
 
 ### 使用 Element Plus 版本
@@ -92,6 +102,10 @@ json-form 采用 **分层架构设计**，将表单逻辑与 UI 渲染完全解�
 
 - [请参考对应文档](https://github.com/xiaohaiH/json-form/tree/master/packages/element-ui/README.md)
 
+### 使用 Vant 版本
+
+- [请参考对应文档](https://github.com/xiaohaiH/json-form/tree/master/packages/vant/README.md)
+
 ## 🔧 开发指南
 
 ### 环境要求
@@ -100,13 +114,19 @@ json-form 采用 **分层架构设计**，将表单逻辑与 UI 渲染完全解�
 
 - Vue 3.0+
 - Element Plus 2.x
-- TypeScript 4.0+ (推荐)
+- TypeScript 6.0+ (推荐)
 
 #### Element UI 版本
 
 - Vue 2.7+
 - Element UI 2.x
-- TypeScript 4.0+ (推荐)
+- TypeScript 6.0+ (推荐)
+
+#### Vant 版本
+
+- Vue 3.0+
+- Vant 4.x
+- TypeScript 6.0+ (推荐)
 
 ### 项目结构
 
@@ -123,9 +143,13 @@ json-form/
 │   └── element-plus/      # Element Plus 适配
 │       ├── components/    # UI 组件实现
 │       └── docs/          # 文档和示例
+│   └── vant/              # Vant 适配
+│       ├── components/    # UI 组件实现
+│       └── docs/          # 文档和示例
 ├── examples/              # 示例项目
 │   ├── el-vue2/          # Element UI 示例
 │   └── plus-vue3/        # Element Plus 示例
+│   └── vant-vue3/        # Vant 示例
 └── README.md              # 项目文档
 ```
 
@@ -166,9 +190,11 @@ pnpm --filter="@xiaohaih/json-form-core" test
 
 ## 🌟 在线示例
 
-- [Vue 3 + Element Plus 示例](https://xiaohaih.github.io/json-form/example-plus-vue3/index.html)
-- [Vue 2 + Element UI 示例](https://xiaohaih.github.io/json-form/example-el-vue2/index.html)
-- [Element Plus 文档](https://xiaohaih.github.io/json-form/docs-plus/index.html)
+- [Vue3 + ElementPlus 示例](https://xiaohaih.github.io/json-form/example-plus-vue3/index.html)
+- [Vue2 + ElementUI 示例](https://xiaohaih.github.io/json-form/example-el-vue2/index.html)
+- [Vue3 + Vant 示例](https://xiaohaih.github.io/json-form/example-vant-vue3/index.html)
+- [ElementPlus 文档](https://xiaohaih.github.io/json-form/docs-plus/index.html)
+- [Vant 文档](https://xiaohaih.github.io/json-form/docs-vant/index.html)
 
 ## 📊 版本对比
 
@@ -212,15 +238,17 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 特别感谢：
 
 - [Vue.js](https://vuejs.org/) - 渐进式 JavaScript 框架
-- [Element UI](https://element.eleme.cn/) - Vue 2 组件库
-- [Element Plus](https://element-plus.org/) - Vue 3 组件库
+- [ElementPlus](https://element-plus.org/) - Vue3 组件库
+- [ElementUI](https://element.eleme.cn/) - Vue2 组件库
+- [Vant](https://vant.pro/vant/) - Vue3 组件库
 - [vue-demi](https://github.com/vueuse/vue-demi) - Vue 版本兼容工具
 
 ## 🔗 相关链接
 
 - 📚 [核心模块文档](./packages/core/README.md)
-- 🎨 [Element UI 适配文档](./packages/element-ui/README.md)
-- 🎪 [Element Plus 适配文档](./packages/element-plus/README.md)
+- 🎪 [ElementPlus 适配文档](./packages/element-plus/README.md)
+- 🎨 [ElementUI 适配文档](./packages/element-ui/README.md)
+- 🎨 [Vant 适配文档](./packages/vant/README.md)
 - 🏠 [GitHub 仓库](https://github.com/xiaohaih/json-form)
 
 ---
