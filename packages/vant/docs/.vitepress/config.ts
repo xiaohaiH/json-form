@@ -14,12 +14,16 @@ import type { DefaultTheme } from 'vitepress/theme';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default async () => {
-    const components = readdirSync(resolve(__dirname, '../options/components'))
-        .map((v) => {
-            if (v.slice(-3) !== '.md') return null;
-            return { text: v.slice(0, -3), link: `/options/components/${v.slice(0, -3)}` };
-        })
-        .filter(Boolean) as DefaultTheme.SidebarItem[];
+    let components: DefaultTheme.SidebarItem[] = [];
+    try {
+        components = readdirSync(resolve(__dirname, '../options/components'))
+            .map((v) => {
+                if (v.slice(-3) !== '.md') return null;
+                return { text: v.slice(0, -3), link: `/options/components/${v.slice(0, -3)}` };
+            })
+            .filter(Boolean) as DefaultTheme.SidebarItem[];
+    }
+    catch (error) {}
 
     // https://vitepress.dev/reference/site-config
     return defineConfig({
